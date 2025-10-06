@@ -1,3 +1,26 @@
 @import "tailwindcss";
 @source not "../../public";
 @plugin "daisyui";
+
+@theme {
+  --dui-primary: 71 89% 53%;
+  --dui-primary-content: 0 0% 100%;
+  --dui-secondary: 276 82% 63%;
+  --dui-secondary-content: 0 0% 100%;
+  --dui-accent: 329 86% 58%;
+  --dui-accent-content: 0 0% 100%;
+  --dui-neutral: 230 15% 23%;
+  --dui-neutral-content: 0 0% 100%;
+  --dui-base-100: 0 0% 100%;
+  --dui-base-200: 210 20% 98%;
+  --dui-base-300: 216 12% 92%;
+  --dui-base-content: 230 15% 23%;
+  --dui-info: 207 90% 54%;
+  --dui-info-content: 0 0% 100%;
+  --dui-success: 174 60% 41%;
+  --dui-success-content: 0 0% 100%;
+  --dui-warning: 36 100% 50%;
+  --dui-warning-content: 0 0% 100%;
+  --dui-error: 14 100% 57%;
+  --dui-error-content: 0 0% 100%;
+}
