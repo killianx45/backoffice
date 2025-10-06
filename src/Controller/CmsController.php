@@ -6,13 +6,13 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-final class HelloController extends AbstractController
+final class CmsController extends AbstractController
 {
-    #[Route('/hello', name: 'app_hello')]
+    #[Route('/cms', name: 'app_cms')]
     public function index(): Response
     {
-        return $this->render('hello/index.html.twig', [
-            'controller_name' => 'HelloController',
+        return $this->render('cms/index.html.twig', [
+            'controller_name' => 'CmsController',
         ]);
     }
 }

@@ -3,23 +3,82 @@
 {% block title %}Register{% endblock %}
 
 {% block body %}
-    {% for flash_error in app.flashes('verify_email_error') %}
-        <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
-    {% endfor %}
+    <div class="min-h-screen flex items-center justify-center">
+        <div class="card w-full max-w-md bg-base-100 shadow-xl">
+            <div class="card-body">
+                <h2 class="card-title text-2xl font-bold text-center justify-center mb-4">
+                    Create an account
+                </h2>
 
-    <h1>Register</h1>
+                {% for flash_error in app.flashes('verify_email_error') %}
+                    <div class="alert alert-error mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <span>{{ flash_error }}</span>
+                    </div>
+                {% endfor %}
 
-    {{ form_errors(registrationForm) }}
+                {% if form_errors(registrationForm) %}
+                    <div class="alert alert-error mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <span>{{ form_errors(registrationForm) }}</span>
+                    </div>
+                {% endif %}
 
-    {{ form_start(registrationForm) }}
-        {{ form_row(registrationForm.nom) }}
-        {{ form_row(registrationForm.prenom) }}
-        {{ form_row(registrationForm.email) }}
-        {{ form_row(registrationForm.plainPassword, {
-            label: 'Password'
-        }) }}
-        {{ form_row(registrationForm.agreeTerms) }}
+                {{ form_start(registrationForm, {'attr': {'class': 'w-full'}}) }}
+                    <div class="form-control mb-4">
+                        {{ form_label(registrationForm.nom, null, {'label_attr': {'class': 'label'}}) }}
+                        <span class="label-text">{{ form_label(registrationForm.nom) }}</span>
+                        {{ form_widget(registrationForm.nom, {'attr': {'class': 'input input-bordered w-full', 'placeholder': 'Doe'}}) }}
+                        {{ form_errors(registrationForm.nom) }}
+                    </div>
 
-        <button type="submit" class="btn">Register</button>
-    {{ form_end(registrationForm) }}
+                    <div class="form-control mb-4">
+                        {{ form_label(registrationForm.prenom, null, {'label_attr': {'class': 'label'}}) }}
+                        <span class="label-text">{{ form_label(registrationForm.prenom) }}</span>
+                        {{ form_widget(registrationForm.prenom, {'attr': {'class': 'input input-bordered w-full', 'placeholder': 'John'}}) }}
+                        {{ form_errors(registrationForm.prenom) }}
+                    </div>
+
+                    <div class="form-control mb-4">
+                        {{ form_label(registrationForm.email, null, {'label_attr': {'class': 'label'}}) }}
+                        <span class="label-text">{{ form_label(registrationForm.email) }}</span>
+                        {{ form_widget(registrationForm.email, {'attr': {'class': 'input input-bordered w-full', 'placeholder': 'john.doe@email.com'}}) }}
+                        {{ form_errors(registrationForm.email) }}
+                    </div>
+
+                    <div class="form-control mb-4">
+                        {{ form_label(registrationForm.plainPassword, 'Password', {'label_attr': {'class': 'label'}}) }}
+                        <span class="label-text">Password</span>
+                        {{ form_widget(registrationForm.plainPassword, {'attr': {'class': 'input input-bordered w-full', 'placeholder': '••••••••'}}) }}
+                        {{ form_errors(registrationForm.plainPassword) }}
+                    </div>
+
+                    <div class="form-control mb-4">
+                        <label class="label cursor-pointer justify-start gap-2">
+                            {{ form_widget(registrationForm.agreeTerms, {'attr': {'class': 'checkbox checkbox-primary'}}) }}
+                            <span class="label-text">{{ form_label(registrationForm.agreeTerms) }}</span>
+                        </label>
+                        {{ form_errors(registrationForm.agreeTerms) }}
+                    </div>
+
+                    <div class="card-actions justify-end mt-6">
+                        <button type="submit" class="btn btn-primary w-full">Register</button>
+                    </div>
+                {{ form_end(registrationForm) }}
+
+                <div class="divider">OR</div>
+
+                <div class="text-center">
+                    <p class="text-sm">
+                        Already have an account?
+                        <a href="{{ path('app_login') }}" class="link link-primary">Sign in here</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}
