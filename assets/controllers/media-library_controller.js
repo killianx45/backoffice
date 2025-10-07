@@ -16,6 +16,10 @@ export default class extends Controller {
   connect() {
     this.imageToDelete = null;
     this.loadImages();
+    this.dropzoneTarget.addEventListener("click", (e) => {
+      if (e.target === this.fileInputTarget) return;
+      this.fileInputTarget.click();
+    });
   }
 
   async loadImages() {
@@ -46,8 +50,7 @@ export default class extends Controller {
 
   createImageCard(image) {
     const card = document.createElement("div");
-    card.className =
-      "card bg-base-100 shadow-sm border border-base-300 hover:shadow-md transition-shadow";
+    card.className = "card bg-base-100 shadow-sm border border-base-300 hover:shadow-md transition-shadow";
     card.dataset.filename = image.filename;
 
     const sizeInMB = MediaService.formatFileSize(image.size);

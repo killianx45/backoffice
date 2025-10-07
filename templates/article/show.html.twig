@@ -27,7 +27,7 @@
 
         <div class="flex gap-2">
             <a href="{{ path('app_article_index') }}" class="btn btn-ghost btn-sm">Retour</a>
-            {% if is_granted('ROLE_EDITEUR') %}
+            {% if is_granted('ARTICLE_EDIT', article) %}
             <a href="{{ path('app_article_edit', {'id': article.id}) }}" class="btn btn-primary btn-sm">Modifier</a>
             {% endif %}
         </div>
@@ -35,7 +35,7 @@
 
     {% if article.featuredImage %}
     <figure class="mb-8 rounded-lg overflow-hidden">
-        <img src="/media/images/{{ article.featuredImage }}"
+        <img src="{{ vich_uploader_asset(article, 'featuredImageFile') }}"
              alt="{{ article.title }}"
              class="w-full max-h-96 object-cover">
     </figure>

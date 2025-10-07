@@ -173,9 +173,6 @@ export default class extends Controller {
         gallery.appendChild(imageCard);
       });
     } catch (error) {
-      if (process.env.NODE_ENV === "development") {
-        console.error("Erreur lors du chargement des images:", error);
-      }
       if (gallery) {
         gallery.innerHTML = `
                     <div class="col-span-4 text-center py-8">
@@ -281,9 +278,6 @@ export default class extends Controller {
         uploadedCard.classList.add("border-primary", "ring-2", "ring-primary");
       }
     } catch (error) {
-      if (process.env.NODE_ENV === "development") {
-        console.error("Erreur:", error);
-      }
       alert(error.message || "Erreur lors du téléversement du fichier");
     } finally {
       if (uploadZone) {

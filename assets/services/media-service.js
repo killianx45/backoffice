@@ -4,6 +4,19 @@ export class MediaService {
 
   static async loadImages() {
     const response = await fetch("/api/media/images");
+
+    if (!response.ok) {
+      if (response.status === 403) {
+        throw new Error("Accès refusé. Permissions insuffisantes.");
+      }
+      throw new Error(`Erreur serveur: ${response.status}`);
+    }
+
+    const contentType = response.headers.get("content-type");
+    if (!contentType || !contentType.includes("application/json")) {
+      throw new Error("Réponse invalide du serveur");
+    }
+
     const data = await response.json();
 
     if (!data.images || !Array.isArray(data.images)) {
@@ -22,6 +35,18 @@ export class MediaService {
       body: formData,
     });
 
+    if (!response.ok) {
+      if (response.status === 403) {
+        throw new Error("Accès refusé. Permissions insuffisantes.");
+      }
+      throw new Error(`Erreur serveur: ${response.status}`);
+    }
+
+    const contentType = response.headers.get("content-type");
+    if (!contentType || !contentType.includes("application/json")) {
+      throw new Error("Réponse invalide du serveur");
+    }
+
     const data = await response.json();
 
     if (!data.success) {
@@ -35,6 +60,18 @@ export class MediaService {
     const response = await fetch(`/api/media/delete/image/${filename}`, {
       method: "DELETE",
     });
+
+    if (!response.ok) {
+      if (response.status === 403) {
+        throw new Error("Accès refusé. Permissions insuffisantes.");
+      }
+      throw new Error(`Erreur serveur: ${response.status}`);
+    }
+
+    const contentType = response.headers.get("content-type");
+    if (!contentType || !contentType.includes("application/json")) {
+      throw new Error("Réponse invalide du serveur");
+    }
 
     const data = await response.json();
 

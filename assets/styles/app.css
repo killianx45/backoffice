@@ -1,6 +1,9 @@
 @import "tailwindcss";
 @source not "../../public";
 @plugin "daisyui";
+/* @import url("https://fonts.googleapis.com/css2?family=Darker+Grotesque:wght@300..900&display=swap"); */
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap");
+/* @import url("https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,100..900;1,100..900&display=swap"); */
 
 @theme {
   --dui-primary: 71 89% 53%;
@@ -23,6 +26,10 @@
   --dui-warning-content: 0 0% 100%;
   --dui-error: 14 100% 57%;
   --dui-error-content: 0 0% 100%;
+}
+
+body {
+  font-family: "Montserrat", sans-serif;
 }
 
 @layer components {

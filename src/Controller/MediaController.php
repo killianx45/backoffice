@@ -13,7 +13,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
 #[Route('/api/media')]
-#[IsGranted('ROLE_EDITEUR')]
+#[IsGranted('ROLE_AUTHEUR')]
 class MediaController extends AbstractController
 {
     private const MAX_FILE_SIZE = 5 * 1024 * 1024;
