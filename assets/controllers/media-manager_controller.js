@@ -1,4 +1,5 @@
 import { Controller } from "@hotwired/stimulus";
+import { MediaService } from "../services/media-service";
 
 export default class extends Controller {
   static targets = ["preview"];
@@ -147,21 +148,11 @@ export default class extends Controller {
     if (!gallery) return;
 
     try {
-      const response = await fetch("/api/media/images");
-      const data = await response.json();
+      const images = await MediaService.loadImages();
 
       gallery.innerHTML = "";
 
-      if (!data.images || !Array.isArray(data.images)) {
-        gallery.innerHTML = `
-                    <div class="col-span-4 text-center py-8">
-                        <p class="text-error">Erreur de format des données</p>
-                    </div>
-                `;
-        return;
-      }
-
-      if (data.images.length === 0) {
+      if (images.length === 0) {
         gallery.innerHTML = `
                     <div class="col-span-4 text-center py-8">
                         <p class="text-base-content/50">Aucune image disponible</p>
@@ -170,7 +161,7 @@ export default class extends Controller {
         return;
       }
 
-      data.images.forEach((image) => {
+      images.forEach((image) => {
         const imageCard = document.createElement("div");
         imageCard.className =
           "aspect-square bg-base-200 rounded-box overflow-hidden cursor-pointer border-2 border-transparent hover:border-primary transition-all";
@@ -188,7 +179,7 @@ export default class extends Controller {
       if (gallery) {
         gallery.innerHTML = `
                     <div class="col-span-4 text-center py-8">
-                        <p class="text-error">Erreur lors du chargement des images</p>
+                        <p class="text-error">${error.message || "Erreur lors du chargement des images"}</p>
                     </div>
                 `;
       }
@@ -262,8 +253,11 @@ export default class extends Controller {
     const uploadZone = this.modalElement?.querySelector("[data-upload-zone]");
     if (!uploadZone) return;
 
-    const formData = new FormData();
-    formData.append("file", file);
+    const validation = MediaService.validateFile(file);
+    if (!validation.valid) {
+      alert(validation.error);
+      return;
+    }
 
     try {
       uploadZone.innerHTML = `
@@ -271,35 +265,26 @@ export default class extends Controller {
                 <p class="mt-4">Téléversement en cours...</p>
             `;
 
-      const response = await fetch("/api/media/upload/image", {
-        method: "POST",
-        body: formData,
-      });
+      const data = await MediaService.uploadImage(file);
 
-      const data = await response.json();
+      this.selectedImage = data.url;
+      await this.loadImages();
 
-      if (data.success) {
-        this.selectedImage = data.url;
-        await this.loadImages();
+      const libraryTab = this.modalElement.querySelector('[data-tab="library"]');
+      if (libraryTab) {
+        libraryTab.click();
+      }
 
-        const libraryTab = this.modalElement.querySelector('[data-tab="library"]');
-        if (libraryTab) {
-          libraryTab.click();
-        }
-
-        const gallery = this.modalElement.querySelector("[data-gallery]");
-        const uploadedCard = gallery?.querySelector(`[data-image-url="${data.url}"]`);
-        if (uploadedCard) {
-          uploadedCard.classList.add("border-primary", "ring-2", "ring-primary");
-        }
-      } else {
-        alert(data.error || "Erreur lors du téléversement");
+      const gallery = this.modalElement.querySelector("[data-gallery]");
+      const uploadedCard = gallery?.querySelector(`[data-image-url="${data.url}"]`);
+      if (uploadedCard) {
+        uploadedCard.classList.add("border-primary", "ring-2", "ring-primary");
       }
     } catch (error) {
       if (process.env.NODE_ENV === "development") {
         console.error("Erreur:", error);
       }
-      alert("Erreur lors du téléversement du fichier");
+      alert(error.message || "Erreur lors du téléversement du fichier");
     } finally {
       if (uploadZone) {
         uploadZone.innerHTML = `

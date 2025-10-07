@@ -1,0 +1,85 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Médiathèque{% endblock %}
+
+{% block body %}
+<div class="container mx-auto px-4 py-8" data-controller="media-library">
+    <div class="flex justify-between items-center mb-8">
+        <h1 class="text-3xl font-bold text-base-content">Médiathèque</h1>
+    </div>
+
+    <div id="flash-container" class="mb-4"></div>
+
+    <div class="card bg-base-100 shadow-sm border border-base-300 mb-8">
+        <div class="card-body">
+            <h2 class="card-title text-xl mb-4">Ajouter des images</h2>
+
+            <div
+                class="border-2 border-dashed border-base-300 rounded-lg p-8 text-center hover:border-primary transition-colors cursor-pointer"
+                data-media-library-target="dropzone"
+                data-action="click->media-library#triggerFileInput dragover->media-library#handleDragOver dragleave->media-library#handleDragLeave drop->media-library#handleDrop"
+            >
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto mb-4 text-base-content/50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                </svg>
+                <p class="text-lg mb-2">Glissez-déposez vos images ici</p>
+                <p class="text-sm text-base-content/60 mb-4">ou cliquez pour sélectionner des fichiers</p>
+                <p class="text-xs text-base-content/50">JPG, PNG, GIF, WebP - Max 5MB</p>
+
+                <input
+                    type="file"
+                    class="hidden"
+                    multiple
+                    accept="image/jpeg,image/png,image/gif,image/webp"
+                    data-media-library-target="fileInput"
+                    data-action="change->media-library#handleFileSelect"
+                >
+            </div>
+
+            <div class="mt-4" data-media-library-target="uploadProgress" style="display: none;">
+                <progress class="progress progress-primary w-full" data-media-library-target="progressBar"></progress>
+                <p class="text-sm text-center mt-2" data-media-library-target="progressText">Upload en cours...</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="mb-4">
+        <h2 class="text-2xl font-bold text-base-content">Images</h2>
+    </div>
+
+    <div
+        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+        data-media-library-target="imageGrid"
+    >
+        <div class="col-span-full flex justify-center items-center py-12">
+            <span class="loading loading-spinner loading-lg"></span>
+        </div>
+    </div>
+
+    <div
+        class="col-span-full hidden"
+        data-media-library-target="emptyState"
+    >
+        <div class="alert">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-info shrink-0 w-6 h-6">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <span>Aucune image dans la médiathèque</span>
+        </div>
+    </div>
+
+    <dialog class="modal" data-media-library-target="deleteModal">
+        <div class="modal-box">
+            <h3 class="font-bold text-lg">Confirmer la suppression</h3>
+            <p class="py-4">Êtes-vous sûr de vouloir supprimer cette image ? Cette action est irréversible.</p>
+            <div class="modal-action">
+                <button class="btn" data-action="click->media-library#closeDeleteModal">Annuler</button>
+                <button class="btn btn-error" data-action="click->media-library#confirmDelete">Supprimer</button>
+            </div>
+        </div>
+        <form method="dialog" class="modal-backdrop">
+            <button>close</button>
+        </form>
+    </dialog>
+</div>
+{% endblock %}

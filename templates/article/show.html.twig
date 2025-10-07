@@ -27,7 +27,7 @@
 
         <div class="flex gap-2">
             <a href="{{ path('app_article_index') }}" class="btn btn-ghost btn-sm">Retour</a>
-            {% if is_granted('ROLE_EDITOR') %}
+            {% if is_granted('ROLE_EDITEUR') %}
             <a href="{{ path('app_article_edit', {'id': article.id}) }}" class="btn btn-primary btn-sm">Modifier</a>
             {% endif %}
         </div>
