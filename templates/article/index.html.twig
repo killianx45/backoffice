@@ -1,0 +1,65 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Articles{% endblock %}
+
+{% block body %}
+<div class="container mx-auto px-4 py-8">
+    <div class="flex justify-between items-center mb-8">
+        <h1 class="text-3xl font-bold text-base-content">Articles</h1>
+        {% if is_granted('ROLE_EDITOR') %}
+        <a href="{{ path('app_article_new') }}" class="btn btn-primary gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+            </svg>
+            Nouvel article
+        </a>
+        {% endif %}
+    </div>
+
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success mb-4">
+            <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+            <span>{{ message }}</span>
+        </div>
+    {% endfor %}
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for article in articles %}
+        <div class="card bg-base-100 shadow-sm border border-base-300 hover:shadow-md transition-shadow">
+            {% if article.featuredImage %}
+            <figure class="aspect-video bg-base-200">
+                <img src="{{ vich_uploader_asset(article, 'featuredImageFile') }}" alt="{{ article.title }}" class="w-full h-full object-cover">
+            </figure>
+            {% endif %}
+
+            <div class="card-body">
+                <h2 class="card-title text-lg">{{ article.title }}</h2>
+
+                <div class="text-sm text-base-content/70 space-y-1">
+                    <p>Par {{ article.author.prenom }} {{ article.author.nom }}</p>
+                    <p>{{ article.createdAt|date('d/m/Y à H:i') }}</p>
+                </div>
+
+                <div class="card-actions justify-end mt-4">
+                    <a href="{{ path('app_article_show', {'id': article.id}) }}" class="btn btn-sm btn-ghost">
+                        Voir
+                    </a>
+                    {% if is_granted('ROLE_EDITOR') %}
+                    <a href="{{ path('app_article_edit', {'id': article.id}) }}" class="btn btn-sm btn-outline">
+                        Modifier
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="col-span-full">
+            <div class="alert">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-info shrink-0 w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <span>Aucun article trouvé</span>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

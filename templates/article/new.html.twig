@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouvel article{% endblock %}
+
+{% block body %}
+<div class="container mx-auto px-4 py-8 max-w-4xl">
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-base-content">Créer un article</h1>
+        <p class="text-base-content/70 mt-2">Remplissez les informations ci-dessous pour créer un nouvel article</p>
+    </div>
+
+    <div class="card bg-base-100 shadow-sm border border-base-300">
+        <div class="card-body">
+            {{ include('article/_form.html.twig', {'button_label': 'Créer l\'article'}) }}
+        </div>
+    </div>
+</div>
+{% endblock %}

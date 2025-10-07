@@ -32,11 +32,15 @@ security:
             # https://symfony.com/doc/current/security/impersonating_user.html
             # switch_user: true
 
+    # Role hierarchy: ROLE_ADMIN has all roles
+    role_hierarchy:
+        ROLE_EDITEUR: ROLE_AUTHEUR
+        ROLE_ADMIN: [ROLE_EDITEUR, ROLE_AUTHEUR, ROLE_DESIGNEUR, ROLE_FOURNISSEUR]
+
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-        # - { path: ^/admin, roles: ROLE_ADMIN }
-        # - { path: ^/profile, roles: ROLE_USER }
+        - { path: ^/cms, roles: ROLE_AUTHEUR }
 
 when@test:
     security:

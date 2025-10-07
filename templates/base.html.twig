@@ -10,6 +10,9 @@
     {% block stylesheets %}
       {{ encore_entry_link_tags('app') }}
     {% endblock %}
+    {% block javascripts %}
+      {{ encore_entry_script_tags('app') }}
+    {% endblock %}
   </head>
   <body>
     <div class="drawer lg:drawer-open">
@@ -28,19 +31,11 @@
             <a class="btn btn-ghost text-xl">CMS Backoffice</a>
           </div>
         </div>
-
-        {# Main content area #}
         <main class="flex-1 p-6">
           {% block body %}{% endblock %}
         </main>
       </div>
-
-      {# Sidebar menu #}
       {% include 'header.html.twig' %}
     </div>
-
-    {% block javascripts %}
-      {{ encore_entry_script_tags('app') }}
-    {% endblock %}
   </body>
 </html>

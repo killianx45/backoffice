@@ -1,0 +1,68 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ article.title }}{% endblock %}
+
+{% block body %}
+<div class="container mx-auto px-4 py-8 max-w-4xl">
+    <div class="mb-8 flex justify-between items-start">
+        <div class="flex-1">
+            <h1 class="text-4xl font-bold text-base-content mb-4">{{ article.title }}</h1>
+
+            <div class="flex items-center gap-4 text-sm text-base-content/70">
+                <div class="flex items-center gap-2">
+                    <div class="avatar placeholder">
+                        <div class="bg-neutral text-neutral-content rounded-full w-8 !flex items-center justify-center">
+                            <span class="text-xs">{{ article.author.prenom|first }}{{ article.author.nom|first }}</span>
+                        </div>
+                    </div>
+                    <span>{{ article.author.prenom }} {{ article.author.nom }}</span>
+                </div>
+                <span>•</span>
+                <span>{{ article.createdAt|date('d/m/Y à H:i') }}</span>
+                {% if article.createdAt != article.updatedAt %}
+                <span class="text-xs">(modifié le {{ article.updatedAt|date('d/m/Y') }})</span>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="flex gap-2">
+            <a href="{{ path('app_article_index') }}" class="btn btn-ghost btn-sm">Retour</a>
+            {% if is_granted('ROLE_EDITOR') %}
+            <a href="{{ path('app_article_edit', {'id': article.id}) }}" class="btn btn-primary btn-sm">Modifier</a>
+            {% endif %}
+        </div>
+    </div>
+
+    {% if article.featuredImage %}
+    <figure class="mb-8 rounded-lg overflow-hidden">
+        <img src="/media/images/{{ article.featuredImage }}"
+             alt="{{ article.title }}"
+             class="w-full max-h-96 object-cover">
+    </figure>
+    {% endif %}
+
+    <div class="card bg-base-100 shadow-sm border border-base-300 mb-8">
+        <div class="card-body">
+            <div class="article-content">
+                {{ article.description|raw }}
+            </div>
+        </div>
+    </div>
+
+    {% if article.csvFile and article.chartType %}
+    <div class="card bg-base-100 shadow-sm border border-base-300">
+        <div class="card-body">
+            <h2 class="card-title text-xl mb-4">Données graphiques</h2>
+            <div class="alert alert-info">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <div>
+                    <p>Fichier CSV: <code class="font-mono text-sm">{{ article.csvFile }}</code></p>
+                    <p>Type de graphique: <strong>{{ article.chartType|capitalize }}</strong></p>
+                    <p class="text-sm mt-2">(L'affichage du graphique sera implémenté ultérieurement)</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
