@@ -6,7 +6,7 @@
 <div class="container mx-auto px-4 py-8">
     <div class="flex justify-between items-center mb-8">
         <h1 class="text-3xl font-bold text-base-content">Articles</h1>
-        {% if is_granted('ROLE_AUTHEUR') %}
+        {% if is_granted('ROLE_AUTEUR') %}
         <a href="{{ path('app_article_new') }}" class="btn btn-primary gap-2">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
