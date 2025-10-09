@@ -14,8 +14,12 @@
 
             <div class="flex items-center gap-3 text-sm text-base-content/60">
                 <div class="flex items-center gap-2">
-                    <div class="w-7 h-7 rounded-full bg-base-300 flex items-center justify-center">
-                        <span class="text-xs font-medium text-base-content/70">{{ article.author.prenom|first }}{{ article.author.nom|first }}</span>
+                    <div class="w-7 h-7 rounded-full bg-base-300 flex items-center justify-center overflow-hidden">
+                        {% if article.author.avatar %}
+                            <img src="{{ asset('uploads/avatars/' ~ article.author.avatar) }}" alt="Avatar de {{ article.author.prenom }}" class="w-full h-full object-cover">
+                        {% else %}
+                            <span class="text-xs font-medium text-base-content/70">{{ article.author.prenom|first }}{{ article.author.nom|first }}</span>
+                        {% endif %}
                     </div>
                     <span>{{ article.author.prenom }} {{ article.author.nom }}</span>
                 </div>

@@ -1,0 +1,97 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon Profil{% endblock %}
+
+{% block body %}
+<div class="container mx-auto px-6 py-12 max-w-2xl">
+    <div class="mb-8">
+        <h1 class="text-3xl font-semibold text-base-content">Mon Profil</h1>
+        <p class="text-sm text-base-content/60 mt-1">Gérez votre avatar et mot de passe</p>
+    </div>
+
+    {% for message in app.flashes('success') %}
+        <div class="border border-base-300 bg-base-100 rounded-lg p-4 mb-6 flex items-center gap-3">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-base-content/60" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span class="text-sm text-base-content/80">{{ message }}</span>
+        </div>
+    {% endfor %}
+
+    <div class="border border-base-300 rounded-lg bg-base-100 p-8">
+        {{ form_start(form, {'attr': {'class': 'space-y-6'}}) }}
+
+            {# Avatar Section #}
+            <div class="flex flex-col items-center gap-4 pb-6 border-b border-base-300">
+                <div class="w-24 h-24 rounded-full bg-base-200 flex items-center justify-center overflow-hidden">
+                    {% if app.user.avatar %}
+                        <img src="{{ asset('uploads/avatars/' ~ app.user.avatar) }}" alt="Avatar" class="w-full h-full object-cover">
+                    {% else %}
+                        <span class="text-3xl font-medium text-base-content/70">{{ app.user.prenom[:1] }}{{ app.user.nom[:1] }}</span>
+                    {% endif %}
+                </div>
+
+                <div class="w-full">
+                    <label class="text-sm font-medium text-base-content/80 mb-2 block">Photo de profil</label>
+                    {{ form_widget(form.avatar, {'attr': {'class': 'file-input file-input-bordered w-full border-base-300 bg-base-100 text-base-content/80', 'accept': 'image/jpeg,image/png,image/webp'}}) }}
+                    <p class="text-xs text-base-content/50 mt-1">Format accepté : JPEG, PNG, WebP (max 2MB)</p>
+                    {{ form_errors(form.avatar) }}
+                </div>
+            </div>
+
+            {# Personal Information (Read-only) #}
+            <div class="space-y-4">
+                <h3 class="text-sm font-medium text-base-content/80">Informations personnelles</h3>
+                <p class="text-xs text-base-content/50">Ces informations ne peuvent pas être modifiées</p>
+
+                <div>
+                    <label class="text-sm text-base-content/70 mb-2 block">{{ form_label(form.nom) }}</label>
+                    {{ form_widget(form.nom, {'attr': {'class': 'input input-bordered w-full border-base-300 bg-base-200 text-base-content/60 cursor-not-allowed'}}) }}
+                    {{ form_errors(form.nom) }}
+                </div>
+
+                <div>
+                    <label class="text-sm text-base-content/70 mb-2 block">{{ form_label(form.prenom) }}</label>
+                    {{ form_widget(form.prenom, {'attr': {'class': 'input input-bordered w-full border-base-300 bg-base-200 text-base-content/60 cursor-not-allowed'}}) }}
+                    {{ form_errors(form.prenom) }}
+                </div>
+
+                <div>
+                    <label class="text-sm text-base-content/70 mb-2 block">{{ form_label(form.email) }}</label>
+                    {{ form_widget(form.email, {'attr': {'class': 'input input-bordered w-full border-base-300 bg-base-200 text-base-content/60 cursor-not-allowed'}}) }}
+                    {{ form_errors(form.email) }}
+                </div>
+            </div>
+
+            {# Password Change Section #}
+            <div class="space-y-4 pt-6 border-t border-base-300">
+                <h3 class="text-sm font-medium text-base-content/80">Changer le mot de passe</h3>
+                <p class="text-xs text-base-content/50">Laissez vide pour conserver le mot de passe actuel</p>
+
+                <div>
+                    <label class="text-sm text-base-content/70 mb-2 block">{{ form_label(form.plainPassword.first) }}</label>
+                    {{ form_widget(form.plainPassword.first, {'attr': {'class': 'input input-bordered w-full border-base-300 bg-base-100 text-base-content'}}) }}
+                    {{ form_errors(form.plainPassword.first) }}
+                </div>
+
+                <div>
+                    <label class="text-sm text-base-content/70 mb-2 block">{{ form_label(form.plainPassword.second) }}</label>
+                    {{ form_widget(form.plainPassword.second, {'attr': {'class': 'input input-bordered w-full border-base-300 bg-base-100 text-base-content'}}) }}
+                    {{ form_errors(form.plainPassword.second) }}
+                </div>
+            </div>
+
+            {# Action Buttons #}
+            <div class="flex gap-3 pt-6">
+                <a href="{{ path('app_dashboard') }}" class="flex-1 px-4 py-2 text-sm text-center border border-base-300 rounded-lg hover:bg-base-200 transition-colors">
+                    Annuler
+                </a>
+                <button type="submit" class="flex-1 px-4 py-2 text-sm border border-base-content bg-base-content text-base-100 rounded-lg hover:opacity-90 transition-opacity">
+                    Enregistrer les modifications
+                </button>
+            </div>
+
+        {{ form_end(form) }}
+    </div>
+</div>
+{% endblock %}

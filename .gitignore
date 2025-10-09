@@ -31,3 +31,4 @@ yarn-error.log
 public/media
 ARTICLE_FEATURE.md
 assets/fonts
+public/uploads/avatars/*
