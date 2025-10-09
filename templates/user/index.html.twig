@@ -3,136 +3,137 @@
 {% block title %}Gestion des Utilisateurs{% endblock %}
 
 {% block body %}
-<div class="container mx-auto px-4 py-8">
-    <div class="flex justify-between items-center mb-8">
-        <h1 class="text-3xl font-bold">Gestion des Utilisateurs</h1>
+<div class="container mx-auto px-6 py-12 max-w-7xl">
+    <div class="mb-8">
+        <h1 class="text-3xl font-semibold text-base-content">Gestion des Utilisateurs</h1>
+        <p class="text-sm text-base-content/60 mt-1">Gérez les rôles et permissions</p>
     </div>
 
     {% for message in app.flashes('success') %}
-        <div class="alert alert-success mb-4">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
+        <div class="border border-base-300 bg-base-100 rounded-lg p-4 mb-6 flex items-center gap-3">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-base-content/60" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
-            <span>{{ message }}</span>
+            <span class="text-sm text-base-content/80">{{ message }}</span>
         </div>
     {% endfor %}
 
-    <div class="overflow-x-auto bg-base-200 rounded-lg shadow-lg">
-        <table class="table table-zebra w-full">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Nom</th>
-                    <th>Prénom</th>
-                    <th>Email</th>
-                    <th>Rôles</th>
-                    <th>Vérifié</th>
-                    <th>Actions</th>
+    <div class="border border-base-300 rounded-lg overflow-hidden bg-base-100">
+        <table class="w-full">
+            <thead class="border-b border-base-300">
+                <tr class="text-left">
+                    <th class="px-6 py-3 text-xs font-medium text-base-content/60">ID</th>
+                    <th class="px-6 py-3 text-xs font-medium text-base-content/60">Nom</th>
+                    <th class="px-6 py-3 text-xs font-medium text-base-content/60">Prénom</th>
+                    <th class="px-6 py-3 text-xs font-medium text-base-content/60">Email</th>
+                    <th class="px-6 py-3 text-xs font-medium text-base-content/60">Rôles</th>
+                    <th class="px-6 py-3 text-xs font-medium text-base-content/60">Statut</th>
+                    <th class="px-6 py-3 text-xs font-medium text-base-content/60">Actions</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody class="divide-y divide-base-300">
                 {% for user in users %}
-                <tr>
-                    <td>{{ user.id }}</td>
-                    <td>{{ user.nom }}</td>
-                    <td>{{ user.prenom }}</td>
-                    <td>{{ user.email }}</td>
-                    <td>
+                <tr class="hover:bg-base-200/50 transition-colors">
+                    <td class="px-6 py-4 text-sm text-base-content/70">{{ user.id }}</td>
+                    <td class="px-6 py-4 text-sm text-base-content">{{ user.nom }}</td>
+                    <td class="px-6 py-4 text-sm text-base-content">{{ user.prenom }}</td>
+                    <td class="px-6 py-4 text-sm text-base-content/70">{{ user.email }}</td>
+                    <td class="px-6 py-4">
                         <div class="flex flex-wrap gap-1">
                             {% for role in user.roles %}
                                 {% if role != 'ROLE_ABONNE' %}
-                                    <span class="badge badge-primary badge-sm">{{ role|replace({'ROLE_': ''}) }}</span>
+                                    <span class="text-xs px-2 py-1 border border-base-300 rounded text-base-content/70">{{ role|replace({'ROLE_': ''}) }}</span>
                                 {% endif %}
                             {% endfor %}
                             {% if user.roles|length == 1 %}
-                                <span class="badge badge-ghost badge-sm">ABONNE</span>
+                                <span class="text-xs px-2 py-1 border border-base-300 rounded text-base-content/50">ABONNE</span>
                             {% endif %}
                         </div>
                     </td>
-                    <td>
+                    <td class="px-6 py-4">
                         {% if user.isVerified %}
-                            <span class="badge badge-success badge-sm">✓ Vérifié</span>
+                            <span class="text-xs text-base-content/60">Vérifié</span>
                         {% else %}
-                            <span class="badge badge-warning badge-sm">Non vérifié</span>
+                            <span class="text-xs text-base-content/40">Non vérifié</span>
                         {% endif %}
                     </td>
-                    <td>
+                    <td class="px-6 py-4">
                         <button
-                            class="btn btn-sm btn-primary"
+                            class="text-sm text-base-content/60 hover:text-base-content transition-colors flex items-center gap-1"
                             onclick="openRoleModal{{ user.id }}()"
                         >
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                             </svg>
-                            Modifier rôles
+                            Modifier
                         </button>
 
                         {# Modal for editing roles #}
                         <dialog id="role_modal_{{ user.id }}" class="modal">
-                            <div class="modal-box">
-                                <h3 class="text-lg font-bold mb-4">Modifier les rôles de {{ user.prenom }} {{ user.nom }}</h3>
+                            <div class="modal-box border border-base-300 bg-base-100 shadow-lg">
+                                <h3 class="text-lg font-medium text-base-content mb-6">Modifier les rôles de {{ user.prenom }} {{ user.nom }}</h3>
 
                                 <form method="post" action="{{ path('app_user_update_roles', {'id': user.id}) }}">
-                                    <div class="form-control">
-                                        <label class="label cursor-pointer justify-start gap-3">
+                                    <div class="space-y-3">
+                                        <label class="flex items-center gap-3 cursor-pointer p-3 border border-base-300 rounded-lg hover:bg-base-200/50 transition-colors">
                                             <input
                                                 type="checkbox"
                                                 name="roles[]"
                                                 value="ROLE_AUTEUR"
-                                                class="checkbox checkbox-primary"
+                                                class="w-4 h-4 border-2 border-base-300 rounded"
                                                 {% if 'ROLE_AUTEUR' in user.roles %}checked{% endif %}
                                             />
-                                            <span class="label-text">Auteur</span>
+                                            <span class="text-sm text-base-content">Auteur</span>
                                         </label>
 
-                                        <label class="label cursor-pointer justify-start gap-3">
+                                        <label class="flex items-center gap-3 cursor-pointer p-3 border border-base-300 rounded-lg hover:bg-base-200/50 transition-colors">
                                             <input
                                                 type="checkbox"
                                                 name="roles[]"
                                                 value="ROLE_EDITEUR"
-                                                class="checkbox checkbox-primary"
+                                                class="w-4 h-4 border-2 border-base-300 rounded"
                                                 {% if 'ROLE_EDITEUR' in user.roles %}checked{% endif %}
                                             />
-                                            <span class="label-text">Éditeur</span>
+                                            <span class="text-sm text-base-content">Éditeur</span>
                                         </label>
 
-                                        <label class="label cursor-pointer justify-start gap-3">
+                                        <label class="flex items-center gap-3 cursor-pointer p-3 border border-base-300 rounded-lg hover:bg-base-200/50 transition-colors">
                                             <input
                                                 type="checkbox"
                                                 name="roles[]"
                                                 value="ROLE_FOURNISSEUR"
-                                                class="checkbox checkbox-primary"
+                                                class="w-4 h-4 border-2 border-base-300 rounded"
                                                 {% if 'ROLE_FOURNISSEUR' in user.roles %}checked{% endif %}
                                             />
-                                            <span class="label-text">Fournisseur</span>
+                                            <span class="text-sm text-base-content">Fournisseur</span>
                                         </label>
 
-                                        <label class="label cursor-pointer justify-start gap-3">
+                                        <label class="flex items-center gap-3 cursor-pointer p-3 border border-base-300 rounded-lg hover:bg-base-200/50 transition-colors">
                                             <input
                                                 type="checkbox"
                                                 name="roles[]"
                                                 value="ROLE_DESIGNEUR"
-                                                class="checkbox checkbox-primary"
+                                                class="w-4 h-4 border-2 border-base-300 rounded"
                                                 {% if 'ROLE_DESIGNEUR' in user.roles %}checked{% endif %}
                                             />
-                                            <span class="label-text">Designer</span>
+                                            <span class="text-sm text-base-content">Designer</span>
                                         </label>
 
-                                        <label class="label cursor-pointer justify-start gap-3">
+                                        <label class="flex items-center gap-3 cursor-pointer p-3 border border-base-300 rounded-lg hover:bg-base-200/50 transition-colors">
                                             <input
                                                 type="checkbox"
                                                 name="roles[]"
                                                 value="ROLE_ADMIN"
-                                                class="checkbox checkbox-primary"
+                                                class="w-4 h-4 border-2 border-base-300 rounded"
                                                 {% if 'ROLE_ADMIN' in user.roles %}checked{% endif %}
                                             />
-                                            <span class="label-text">Administrateur</span>
+                                            <span class="text-sm text-base-content">Administrateur</span>
                                         </label>
                                     </div>
 
-                                    <div class="modal-action">
-                                        <button type="button" class="btn" onclick="document.getElementById('role_modal_{{ user.id }}').close()">Annuler</button>
-                                        <button type="submit" class="btn btn-primary">Enregistrer</button>
+                                    <div class="flex gap-3 mt-6 justify-end">
+                                        <button type="button" class="px-4 py-2 text-sm border border-base-300 rounded-lg hover:bg-base-200 transition-colors" onclick="document.getElementById('role_modal_{{ user.id }}').close()">Annuler</button>
+                                        <button type="submit" class="px-4 py-2 text-sm border border-base-content bg-base-content text-base-100 rounded-lg hover:opacity-90 transition-opacity">Enregistrer</button>
                                     </div>
                                 </form>
                             </div>
@@ -150,8 +151,8 @@
                 </tr>
                 {% else %}
                 <tr>
-                    <td colspan="7" class="text-center py-8">
-                        <p class="text-base-content/60">Aucun utilisateur trouvé.</p>
+                    <td colspan="7" class="text-center py-12">
+                        <p class="text-sm text-base-content/60">Aucun utilisateur trouvé.</p>
                     </td>
                 </tr>
                 {% endfor %}

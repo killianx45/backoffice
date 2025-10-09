@@ -171,3 +171,30 @@ API endpoints will be created in Symfony to serve the React frontend, providing:
 - Symfony uses autowiring by default; services in `src/` are auto-registered
 - Entity changes require creating and running migrations via `make:migration`
 - The project uses Symfony UX Stimulus Bridge; controllers are registered in `assets/controllers.json`
+
+## Design Guidelines
+
+**Visual Style:** The backoffice should follow a clean, minimalist design inspired by modern tools like Vercel, shadcn/ui, and melvynx.com.
+
+**Design Principles:**
+- **Minimalist & Clean:** Prioritize whitespace, simple layouts, and clear hierarchy
+- **Subtle Colors:** Use neutral grays as the primary palette with minimal accent colors
+- **Avoid Extravagance:** No bright, saturated colors or overly decorative elements
+- **Professional Aesthetic:** Modern, refined, and distraction-free interface
+- **Consistency:** Maintain visual coherence across all pages and components
+
+**Color Usage:**
+- Primary palette: Neutral grays (base-100, base-200, base-300 from DaisyUI)
+- Accent colors: Use sparingly and only for important actions or status indicators
+- Avoid: Multiple bright colors, rainbow badges, excessive use of primary/secondary/accent variants
+
+**Typography & Spacing:**
+- Clear visual hierarchy with appropriate font sizes
+- Generous whitespace and padding
+- Subtle borders and shadows for depth when needed
+
+**Components:**
+- Prefer simple, borderless cards over heavily styled containers
+- Use subtle hover states and transitions
+- Keep badge usage minimal and contextual
+- Icons should be subtle and monochromatic where possible

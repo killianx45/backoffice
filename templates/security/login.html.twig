@@ -1,89 +1,85 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Log in!{% endblock %}
+{% block title %}Connexion{% endblock %}
 
 {% block body %}
-    <div class="min-h-screen flex items-center justify-center">
-        <div class="card w-full max-w-md bg-base-100 shadow-xl">
-            <div class="card-body">
-                <h2 class="card-title text-2xl font-bold text-center justify-center mb-4">
-                    Sign in
+    <div class="min-h-screen flex items-center justify-center px-6 py-12 bg-base-100">
+        <div class="w-full max-w-md border border-base-300 rounded-lg p-8 bg-base-100">
+            <div class="mb-8">
+                <h2 class="text-2xl font-semibold text-base-content text-center">
+                    Connexion
                 </h2>
+            </div>
 
-                {% if error %}
-                    <div class="alert alert-error mb-4">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        <span>{{ error.messageKey|trans(error.messageData, 'security') }}</span>
-                    </div>
-                {% endif %}
-
-                {% if app.user %}
-                    <div class="alert alert-info mb-4">
-                        <span>You are logged in as {{ app.user.userIdentifier }}, <a href="{{ path('app_logout') }}" class="link">Logout</a></span>
-                    </div>
-                {% endif %}
-
-                <form method="post">
-                    <div class="form-control mb-4">
-                        <label class="label" for="username">
-                            <span class="label-text">Email</span>
-                        </label>
-                        <input
-                            type="email"
-                            value="{{ last_username }}"
-                            name="_username"
-                            id="username"
-                            class="input input-bordered w-full"
-                            autocomplete="email"
-                            required
-                            autofocus
-                            placeholder="your@email.com"
-                        >
-                    </div>
-
-                    <div class="form-control mb-4">
-                        <label class="label" for="password">
-                            <span class="label-text">Password</span>
-                        </label>
-                        <input
-                            type="password"
-                            name="_password"
-                            id="password"
-                            class="input input-bordered w-full"
-                            autocomplete="current-password"
-                            required
-                            placeholder="••••••••"
-                        >
-                    </div>
-
-                    <input type="hidden" name="_csrf_token" data-controller="csrf-protection" value="{{ csrf_token('authenticate') }}">
-
-                    {#
-                    <div class="form-control mb-4">
-                        <label class="label cursor-pointer justify-start gap-2">
-                            <input type="checkbox" name="_remember_me" id="_remember_me" class="checkbox checkbox-primary">
-                            <span class="label-text">Remember me</span>
-                        </label>
-                    </div>
-                    #}
-
-                    <div class="card-actions justify-end mt-6">
-                        <button class="btn btn-primary w-full" type="submit">
-                            Sign in
-                        </button>
-                    </div>
-                </form>
-
-                <div class="divider">OR</div>
-
-                <div class="text-center">
-                    <p class="text-sm">
-                        Don't have an account?
-                        <a href="{{ path('app_register') }}" class="link link-primary">Register here</a>
-                    </p>
+            {% if error %}
+                <div class="border border-base-content/20 bg-base-100 rounded-lg p-4 mb-6 flex items-start gap-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-base-content/60 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span class="text-sm text-base-content/80">{{ error.messageKey|trans(error.messageData, 'security') }}</span>
                 </div>
+            {% endif %}
+
+            {% if app.user %}
+                <div class="border border-base-300 bg-base-100 rounded-lg p-4 mb-6">
+                    <span class="text-sm text-base-content/80">Vous êtes connecté en tant que {{ app.user.userIdentifier }}, <a href="{{ path('app_logout') }}" class="text-base-content underline hover:no-underline">Se déconnecter</a></span>
+                </div>
+            {% endif %}
+
+            <form method="post">
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-base-content mb-2" for="username">
+                        Email
+                    </label>
+                    <input
+                        type="email"
+                        value="{{ last_username }}"
+                        name="_username"
+                        id="username"
+                        class="w-full px-4 py-2 border border-base-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-base-content/20 text-sm bg-base-100"
+                        autocomplete="email"
+                        required
+                        autofocus
+                        placeholder="votre@email.com"
+                    >
+                </div>
+
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-base-content mb-2" for="password">
+                        Mot de passe
+                    </label>
+                    <input
+                        type="password"
+                        name="_password"
+                        id="password"
+                        class="w-full px-4 py-2 border border-base-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-base-content/20 text-sm bg-base-100"
+                        autocomplete="current-password"
+                        required
+                        placeholder="••••••••"
+                    >
+                </div>
+
+                <input type="hidden" name="_csrf_token" data-controller="csrf-protection" value="{{ csrf_token('authenticate') }}">
+
+                <button class="w-full border border-base-content bg-base-content text-base-100 hover:opacity-90 transition-opacity px-4 py-2 rounded-lg text-sm font-medium mt-2" type="submit">
+                    Se connecter
+                </button>
+            </form>
+
+            <div class="relative my-8">
+                <div class="absolute inset-0 flex items-center">
+                    <div class="w-full border-t border-base-300"></div>
+                </div>
+                <div class="relative flex justify-center text-xs">
+                    <span class="px-2 bg-base-100 text-base-content/60">OU</span>
+                </div>
+            </div>
+
+            <div class="text-center">
+                <p class="text-sm text-base-content/60">
+                    Pas encore de compte ?
+                    <a href="{{ path('app_register') }}" class="text-base-content underline hover:no-underline">Créer un compte</a>
+                </p>
             </div>
         </div>
     </div>

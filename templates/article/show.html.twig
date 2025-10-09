@@ -3,82 +3,76 @@
 {% block title %}{{ article.title }}{% endblock %}
 
 {% block body %}
-<div class="container mx-auto px-4 py-8 max-w-4xl">
+<div class="container mx-auto px-6 py-12 max-w-4xl">
     <div class="mb-8 flex justify-between items-start">
         <div class="flex-1">
-            <h1 class="text-4xl font-bold text-base-content mb-4">{{ article.title }}</h1>
+            <h1 class="text-3xl font-semibold text-base-content mb-3">{{ article.title }}</h1>
 
-            <div class="flex items-center gap-4 text-sm text-base-content/70">
+            <div class="flex items-center gap-3 text-sm text-base-content/60">
                 <div class="flex items-center gap-2">
-                    <div class="avatar placeholder">
-                        <div class="bg-neutral text-neutral-content rounded-full w-8 !flex items-center justify-center">
-                            <span class="text-xs">{{ article.author.prenom|first }}{{ article.author.nom|first }}</span>
-                        </div>
+                    <div class="w-7 h-7 rounded-full bg-base-300 flex items-center justify-center">
+                        <span class="text-xs font-medium text-base-content/70">{{ article.author.prenom|first }}{{ article.author.nom|first }}</span>
                     </div>
                     <span>{{ article.author.prenom }} {{ article.author.nom }}</span>
                 </div>
-                <span>•</span>
-                <span>{{ article.createdAt|date('d/m/Y à H:i') }}</span>
+                <span class="text-base-content/40">•</span>
+                <span>{{ article.createdAt|date('d/m/Y') }}</span>
                 {% if article.createdAt != article.updatedAt %}
-                <span class="text-xs">(modifié le {{ article.updatedAt|date('d/m/Y') }})</span>
+                <span class="text-xs text-base-content/40">(modifié le {{ article.updatedAt|date('d/m/Y') }})</span>
                 {% endif %}
             </div>
         </div>
 
         <div class="flex gap-2">
-            <a href="{{ path('app_article_index') }}" class="btn btn-ghost btn-sm">Retour</a>
+            <a href="{{ path('app_article_index') }}" class="text-sm text-base-content/60 hover:text-base-content transition-colors px-3 py-2">Retour</a>
             {% if is_granted('ARTICLE_EDIT', article) %}
-            <a href="{{ path('app_article_edit', {'id': article.id}) }}" class="btn btn-primary btn-sm">Modifier</a>
+            <a href="{{ path('app_article_edit', {'id': article.id}) }}" class="text-sm border border-base-content text-base-content hover:bg-base-content hover:text-base-100 transition-colors px-4 py-2 rounded-lg">Modifier</a>
             {% endif %}
         </div>
     </div>
 
     {% if article.featuredImage %}
-    <figure class="mb-8 rounded-lg overflow-hidden">
+    <figure class="mb-8 rounded-lg overflow-hidden border border-base-300">
         <img src="{{ vich_uploader_asset(article, 'featuredImageFile') }}"
              alt="{{ article.title }}"
              class="w-full max-h-96 object-cover">
     </figure>
     {% endif %}
 
-    <div class="card bg-base-100 shadow-sm border border-base-300 mb-8">
-        <div class="card-body">
-            <div class="article-content">
-                {{ article.description|raw }}
-            </div>
+    <div class="border border-base-300 rounded-lg p-8 bg-base-100 mb-8">
+        <div class="article-content">
+            {{ article.description|raw }}
         </div>
     </div>
 
     {% if article.charts|length > 0 %}
     <div class="space-y-6 mt-8">
-        <h2 class="text-2xl font-bold text-base-content">Graphiques</h2>
+        <h2 class="text-xl font-medium text-base-content mb-6">Graphiques</h2>
 
         {% for chart in article.charts %}
-        <div class="card bg-base-100 shadow-sm border border-base-300">
-            <div class="card-body">
-                {% if chart.title %}
-                <h3 class="card-title text-lg mb-4">{{ chart.title }}</h3>
-                {% else %}
-                <h3 class="card-title text-lg mb-4">Graphique #{{ loop.index }}</h3>
-                {% endif %}
+        <div class="border border-base-300 rounded-lg p-6 bg-base-100">
+            {% if chart.title %}
+            <h3 class="text-lg font-medium text-base-content mb-4">{{ chart.title }}</h3>
+            {% else %}
+            <h3 class="text-lg font-medium text-base-content mb-4">Graphique #{{ loop.index }}</h3>
+            {% endif %}
 
-                <div
-                    data-controller="chart"
-                    data-chart-csv-url-value="/media/csv/{{ chart.csvFile }}"
-                    data-chart-chart-type-value="{{ chart.chartType }}"
-                    data-chart-title-value="{{ chart.title }}"
-                    data-chart-x-axis-label-value="{{ chart.xAxisLabel }}"
-                    data-chart-y-axis-label-value="{{ chart.yAxisLabel }}"
-                    class="w-full"
-                >
-                    <canvas data-chart-target="canvas" class="max-h-96"></canvas>
-                </div>
+            <div
+                data-controller="chart"
+                data-chart-csv-url-value="/media/csv/{{ chart.csvFile }}"
+                data-chart-chart-type-value="{{ chart.chartType }}"
+                data-chart-title-value="{{ chart.title }}"
+                data-chart-x-axis-label-value="{{ chart.xAxisLabel }}"
+                data-chart-y-axis-label-value="{{ chart.yAxisLabel }}"
+                class="w-full"
+            >
+                <canvas data-chart-target="canvas" class="max-h-96"></canvas>
+            </div>
 
-                <div class="mt-4 flex justify-between items-center text-sm text-base-content/60">
-                    <div>
-                        <span class="badge badge-sm">{{ chart.chartType|upper }}</span>
-                        <span class="ml-2">{{ chart.csvFile }}</span>
-                    </div>
+            <div class="mt-4 flex justify-between items-center text-xs text-base-content/50">
+                <div class="flex items-center gap-2">
+                    <span class="px-2 py-1 border border-base-300 rounded uppercase">{{ chart.chartType }}</span>
+                    <span>{{ chart.csvFile }}</span>
                 </div>
             </div>
         </div>

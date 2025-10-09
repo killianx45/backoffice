@@ -3,56 +3,57 @@
 {% block title %}Médiathèque{% endblock %}
 
 {% block body %}
-<div class="container mx-auto px-4 py-8" data-controller="media-library">
-    <div class="flex justify-between items-center mb-8">
-        <h1 class="text-3xl font-bold text-base-content">Médiathèque</h1>
+<div class="container mx-auto px-6 py-12 max-w-7xl" data-controller="media-library">
+    <div class="mb-8">
+        <h1 class="text-3xl font-semibold text-base-content">Médiathèque</h1>
+        <p class="text-sm text-base-content/60 mt-1">Gérez vos images et médias</p>
     </div>
 
-    <div id="flash-container" class="mb-4"></div>
+    <div id="flash-container" class="mb-6"></div>
 
-    <div class="card bg-base-100 shadow-sm border border-base-300 mb-8">
-        <div class="card-body">
-            <h2 class="card-title text-xl mb-4">Ajouter des images</h2>
+    <div class="border border-base-300 rounded-lg p-6 bg-base-100 mb-12">
+        <h2 class="text-xl font-medium text-base-content mb-6">Ajouter des images</h2>
 
-            <div
-                class="border-2 border-dashed border-base-300 rounded-lg p-8 text-center hover:border-primary transition-colors cursor-pointer"
-                data-media-library-target="dropzone"
-                data-action="dragover->media-library#handleDragOver dragleave->media-library#handleDragLeave drop->media-library#handleDrop"
+        <div
+            class="border-2 border-dashed border-base-300 rounded-lg p-12 text-center hover:border-base-content/30 transition-colors cursor-pointer bg-base-100"
+            data-media-library-target="dropzone"
+            data-action="dragover->media-library#handleDragOver dragleave->media-library#handleDragLeave drop->media-library#handleDrop"
+        >
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto mb-4 text-base-content/30" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+            </svg>
+            <p class="text-base font-medium text-base-content mb-2">Glissez-déposez vos images ici</p>
+            <p class="text-sm text-base-content/60 mb-1">ou cliquez pour sélectionner des fichiers</p>
+            <p class="text-xs text-base-content/40">JPG, PNG, GIF, WebP - Max 5MB</p>
+
+            <input
+                type="file"
+                class="hidden"
+                multiple
+                accept="image/jpeg,image/png,image/gif,image/webp"
+                data-media-library-target="fileInput"
+                data-action="change->media-library#handleFileSelect"
             >
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto mb-4 text-base-content/50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                </svg>
-                <p class="text-lg mb-2">Glissez-déposez vos images ici</p>
-                <p class="text-sm text-base-content/60 mb-4">ou cliquez pour sélectionner des fichiers</p>
-                <p class="text-xs text-base-content/50">JPG, PNG, GIF, WebP - Max 5MB</p>
+        </div>
 
-                <input
-                    type="file"
-                    class="hidden"
-                    multiple
-                    accept="image/jpeg,image/png,image/gif,image/webp"
-                    data-media-library-target="fileInput"
-                    data-action="change->media-library#handleFileSelect"
-                >
+        <div class="mt-6" data-media-library-target="uploadProgress" style="display: none;">
+            <div class="w-full bg-base-300 rounded-full h-2 overflow-hidden">
+                <div class="bg-base-content h-2 transition-all duration-300" data-media-library-target="progressBar" style="width: 0%"></div>
             </div>
-
-            <div class="mt-4" data-media-library-target="uploadProgress" style="display: none;">
-                <progress class="progress progress-primary w-full" data-media-library-target="progressBar"></progress>
-                <p class="text-sm text-center mt-2" data-media-library-target="progressText">Upload en cours...</p>
-            </div>
+            <p class="text-sm text-center mt-3 text-base-content/60" data-media-library-target="progressText">Upload en cours...</p>
         </div>
     </div>
 
-    <div class="mb-4">
-        <h2 class="text-2xl font-bold text-base-content">Images</h2>
+    <div class="mb-6">
+        <h2 class="text-xl font-medium text-base-content">Images</h2>
     </div>
 
     <div
-        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
         data-media-library-target="imageGrid"
     >
-        <div class="col-span-full flex justify-center items-center py-12">
-            <span class="loading loading-spinner loading-lg"></span>
+        <div class="col-span-full flex justify-center items-center py-16">
+            <div class="w-8 h-8 border-2 border-base-content/20 border-t-base-content rounded-full animate-spin"></div>
         </div>
     </div>
 
@@ -60,21 +61,21 @@
         class="col-span-full hidden"
         data-media-library-target="emptyState"
     >
-        <div class="alert">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-info shrink-0 w-6 h-6">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        <div class="border border-base-300 rounded-lg p-12 text-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto mb-4 text-base-content/20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
             </svg>
-            <span>Aucune image dans la médiathèque</span>
+            <span class="text-sm text-base-content/60">Aucune image dans la médiathèque</span>
         </div>
     </div>
 
     <dialog class="modal" data-media-library-target="deleteModal">
-        <div class="modal-box">
-            <h3 class="font-bold text-lg">Confirmer la suppression</h3>
-            <p class="py-4">Êtes-vous sûr de vouloir supprimer cette image ? Cette action est irréversible.</p>
+        <div class="modal-box border border-base-300 bg-base-100 shadow-lg">
+            <h3 class="font-medium text-lg text-base-content">Confirmer la suppression</h3>
+            <p class="py-4 text-sm text-base-content/70">Êtes-vous sûr de vouloir supprimer cette image ? Cette action est irréversible.</p>
             <div class="modal-action">
-                <button class="btn" data-action="click->media-library#closeDeleteModal">Annuler</button>
-                <button class="btn btn-error" data-action="click->media-library#confirmDelete">Supprimer</button>
+                <button class="px-4 py-2 text-sm border border-base-300 rounded-lg hover:bg-base-200 transition-colors" data-action="click->media-library#closeDeleteModal">Annuler</button>
+                <button class="px-4 py-2 text-sm border border-base-content bg-base-content text-base-100 rounded-lg hover:opacity-90 transition-opacity" data-action="click->media-library#confirmDelete">Supprimer</button>
             </div>
         </div>
         <form method="dialog" class="modal-backdrop">
