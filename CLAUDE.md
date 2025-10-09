@@ -117,6 +117,36 @@ php bin/console debug:container
 php bin/console debug:dotenv
 ```
 
+### SEO Management
+
+```bash
+# Generate sitemap.xml
+php bin/console presta:sitemaps:dump
+
+# Update sitemap (automatically done via SitemapPopulator service)
+# The sitemap is generated dynamically from:
+# - All articles (updated weekly, priority 0.7)
+# - All themes (updated monthly, priority 0.5)
+# - Static pages like dashboard (updated daily, priority 1.0)
+
+# Access sitemap
+# Development: http://localhost:8000/sitemap.xml
+# Production: https://yourdomain.com/sitemap.xml
+
+# robots.txt location: public/robots.txt
+# Update robots.txt when adding new protected routes
+```
+
+**SEO Configuration Files:**
+- `public/robots.txt` - Search engine crawler directives
+- `config/packages/presta_sitemap.yaml` - Sitemap configuration
+- `src/Service/SitemapPopulator.php` - Dynamic sitemap generation service
+- `.env` - `APP_URL` variable (must be updated for production)
+
+**Meta Tags:**
+- Base template (`templates/base.html.twig`) includes meta description and robots tags
+- Override per page using Twig blocks: `{% block meta_description %}`, `{% block meta_robots %}`
+
 ## Architecture
 
 ### Directory Structure

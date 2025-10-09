@@ -1,0 +1,15 @@
+presta_sitemap:
+    # Number of URLs per sitemap (default: 50000)
+    items_by_set: 50000
+
+    # Route name for sitemap controller
+    route_annotation_listener: true
+
+    # Dump sitemap to public directory for better performance
+    dump_directory: '%kernel.project_dir%/public'
+
+    # Default configuration
+    defaults:
+        lastmod: ~
+        priority: 0.5
+        changefreq: weekly

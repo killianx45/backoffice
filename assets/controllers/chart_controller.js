@@ -22,28 +22,47 @@ export default class extends Controller {
         }
 
         try {
+            const theme = await this.fetchActiveTheme();
             const csvContent = await CSVService.fetchCSVContent(this.csvUrlValue);
             const csvData = CSVParser.parse(csvContent);
-            const chartData = CSVParser.toChartData(csvData, this.chartTypeValue || 'bar');
+            const chartData = CSVParser.toChartData(csvData, this.chartTypeValue || 'bar', theme?.configuration?.colors?.chartPalette);
 
-            this.renderChart(chartData);
+            this.renderChart(chartData, theme);
         } catch (error) {
             console.error('Erreur lors du chargement du graphique:', error);
             this.showError(error.message);
         }
     }
 
-    renderChart(chartData) {
+    async fetchActiveTheme() {
+        try {
+            const response = await fetch('/api/theme/active');
+            if (!response.ok) {
+                console.warn('Impossible de récupérer le thème actif, utilisation des couleurs par défaut');
+                return null;
+            }
+            return await response.json();
+        } catch (error) {
+            console.warn('Erreur lors de la récupération du thème:', error);
+            return null;
+        }
+    }
+
+    renderChart(chartData, theme) {
+        const chartConfig = theme?.configuration?.charts || {};
+        const gridStyle = chartConfig.gridStyle || 'solid';
+
         const config = {
             type: this.chartTypeValue || 'bar',
             data: chartData,
             options: {
                 responsive: true,
                 maintainAspectRatio: true,
+                animation: chartConfig.animation !== false,
                 plugins: {
                     legend: {
-                        display: true,
-                        position: 'top',
+                        display: chartConfig.legendPosition !== 'none',
+                        position: chartConfig.legendPosition || 'top',
                     },
                     title: {
                         display: this.hasTitleValue,
@@ -58,7 +77,9 @@ export default class extends Controller {
                     y: {
                         beginAtZero: true,
                         grid: {
-                            color: 'rgba(0, 0, 0, 0.1)'
+                            display: gridStyle !== 'none',
+                            color: 'rgba(0, 0, 0, 0.1)',
+                            borderDash: gridStyle === 'dashed' ? [5, 5] : gridStyle === 'dotted' ? [2, 2] : []
                         },
                         title: {
                             display: this.hasYAxisLabelValue,

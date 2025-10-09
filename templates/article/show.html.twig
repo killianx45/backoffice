@@ -2,8 +2,12 @@
 
 {% block title %}{{ article.title }}{% endblock %}
 
+{% set theme = active_theme() %}
+{% set themeConfig = theme ? theme.configuration : null %}
+
 {% block body %}
-<div class="container mx-auto px-6 py-12 max-w-4xl">
+<div class="container mx-auto px-6 py-12"
+     style="max-width: {% if themeConfig and themeConfig.layout.articleWidth == 'narrow' %}600px{% elseif themeConfig and themeConfig.layout.articleWidth == 'medium' %}800px{% elseif themeConfig and themeConfig.layout.articleWidth == 'wide' %}1200px{% else %}800px{% endif %};">
     <div class="mb-8 flex justify-between items-start">
         <div class="flex-1">
             <h1 class="text-3xl font-semibold text-base-content mb-3">{{ article.title }}</h1>
@@ -39,11 +43,59 @@
     </figure>
     {% endif %}
 
-    <div class="border border-base-300 rounded-lg p-8 bg-base-100 mb-8">
-        <div class="article-content">
+    <div class="border border-base-300 rounded-lg bg-base-100 mb-8"
+         style="padding: {% if themeConfig and themeConfig.layout.spacing == 'compact' %}1.5rem{% elseif themeConfig and themeConfig.layout.spacing == 'comfortable' %}2rem{% else %}2.5rem{% endif %};">
+        <div class="article-content"
+             style="text-align: {{ themeConfig ? themeConfig.layout.contentAlignment : 'left' }};
+                    font-family: {{ themeConfig and themeConfig.typography.bodyFont == 'montserrat' ? 'Montserrat' : 'Darker Grotesque' }};
+                    font-size: {% if themeConfig and themeConfig.typography.bodySize == 'small' %}0.9rem{% elseif themeConfig and themeConfig.typography.bodySize == 'large' %}1.1rem{% else %}1rem{% endif %};
+                    line-height: {% if themeConfig and themeConfig.typography.lineHeight == 'tight' %}1.4{% elseif themeConfig and themeConfig.typography.lineHeight == 'relaxed' %}1.8{% else %}1.6{% endif %};">
             {{ article.description|raw }}
         </div>
     </div>
+
+    <style>
+        .article-content h1,
+        .article-content h2,
+        .article-content h3,
+        .article-content h4,
+        .article-content h5,
+        .article-content h6 {
+            font-family: {{ themeConfig and themeConfig.typography.headingFont == 'darker-grotesque' ? 'Darker Grotesque' : 'Montserrat' }};
+            color: {{ themeConfig ? themeConfig.colors.primary : 'hsl(0, 0%, 9%)' }};
+            {% if themeConfig and themeConfig.typography.headingSize == 'small' %}
+            font-size: 0.9em;
+            {% elseif themeConfig and themeConfig.typography.headingSize == 'large' %}
+            font-size: 1.3em;
+            {% endif %}
+        }
+
+        .article-content blockquote {
+            border-left-color: {{ themeConfig ? themeConfig.colors.accent : 'hsl(0, 0%, 15%)' }};
+            border-left-width: 4px;
+            padding-left: 1rem;
+            font-style: italic;
+            opacity: 0.8;
+        }
+
+        .article-content a {
+            color: {{ themeConfig ? themeConfig.colors.accent : 'hsl(0, 0%, 15%)' }};
+            text-decoration: underline;
+        }
+
+        .article-content code {
+            background-color: {{ themeConfig ? themeConfig.colors.base200 : 'hsl(0, 0%, 98%)' }};
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+        }
+
+        .article-content pre {
+            background-color: {{ themeConfig ? themeConfig.colors.base200 : 'hsl(0, 0%, 98%)' }};
+            padding: 1rem;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+        }
+    </style>
 
     {% if article.charts|length > 0 %}
     <div class="space-y-6 mt-8">

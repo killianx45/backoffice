@@ -1,0 +1,12 @@
+# Robots.txt for CMS Backoffice
+
+# Block backoffice from search engines
+User-agent: *
+Disallow: /admin/
+Disallow: /dashboard/
+Disallow: /user/
+Disallow: /article/
+Disallow: /theme/
+
+# Allow sitemap
+Sitemap: https://yourdomain.com/sitemap.xml

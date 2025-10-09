@@ -66,7 +66,7 @@ final class DashboardController extends AbstractController
                 'title' => 'Personnaliser le thème',
                 'description' => 'Modifiez l\'apparence du site',
                 'icon' => 'theme',
-                'route' => '#',
+                'route' => 'app_theme_index',
                 'color' => 'info',
             ];
         }

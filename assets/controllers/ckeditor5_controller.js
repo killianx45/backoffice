@@ -7,7 +7,7 @@ export default class extends Controller {
         content: String
     };
 
-    connect() {
+    async connect() {
         const editorElement = this.element.querySelector('textarea');
         if (!editorElement) {
             if (process.env.NODE_ENV === 'development') {
@@ -16,6 +16,8 @@ export default class extends Controller {
             return;
         }
 
+        const theme = await this.fetchActiveTheme();
+
         const config = {
             initialData: this.contentValue || '',
         };
@@ -23,6 +25,10 @@ export default class extends Controller {
         EnhancedEditor.create(editorElement, config)
             .then(editor => {
                 this.editor = editor;
+
+                if (theme) {
+                    this.applyThemeStyles(editor, theme);
+                }
 
                 editor.model.document.on('change:data', () => {
                     this.updateHiddenInput(editor);
@@ -42,6 +48,76 @@ export default class extends Controller {
                     console.error('CKEditor initialization error:', error);
                 }
             });
+    }
+
+    async fetchActiveTheme() {
+        try {
+            const response = await fetch('/api/theme/active');
+            if (!response.ok) {
+                return null;
+            }
+            return await response.json();
+        } catch (error) {
+            console.warn('Could not fetch active theme:', error);
+            return null;
+        }
+    }
+
+    applyThemeStyles(editor, theme) {
+        const config = theme.configuration;
+        const editorElement = editor.ui.view.editable.element;
+
+        if (!editorElement) return;
+
+        const styleElement = document.createElement('style');
+        styleElement.id = 'ckeditor-theme-styles';
+        styleElement.textContent = `
+            .ck-content {
+                font-family: ${config.typography.bodyFont === 'montserrat' ? 'Montserrat' : 'Darker Grotesque'} !important;
+                font-size: ${config.typography.bodySize === 'small' ? '0.9rem' : config.typography.bodySize === 'large' ? '1.1rem' : '1rem'} !important;
+                line-height: ${config.typography.lineHeight === 'tight' ? '1.4' : config.typography.lineHeight === 'relaxed' ? '1.8' : '1.6'} !important;
+            }
+
+            .ck-content h1,
+            .ck-content h2,
+            .ck-content h3,
+            .ck-content h4,
+            .ck-content h5,
+            .ck-content h6 {
+                font-family: ${config.typography.headingFont === 'darker-grotesque' ? 'Darker Grotesque' : 'Montserrat'} !important;
+                color: ${config.colors.primary} !important;
+            }
+
+            .ck-content blockquote {
+                border-left: 4px solid ${config.colors.accent} !important;
+                padding-left: 1rem !important;
+                font-style: italic !important;
+                opacity: 0.8 !important;
+            }
+
+            .ck-content a {
+                color: ${config.colors.accent} !important;
+            }
+
+            .ck-content code {
+                background-color: ${config.colors.base200} !important;
+                padding: 0.25rem 0.5rem !important;
+                border-radius: 0.25rem !important;
+            }
+
+            .ck-content pre {
+                background-color: ${config.colors.base200} !important;
+                padding: 1rem !important;
+                border-radius: 0.5rem !important;
+            }
+        `;
+
+        const existingStyle = document.getElementById('ckeditor-theme-styles');
+        if (existingStyle) {
+            existingStyle.remove();
+        }
+
+        document.head.appendChild(styleElement);
     }
 
     disconnect() {

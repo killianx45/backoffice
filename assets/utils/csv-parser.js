@@ -64,7 +64,7 @@ export class CSVParser {
     return result;
   }
 
-  static toChartData(csvData, chartType = "bar") {
+  static toChartData(csvData, chartType = "bar", themeColors = null) {
     const { headers, data } = csvData;
 
     if (headers.length === 0 || data.length === 0) {
@@ -75,7 +75,7 @@ export class CSVParser {
     const labels = data.map((row) => row[labelColumn]);
 
     const datasets = [];
-    const colors = [
+    const colors = themeColors || [
       "hsl(276, 82%, 63%)",
       "hsl(276, 82%, 53%)",
       "hsl(276, 82%, 73%)",
