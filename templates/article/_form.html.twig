@@ -38,19 +38,89 @@
     {{ form_errors(form.featuredImageFile) }}
 </div>
 
-<div class="divider">Données pour graphiques (optionnel)</div>
+<div class="divider">Graphiques (optionnel)</div>
 
-<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-    <div class="form-control">
-        {{ form_label(form.csvFileFile, null, {'label_attr': {'class': 'label'}}) }}
-        {{ form_widget(form.csvFileFile) }}
-        {{ form_errors(form.csvFileFile) }}
-    </div>
+<div class="card bg-base-100 border border-base-300">
+    <div class="card-body">
+        <h3 class="card-title text-base">Ajouter des graphiques</h3>
+        <p class="text-sm text-base-content/70 mb-4">Vous pouvez ajouter plusieurs graphiques à votre article en sélectionnant des fichiers CSV.</p>
 
-    <div class="form-control">
-        {{ form_label(form.chartType, null, {'label_attr': {'class': 'label'}}) }}
-        {{ form_widget(form.chartType) }}
-        {{ form_errors(form.chartType) }}
+        <div data-controller="article-charts"
+             data-article-charts-index-value="{{ form.charts.children|length }}"
+             data-article-charts-prototype-value="{{ form_widget(form.charts.vars.prototype)|e('html_attr') }}">
+            <div data-article-charts-target="chartsContainer">
+                {% for chartForm in form.charts %}
+                    <div class="card bg-base-200 mb-4" data-article-charts-target="chartItem">
+                        <div class="card-body p-4">
+                            <div class="flex justify-between items-center mb-3">
+                                <h4 class="font-medium">Graphique #<span data-article-charts-target="chartNumber">{{ loop.index }}</span></h4>
+                                <button type="button" class="btn btn-sm btn-ghost btn-circle" data-action="click->article-charts#removeChart">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                </button>
+                            </div>
+
+                            <div class="grid grid-cols-1 gap-4" data-controller="csv-manager">
+                                <div class="form-control">
+                                    <label class="label">
+                                        <span class="label-text">Fichier CSV</span>
+                                    </label>
+                                    <button type="button"
+                                            data-action="csv-manager#openModal"
+                                            class="btn btn-outline btn-sm">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                        </svg>
+                                        Sélectionner un CSV
+                                    </button>
+                                    <div data-csv-manager-target="preview" class="mt-2"></div>
+                                    {{ form_widget(chartForm.csvFile) }}
+                                </div>
+
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    <div class="form-control">
+                                        {{ form_label(chartForm.chartType, null, {'label_attr': {'class': 'label'}}) }}
+                                        {{ form_widget(chartForm.chartType) }}
+                                    </div>
+
+                                    <div class="form-control">
+                                        {{ form_label(chartForm.title, null, {'label_attr': {'class': 'label'}}) }}
+                                        {{ form_widget(chartForm.title) }}
+                                    </div>
+
+                                    <div class="form-control">
+                                        {{ form_label(chartForm.displayOrder, null, {'label_attr': {'class': 'label'}}) }}
+                                        {{ form_widget(chartForm.displayOrder) }}
+                                    </div>
+                                </div>
+
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                                    <div class="form-control">
+                                        {{ form_label(chartForm.xAxisLabel, null, {'label_attr': {'class': 'label'}}) }}
+                                        {{ form_widget(chartForm.xAxisLabel) }}
+                                    </div>
+
+                                    <div class="form-control">
+                                        {{ form_label(chartForm.yAxisLabel, null, {'label_attr': {'class': 'label'}}) }}
+                                        {{ form_widget(chartForm.yAxisLabel) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <button type="button"
+                    class="btn btn-outline btn-sm mt-2"
+                    data-action="click->article-charts#addChart">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                </svg>
+                Ajouter un graphique
+            </button>
+        </div>
     </div>
 </div>
 

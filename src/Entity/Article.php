@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\ArticleRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HttpFoundation\File\File;
@@ -61,6 +63,15 @@ class Article
 
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
     private ?\DateTimeImmutable $updatedAt = null;
+
+    #[ORM\OneToMany(targetEntity: ArticleChart::class, mappedBy: 'article', cascade: ['persist', 'remove'], orphanRemoval: true)]
+    #[ORM\OrderBy(['displayOrder' => 'ASC'])]
+    private Collection $charts;
+
+    public function __construct()
+    {
+        $this->charts = new ArrayCollection();
+    }
 
     #[ORM\PrePersist]
     public function setCreatedAtValue(): void
@@ -200,6 +211,35 @@ class Article
     public function setUpdatedAt(\DateTimeImmutable $updatedAt): static
     {
         $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, ArticleChart>
+     */
+    public function getCharts(): Collection
+    {
+        return $this->charts;
+    }
+
+    public function addChart(ArticleChart $chart): static
+    {
+        if (!$this->charts->contains($chart)) {
+            $this->charts->add($chart);
+            $chart->setArticle($this);
+        }
+
+        return $this;
+    }
+
+    public function removeChart(ArticleChart $chart): static
+    {
+        if ($this->charts->removeElement($chart)) {
+            if ($chart->getArticle() === $this) {
+                $chart->setArticle(null);
+            }
+        }
 
         return $this;
     }

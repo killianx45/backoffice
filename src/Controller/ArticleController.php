@@ -39,11 +39,6 @@ class ArticleController extends AbstractController
                 $article->setFeaturedImageFile($featuredImageFile);
             }
 
-            $csvFileFile = $form->get('csvFileFile')->getData();
-            if ($csvFileFile) {
-                $article->setCsvFileFile($csvFileFile);
-            }
-
             $entityManager->persist($article);
             $entityManager->flush();
 
@@ -77,11 +72,6 @@ class ArticleController extends AbstractController
             $featuredImageFile = $form->get('featuredImageFile')->getData();
             if ($featuredImageFile) {
                 $article->setFeaturedImageFile($featuredImageFile);
-            }
-
-            $csvFileFile = $form->get('csvFileFile')->getData();
-            if ($csvFileFile) {
-                $article->setCsvFileFile($csvFileFile);
             }
 
             $entityManager->flush();

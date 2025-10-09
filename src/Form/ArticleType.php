@@ -5,13 +5,12 @@ namespace App\Form;
 use App\Entity\Article;
 use App\Entity\User;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\Validator\Constraints\Image;
 
 class ArticleType extends AbstractType
@@ -62,42 +61,13 @@ class ArticleType extends AbstractType
                     ])
                 ],
             ])
-            ->add('csvFileFile', FileType::class, [
-                'label' => 'Fichier CSV (pour graphiques)',
-                'required' => false,
-                'mapped' => false,
-                'attr' => [
-                    'class' => 'file-input file-input-bordered w-full',
-                    'accept' => '.csv,text/csv',
-                ],
-                'constraints' => [
-                    new File([
-                        'maxSize' => '2M',
-                        'mimeTypes' => [
-                            'text/csv',
-                            'text/plain',
-                            'application/csv',
-                        ],
-                        'mimeTypesMessage' => 'Veuillez uploader un fichier CSV valide',
-                    ])
-                ],
-            ])
-            ->add('chartType', ChoiceType::class, [
-                'label' => 'Type de graphique',
-                'required' => false,
-                'placeholder' => 'Sélectionnez un type de graphique',
-                'choices' => [
-                    'Barres' => 'bar',
-                    'Ligne' => 'line',
-                    'Camembert' => 'pie',
-                    'Aires' => 'area',
-                    'Nuage de points' => 'scatter',
-                    'Anneau' => 'doughnut',
-                    'Radar' => 'radar',
-                ],
-                'attr' => [
-                    'class' => 'select select-bordered w-full',
-                ],
+            ->add('charts', CollectionType::class, [
+                'entry_type' => ArticleChartType::class,
+                'entry_options' => ['label' => false],
+                'allow_add' => true,
+                'allow_delete' => true,
+                'by_reference' => false,
+                'label' => false,
             ])
         ;
     }
