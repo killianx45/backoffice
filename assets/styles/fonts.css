@@ -1,0 +1,28 @@
+/* Darker Grotesque - Variable Font (300-900) */
+@font-face {
+  font-family: "Darker Grotesque";
+  src: url("../fonts-woff2/DarkerGrotesque-VariableFont_wght.woff2")
+    format("woff2-variations");
+  font-weight: 300 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Montserrat - Variable Font (100-900) */
+@font-face {
+  font-family: "Montserrat";
+  src: url("../fonts-woff2/Montserrat-VariableFont_wght.woff2")
+    format("woff2-variations");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Montserrat";
+  src: url("../fonts-woff2/Montserrat-Italic-VariableFont_wght.woff2")
+    format("woff2-variations");
+  font-weight: 100 900;
+  font-style: italic;
+  font-display: swap;
+}

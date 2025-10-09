@@ -49,6 +49,14 @@ Encore
   // enables hashed filenames (e.g. app.abc123.css)
   .enableVersioning(Encore.isProduction())
 
+  // Configure font loader with hashing for cache busting
+  .configureLoaderRule('fonts', loaderRule => {
+    loaderRule.type = 'asset/resource';
+    loaderRule.generator = {
+      filename: 'fonts/[name].[hash:8][ext]'
+    };
+  })
+
   // configure Babel
   // .configureBabel((config) => {
   //     config.plugins.push('@babel/a-babel-plugin');

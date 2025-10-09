@@ -1,9 +1,9 @@
 @import "tailwindcss";
 @source not "../../public";
 @plugin "daisyui";
-@import url("https://fonts.googleapis.com/css2?family=Darker+Grotesque:wght@300..900&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap");
-/* @import url("https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,100..900;1,100..900&display=swap"); */
+
+/* Local fonts - optimized WOFF2 format */
+@import "./fonts.css";
 
 @theme {
   --dui-primary: 0 0% 9%;
