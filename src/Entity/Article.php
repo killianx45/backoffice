@@ -3,8 +3,6 @@
 namespace App\Entity;
 
 use App\Repository\ArticleRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HttpFoundation\File\File;
@@ -41,19 +39,6 @@ class Article
     #[Vich\UploadableField(mapping: 'article_featured_images', fileNameProperty: 'featuredImage')]
     private ?File $featuredImageFile = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $csvFile = null;
-
-    #[Vich\UploadableField(mapping: 'article_csv_files', fileNameProperty: 'csvFile')]
-    private ?File $csvFileFile = null;
-
-    #[ORM\Column(length: 50, nullable: true)]
-    #[Assert\Choice(
-        choices: ['bar', 'line', 'pie', 'area', 'scatter', 'doughnut', 'radar'],
-        message: 'Type de graphique invalide'
-    )]
-    private ?string $chartType = null;
-
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private ?User $author = null;
@@ -63,15 +48,6 @@ class Article
 
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
     private ?\DateTimeImmutable $updatedAt = null;
-
-    #[ORM\OneToMany(targetEntity: ArticleChart::class, mappedBy: 'article', cascade: ['persist', 'remove'], orphanRemoval: true)]
-    #[ORM\OrderBy(['displayOrder' => 'ASC'])]
-    private Collection $charts;
-
-    public function __construct()
-    {
-        $this->charts = new ArrayCollection();
-    }
 
     #[ORM\PrePersist]
     public function setCreatedAtValue(): void
@@ -98,20 +74,6 @@ class Article
     public function getFeaturedImageFile(): ?File
     {
         return $this->featuredImageFile;
-    }
-
-    public function setCsvFileFile(?File $csvFileFile = null): void
-    {
-        $this->csvFileFile = $csvFileFile;
-
-        if (null !== $csvFileFile) {
-            $this->updatedAt = new \DateTimeImmutable();
-        }
-    }
-
-    public function getCsvFileFile(): ?File
-    {
-        return $this->csvFileFile;
     }
 
     public function getId(): ?int
@@ -155,30 +117,6 @@ class Article
         return $this;
     }
 
-    public function getCsvFile(): ?string
-    {
-        return $this->csvFile;
-    }
-
-    public function setCsvFile(?string $csvFile): static
-    {
-        $this->csvFile = $csvFile;
-
-        return $this;
-    }
-
-    public function getChartType(): ?string
-    {
-        return $this->chartType;
-    }
-
-    public function setChartType(?string $chartType): static
-    {
-        $this->chartType = $chartType;
-
-        return $this;
-    }
-
     public function getAuthor(): ?User
     {
         return $this->author;
@@ -211,35 +149,6 @@ class Article
     public function setUpdatedAt(\DateTimeImmutable $updatedAt): static
     {
         $this->updatedAt = $updatedAt;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, ArticleChart>
-     */
-    public function getCharts(): Collection
-    {
-        return $this->charts;
-    }
-
-    public function addChart(ArticleChart $chart): static
-    {
-        if (!$this->charts->contains($chart)) {
-            $this->charts->add($chart);
-            $chart->setArticle($this);
-        }
-
-        return $this;
-    }
-
-    public function removeChart(ArticleChart $chart): static
-    {
-        if ($this->charts->removeElement($chart)) {
-            if ($chart->getArticle() === $this) {
-                $chart->setArticle(null);
-            }
-        }
 
         return $this;
     }

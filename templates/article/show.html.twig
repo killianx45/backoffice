@@ -101,40 +101,5 @@
             overflow-x: auto;
         }
     </style>
-
-    {% if article.charts|length > 0 %}
-    <div class="space-y-6 mt-8">
-        <h2 class="text-xl font-medium text-base-content mb-6">Graphiques</h2>
-
-        {% for chart in article.charts %}
-        <div class="border border-base-300 rounded-lg p-6 bg-base-100">
-            {% if chart.title %}
-            <h3 class="text-lg font-medium text-base-content mb-4">{{ chart.title }}</h3>
-            {% else %}
-            <h3 class="text-lg font-medium text-base-content mb-4">Graphique #{{ loop.index }}</h3>
-            {% endif %}
-
-            <div
-                data-controller="chart"
-                data-chart-csv-url-value="/media/csv/{{ chart.csvFile }}"
-                data-chart-chart-type-value="{{ chart.chartType }}"
-                data-chart-title-value="{{ chart.title }}"
-                data-chart-x-axis-label-value="{{ chart.xAxisLabel }}"
-                data-chart-y-axis-label-value="{{ chart.yAxisLabel }}"
-                class="w-full"
-            >
-                <canvas data-chart-target="canvas" class="max-h-96"></canvas>
-            </div>
-
-            <div class="mt-4 flex justify-between items-center text-xs text-base-content/50">
-                <div class="flex items-center gap-2">
-                    <span class="px-2 py-1 border border-base-300 rounded uppercase">{{ chart.chartType }}</span>
-                    <span>{{ chart.csvFile }}</span>
-                </div>
-            </div>
-        </div>
-        {% endfor %}
-    </div>
-    {% endif %}
 </div>
 {% endblock %}

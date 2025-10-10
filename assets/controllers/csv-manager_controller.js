@@ -202,7 +202,7 @@ export default class extends Controller {
             `;
 
       const form = this.element.closest("form") || document.querySelector('form[name^="article"]');
-      const chartContainer = this.element.closest('[data-article-charts-target="chartItem"]') || this.element;
+      const chartContainer = this.element;
       const csvFileInput = chartContainer.querySelector('input[id$="_csvFile"]');
       if (csvFileInput) {
         csvFileInput.value = filename;
