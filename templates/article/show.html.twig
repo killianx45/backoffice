@@ -50,6 +50,7 @@
     <div class="border border-base-300 rounded-lg bg-base-100 mb-8"
          style="padding: {% if themeConfig and themeConfig.layout.spacing == 'compact' %}1.5rem{% elseif themeConfig and themeConfig.layout.spacing == 'comfortable' %}2rem{% else %}2.5rem{% endif %};">
         <div class="article-content"
+             data-controller="inline-chart"
              style="text-align: {{ themeConfig ? themeConfig.layout.contentAlignment : 'left' }};
                     font-family: {{ themeConfig and themeConfig.typography.bodyFont == 'montserrat' ? 'Montserrat' : 'Darker Grotesque' }};
                     font-size: {% if themeConfig and themeConfig.typography.bodySize == 'small' %}0.9rem{% elseif themeConfig and themeConfig.typography.bodySize == 'large' %}1.1rem{% else %}1rem{% endif %};

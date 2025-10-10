@@ -35,11 +35,15 @@ export default class extends Controller {
                 });
 
                 this.addCustomImageButton(editor);
+                this.addCustomChartButton(editor);
 
                 editor.editing.view.document.on('click', (evt, data) => {
                     const viewElement = data.target;
                     if (viewElement && viewElement.name === 'img') {
                         setTimeout(() => this.addDeleteButtonToImage(viewElement), 100);
+                    }
+                    if (viewElement && viewElement.hasClass && viewElement.hasClass('ck-chart-widget')) {
+                        setTimeout(() => this.addActionsToChart(viewElement), 100);
                     }
                 });
             })
@@ -244,6 +248,178 @@ export default class extends Controller {
                 }
 
                 writer.remove(elementToRemove);
+            });
+        }
+    }
+
+    addCustomChartButton(editor) {
+        const toolbarView = editor.ui.view.toolbar;
+        const chartButton = document.createElement('button');
+        chartButton.className = 'ck ck-button ck-off';
+        chartButton.type = 'button';
+
+        chartButton.style.display = 'inline-flex';
+        chartButton.style.alignItems = 'center';
+        chartButton.style.justifyContent = 'center';
+        chartButton.style.padding = '0 var(--ck-spacing-small)';
+        chartButton.style.minHeight = 'var(--ck-ui-component-min-height)';
+        chartButton.style.cursor = 'pointer';
+        chartButton.style.border = '1px solid transparent';
+        chartButton.style.borderRadius = 'var(--ck-border-radius)';
+        chartButton.style.backgroundColor = 'transparent';
+
+        chartButton.innerHTML = `
+            <span class="ck ck-button__label" style="display: inline-block;">📊 Graphique</span>
+        `;
+        chartButton.title = 'Insérer un graphique';
+
+        chartButton.addEventListener('mouseover', () => {
+            chartButton.style.backgroundColor = 'var(--ck-color-button-default-hover-background)';
+        });
+
+        chartButton.addEventListener('mouseout', () => {
+            chartButton.style.backgroundColor = 'transparent';
+        });
+
+        chartButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            this.openChartManager();
+        });
+
+        const toolbarElement = toolbarView.element;
+        const items = toolbarElement.querySelectorAll('.ck-toolbar__items');
+        if (items.length > 0) {
+            items[0].appendChild(chartButton);
+        } else {
+            toolbarElement.appendChild(chartButton);
+        }
+    }
+
+    openChartManager(isEditMode = false, existingElement = null) {
+        const event = new CustomEvent('ckeditor:open-chart-manager', {
+            detail: {
+                callback: (chartConfig, isEdit, elementToEdit) => this.insertChart(chartConfig, isEdit, elementToEdit),
+                isEditMode: isEditMode,
+                element: existingElement
+            }
+        });
+        window.dispatchEvent(event);
+    }
+
+    insertChart(chartConfig, isEditMode = false, elementToEdit = null) {
+        if (!chartConfig || !this.editor) {
+            return;
+        }
+
+        this.editor.model.change(writer => {
+            if (isEditMode && elementToEdit) {
+                const modelElement = this.editor.editing.mapper.toModelElement(elementToEdit);
+                if (modelElement) {
+                    writer.setAttribute('csvFile', chartConfig.csvFile, modelElement);
+                    writer.setAttribute('chartType', chartConfig.chartType, modelElement);
+                    writer.setAttribute('title', chartConfig.title, modelElement);
+                    writer.setAttribute('xAxisLabel', chartConfig.xAxisLabel, modelElement);
+                    writer.setAttribute('yAxisLabel', chartConfig.yAxisLabel, modelElement);
+                }
+            } else {
+                const chartElement = writer.createElement('chartWidget', {
+                    csvFile: chartConfig.csvFile,
+                    chartType: chartConfig.chartType,
+                    title: chartConfig.title,
+                    xAxisLabel: chartConfig.xAxisLabel,
+                    yAxisLabel: chartConfig.yAxisLabel
+                });
+                this.editor.model.insertContent(chartElement, this.editor.model.document.selection);
+            }
+        });
+    }
+
+    addActionsToChart(viewElement) {
+        const chartWidget = viewElement.parentElement || viewElement;
+        if (!chartWidget) return;
+
+        const existingActions = chartWidget.querySelector('.ck-chart-actions');
+        if (existingActions) return;
+
+        const actionsContainer = document.createElement('div');
+        actionsContainer.className = 'ck-chart-actions';
+        actionsContainer.style.position = 'absolute';
+        actionsContainer.style.top = '8px';
+        actionsContainer.style.right = '8px';
+        actionsContainer.style.zIndex = '10';
+        actionsContainer.style.display = 'flex';
+        actionsContainer.style.gap = '4px';
+
+        const editBtn = document.createElement('button');
+        editBtn.className = 'btn btn-circle btn-xs btn-info';
+        editBtn.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+            </svg>
+        `;
+        editBtn.type = 'button';
+        editBtn.title = 'Modifier le graphique';
+
+        const deleteBtn = document.createElement('button');
+        deleteBtn.className = 'btn btn-circle btn-xs btn-error';
+        deleteBtn.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+        `;
+        deleteBtn.type = 'button';
+        deleteBtn.title = 'Supprimer le graphique';
+
+        editBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            this.editChart(viewElement);
+        });
+
+        deleteBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            this.deleteChart(viewElement);
+        });
+
+        actionsContainer.appendChild(editBtn);
+        actionsContainer.appendChild(deleteBtn);
+
+        if (chartWidget.style) {
+            chartWidget.style.position = 'relative';
+        }
+        chartWidget.appendChild(actionsContainer);
+    }
+
+    editChart(viewElement) {
+        if (!this.editor) return;
+
+        const modelElement = this.editor.editing.mapper.toModelElement(viewElement);
+        if (modelElement) {
+            const chartData = {
+                csvFile: modelElement.getAttribute('csvFile'),
+                chartType: modelElement.getAttribute('chartType'),
+                title: modelElement.getAttribute('title'),
+                xAxisLabel: modelElement.getAttribute('xAxisLabel'),
+                yAxisLabel: modelElement.getAttribute('yAxisLabel')
+            };
+
+            const elementWithData = {
+                getAttribute: (attr) => chartData[attr]
+            };
+
+            this.openChartManager(true, elementWithData);
+        }
+    }
+
+    deleteChart(viewElement) {
+        if (!this.editor) return;
+
+        const modelElement = this.editor.editing.mapper.toModelElement(viewElement);
+        if (modelElement) {
+            this.editor.model.change(writer => {
+                writer.remove(modelElement);
             });
         }
     }
