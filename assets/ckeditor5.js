@@ -42,7 +42,7 @@ class ChartWidget extends Plugin {
         schema.register('chartWidget', {
             isObject: true,
             allowWhere: '$block',
-            allowAttributes: ['csvFile', 'chartType', 'title', 'xAxisLabel', 'yAxisLabel']
+            allowAttributes: ['datasetId', 'chartType', 'title', 'selectedVariables', 'xAxisLabel', 'yAxisLabel', 'csvFile']
         });
     }
 
@@ -56,12 +56,15 @@ class ChartWidget extends Plugin {
                 classes: 'ck-chart'
             },
             model: (viewElement, { writer }) => {
+                const selectedVars = viewElement.getAttribute('data-selected-variables');
                 return writer.createElement('chartWidget', {
-                    csvFile: viewElement.getAttribute('data-csv-file'),
+                    datasetId: viewElement.getAttribute('data-dataset-id'),
                     chartType: viewElement.getAttribute('data-chart-type'),
                     title: viewElement.getAttribute('data-title'),
+                    selectedVariables: selectedVars || '[]',
                     xAxisLabel: viewElement.getAttribute('data-x-axis-label'),
-                    yAxisLabel: viewElement.getAttribute('data-y-axis-label')
+                    yAxisLabel: viewElement.getAttribute('data-y-axis-label'),
+                    csvFile: viewElement.getAttribute('data-csv-file')
                 });
             }
         });
@@ -69,19 +72,23 @@ class ChartWidget extends Plugin {
         conversion.for('dataDowncast').elementToElement({
             model: 'chartWidget',
             view: (modelElement, { writer }) => {
-                const csvFile = modelElement.getAttribute('csvFile');
+                const datasetId = modelElement.getAttribute('datasetId');
                 const chartType = modelElement.getAttribute('chartType');
                 const title = modelElement.getAttribute('title');
+                const selectedVariables = modelElement.getAttribute('selectedVariables');
                 const xAxisLabel = modelElement.getAttribute('xAxisLabel');
                 const yAxisLabel = modelElement.getAttribute('yAxisLabel');
+                const csvFile = modelElement.getAttribute('csvFile');
 
                 return writer.createContainerElement('div', {
                     class: 'ck-chart',
-                    'data-csv-file': csvFile,
+                    'data-dataset-id': datasetId,
                     'data-chart-type': chartType,
                     'data-title': title,
+                    'data-selected-variables': selectedVariables,
                     'data-x-axis-label': xAxisLabel,
-                    'data-y-axis-label': yAxisLabel
+                    'data-y-axis-label': yAxisLabel,
+                    'data-csv-file': csvFile
                 });
             }
         });
@@ -89,15 +96,25 @@ class ChartWidget extends Plugin {
         conversion.for('editingDowncast').elementToElement({
             model: 'chartWidget',
             view: (modelElement, { writer }) => {
-                const csvFile = modelElement.getAttribute('csvFile');
+                const datasetId = modelElement.getAttribute('datasetId');
                 const chartType = modelElement.getAttribute('chartType');
                 const title = modelElement.getAttribute('title');
+                const csvFile = modelElement.getAttribute('csvFile');
+
+                const chartTypeLabels = {
+                    bar: 'Barres',
+                    line: 'Ligne',
+                    pie: 'Camembert',
+                    scatter: 'Nuage de points'
+                };
 
                 const chartDiv = writer.createContainerElement('div', {
                     class: 'ck-chart-widget',
+                    'data-dataset-id': datasetId,
                     'data-csv-file': csvFile,
                     'data-chart-type': chartType,
                     'data-title': title,
+                    'data-selected-variables': modelElement.getAttribute('selectedVariables'),
                     'data-x-axis-label': modelElement.getAttribute('xAxisLabel'),
                     'data-y-axis-label': modelElement.getAttribute('yAxisLabel')
                 });
@@ -111,8 +128,8 @@ class ChartWidget extends Plugin {
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                             </svg>
                             <p style="margin-top: 10px; font-weight: bold; color: #333;">📊 ${title || 'Graphique'}</p>
-                            <p style="font-size: 12px; color: #666; margin-top: 5px;">Type: ${chartType === 'bar' ? 'Barres' : 'Ligne'}</p>
-                            <p style="font-size: 12px; color: #666;">CSV: ${csvFile}</p>
+                            <p style="font-size: 12px; color: #666; margin-top: 5px;">Type: ${chartTypeLabels[chartType] || chartType}</p>
+                            <p style="font-size: 12px; color: #666;">Dataset ID: ${datasetId || csvFile}</p>
                         </div>
                     `;
                 });

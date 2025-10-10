@@ -1,13 +1,17 @@
 import { Controller } from "@hotwired/stimulus";
 import { CSVService } from "../services/csv-service";
+import { ChartValidator } from "../utils/chart-validator";
 
 export default class extends Controller {
   connect() {
-    this.selectedCSV = null;
+    this.selectedDataset = null;
+    this.datasetVariables = [];
+    this.selectedVariables = [];
     this.chartConfig = {
-      csvFile: null,
+      datasetId: null,
       chartType: "bar",
       title: "",
+      selectedVariables: [],
       xAxisLabel: "",
       yAxisLabel: "",
     };
@@ -37,14 +41,34 @@ export default class extends Controller {
     this.openModal();
   }
 
-  loadExistingChartData(element) {
+  async loadExistingChartData(element) {
+    const datasetId = element.getAttribute("data-dataset-id");
+    const chartType = element.getAttribute("data-chart-type");
+    const title = element.getAttribute("data-title");
+    const selectedVariablesStr = element.getAttribute("data-selected-variables");
+    const xAxisLabel = element.getAttribute("data-x-axis-label");
+    const yAxisLabel = element.getAttribute("data-y-axis-label");
+
     this.chartConfig = {
-      csvFile: element.getAttribute("data-csv-file") || "",
-      chartType: element.getAttribute("data-chart-type") || "bar",
-      title: element.getAttribute("data-title") || "",
-      xAxisLabel: element.getAttribute("data-x-axis-label") || "",
-      yAxisLabel: element.getAttribute("data-y-axis-label") || "",
+      datasetId: datasetId ? parseInt(datasetId) : null,
+      chartType: chartType || "bar",
+      title: title || "",
+      selectedVariables: selectedVariablesStr ? JSON.parse(selectedVariablesStr) : [],
+      xAxisLabel: xAxisLabel || "",
+      yAxisLabel: yAxisLabel || "",
     };
+
+    if (this.chartConfig.datasetId) {
+      try {
+        const response = await fetch(`/api/datasets/${this.chartConfig.datasetId}`);
+        const data = await response.json();
+        this.selectedDataset = data.dataset;
+        this.datasetVariables = data.dataset.variables;
+        this.selectedVariables = this.chartConfig.selectedVariables;
+      } catch (error) {
+        console.error("Error loading dataset:", error);
+      }
+    }
   }
 
   openModal() {
@@ -59,7 +83,7 @@ export default class extends Controller {
     }
 
     this.modalElement.showModal();
-    this.loadCSVFiles();
+    this.loadDatasets();
   }
 
   populateFormWithExistingData() {
@@ -75,7 +99,8 @@ export default class extends Controller {
     if (xAxisInput) xAxisInput.value = this.chartConfig.xAxisLabel;
     if (yAxisInput) yAxisInput.value = this.chartConfig.yAxisLabel;
 
-    this.selectedCSV = { filename: this.chartConfig.csvFile };
+    this.updateChartTypeInfo();
+    this.updateVariableSelectors();
   }
 
   closeModal() {
@@ -85,23 +110,19 @@ export default class extends Controller {
   }
 
   resetForm() {
-    this.selectedCSV = null;
+    this.selectedDataset = null;
+    this.datasetVariables = [];
+    this.selectedVariables = [];
     this.chartConfig = {
-      csvFile: null,
+      datasetId: null,
       chartType: "bar",
       title: "",
+      selectedVariables: [],
       xAxisLabel: "",
       yAxisLabel: "",
     };
 
     if (this.modalElement) {
-      const gallery = this.modalElement.querySelector("[data-gallery]");
-      if (gallery) {
-        gallery.querySelectorAll("[data-csv-file]").forEach((card) => {
-          card.classList.remove("border-primary", "ring-2", "ring-primary");
-        });
-      }
-
       const titleInput = this.modalElement.querySelector("[data-chart-title]");
       const xAxisInput = this.modalElement.querySelector("[data-x-axis]");
       const yAxisInput = this.modalElement.querySelector("[data-y-axis]");
@@ -111,23 +132,27 @@ export default class extends Controller {
       if (xAxisInput) xAxisInput.value = "";
       if (yAxisInput) yAxisInput.value = "";
       if (chartTypeSelect) chartTypeSelect.value = "bar";
+
+      this.updateChartTypeInfo();
+      this.updateVariableSelectors();
     }
   }
 
   createModal() {
     const modalHTML = `
             <dialog data-chart-modal class="modal">
-                <div class="modal-box w-11/12 max-w-5xl bg-base-100">
+                <div class="modal-box w-11/12 max-w-6xl bg-base-100">
                     <h3 class="font-bold text-lg mb-4">📊 Gestionnaire de graphiques</h3>
 
                     <div role="tablist" class="tabs tabs-bordered mb-4">
-                        <a role="tab" class="tab tab-active" data-tab="library">Bibliothèque CSV</a>
+                        <a role="tab" class="tab tab-active" data-tab="library">Sélection dataset</a>
                         <a role="tab" class="tab" data-tab="upload">Téléverser CSV</a>
+                        <a role="tab" class="tab" data-tab="variables">Variables</a>
                         <a role="tab" class="tab" data-tab="configure">Configuration</a>
                     </div>
 
                     <div data-tab-content="library">
-                        <div data-gallery class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 max-h-96 overflow-y-auto p-1">
+                        <div data-dataset-gallery class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-h-96 overflow-y-auto p-1">
                             <div class="col-span-full flex justify-center items-center h-40">
                                 <span class="loading loading-spinner loading-lg"></span>
                             </div>
@@ -141,12 +166,24 @@ export default class extends Controller {
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
                             </svg>
                             <p class="text-base-content/70">Cliquez ou glissez un fichier CSV ici</p>
-                            <p class="text-sm text-base-content/50 mt-2">CSV (max 2MB)</p>
+                            <p class="text-sm text-base-content/50 mt-2">CSV (max 2MB) - Vous serez redirigé vers la configuration des variables</p>
                             <input type="file"
                                    data-file-input
                                    accept=".csv,text/csv"
                                    class="hidden">
                         </div>
+                    </div>
+
+                    <div data-tab-content="variables" class="hidden">
+                        <div class="alert alert-info mb-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            <div>
+                                <h3 class="font-bold">Sélectionnez d'abord un dataset</h3>
+                                <div class="text-xs">Retournez à l'onglet "Sélection dataset" pour choisir un jeu de données</div>
+                            </div>
+                        </div>
+                        <div data-chart-type-info class="mb-4"></div>
+                        <div data-variable-selectors class="space-y-4"></div>
                     </div>
 
                     <div data-tab-content="configure" class="hidden">
@@ -158,6 +195,8 @@ export default class extends Controller {
                                 <select data-chart-type class="select select-bordered w-full">
                                     <option value="bar">Barres</option>
                                     <option value="line">Ligne</option>
+                                    <option value="pie">Camembert</option>
+                                    <option value="scatter">Nuage de points</option>
                                 </select>
                             </div>
 
@@ -184,10 +223,7 @@ export default class extends Controller {
                                 </div>
                             </div>
 
-                            <div class="alert alert-info">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                <span class="text-sm">Sélectionnez d'abord un fichier CSV dans l'onglet "Bibliothèque CSV" ou "Téléverser CSV"</span>
-                            </div>
+                            <div data-validation-errors class="hidden"></div>
                         </div>
                     </div>
 
@@ -247,6 +283,8 @@ export default class extends Controller {
     if (chartTypeSelect) {
       chartTypeSelect.addEventListener("change", (e) => {
         this.chartConfig.chartType = e.target.value;
+        this.updateChartTypeInfo();
+        this.updateVariableSelectors();
       });
     }
 
@@ -284,74 +322,213 @@ export default class extends Controller {
     });
   }
 
-  async loadCSVFiles() {
-    const gallery = this.modalElement?.querySelector("[data-gallery]");
+  async loadDatasets() {
+    const gallery = this.modalElement?.querySelector("[data-dataset-gallery]");
     if (!gallery) return;
 
     try {
-      const csvFiles = await CSVService.loadCSVFiles();
+      const response = await fetch("/api/datasets");
+      const data = await response.json();
+      const datasets = data.datasets;
 
       gallery.innerHTML = "";
 
-      if (csvFiles.length === 0) {
+      if (datasets.length === 0) {
         gallery.innerHTML = `
                     <div class="col-span-full text-center py-8">
-                        <p class="text-base-content/50">Aucun fichier CSV disponible</p>
+                        <p class="text-base-content/50">Aucun dataset configuré disponible</p>
+                        <p class="text-sm text-base-content/40 mt-2">Les fournisseurs doivent uploader et configurer des fichiers CSV</p>
                     </div>
                 `;
         return;
       }
 
-      csvFiles.forEach((csv) => {
-        const csvCard = document.createElement("div");
-        csvCard.className =
+      datasets.forEach((dataset) => {
+        const datasetCard = document.createElement("div");
+        datasetCard.className =
           "card bg-base-100 border-2 border-base-300 cursor-pointer hover:border-primary transition-all";
-        csvCard.dataset.csvFile = csv.filename;
-        csvCard.innerHTML = `
+        datasetCard.dataset.datasetId = dataset.id;
+        datasetCard.innerHTML = `
                     <div class="card-body p-4">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-success mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                         </svg>
-                        <h4 class="text-xs font-medium text-center truncate" title="${csv.filename}">${csv.filename}</h4>
-                        <p class="text-xs text-center text-base-content/60">${CSVService.formatFileSize(csv.size)}</p>
+                        <h4 class="text-xs font-medium text-center truncate" title="${dataset.originalName}">${dataset.originalName}</h4>
+                        <div class="text-xs text-center space-y-1">
+                            <p class="text-base-content/60">${dataset.rowCount} lignes</p>
+                            <p class="text-base-content/60">${dataset.variableCount} variables</p>
+                            <span class="badge badge-success badge-sm">Configuré</span>
+                        </div>
                     </div>
                 `;
-        csvCard.addEventListener("click", (e) => this.selectCSVFromGallery(e));
-        gallery.appendChild(csvCard);
+        datasetCard.addEventListener("click", (e) => this.selectDataset(dataset.id));
+        gallery.appendChild(datasetCard);
 
-        if (this.isEditMode && csv.filename === this.chartConfig.csvFile) {
-          csvCard.classList.add("border-primary", "ring-2", "ring-primary");
+        if (this.isEditMode && dataset.id === this.chartConfig.datasetId) {
+          datasetCard.classList.add("border-primary", "ring-2", "ring-primary");
         }
       });
     } catch (error) {
       if (gallery) {
         gallery.innerHTML = `
                     <div class="col-span-full text-center py-8">
-                        <p class="text-error">${error.message || "Erreur lors du chargement des fichiers CSV"}</p>
+                        <p class="text-error">${error.message || "Erreur lors du chargement des datasets"}</p>
                     </div>
                 `;
       }
     }
   }
 
-  selectCSVFromGallery(event) {
-    const gallery = this.modalElement?.querySelector("[data-gallery]");
-    if (gallery) {
-      gallery.querySelectorAll("[data-csv-file]").forEach((card) => {
-        card.classList.remove("border-primary", "ring-2", "ring-primary");
+  async selectDataset(datasetId) {
+    try {
+      const response = await fetch(`/api/datasets/${datasetId}`);
+      const data = await response.json();
+      this.selectedDataset = data.dataset;
+      this.datasetVariables = data.dataset.variables;
+      this.chartConfig.datasetId = datasetId;
+
+      const gallery = this.modalElement?.querySelector("[data-dataset-gallery]");
+      if (gallery) {
+        gallery.querySelectorAll("[data-dataset-id]").forEach((card) => {
+          card.classList.remove("border-primary", "ring-2", "ring-primary");
+        });
+        const selectedCard = gallery.querySelector(`[data-dataset-id="${datasetId}"]`);
+        if (selectedCard) {
+          selectedCard.classList.add("border-primary", "ring-2", "ring-primary");
+        }
+      }
+
+      const variablesTab = this.modalElement.querySelector('[data-tab="variables"]');
+      if (variablesTab) {
+        variablesTab.click();
+      }
+
+      this.updateChartTypeInfo();
+      this.updateVariableSelectors();
+    } catch (error) {
+      console.error("Error selecting dataset:", error);
+      alert("Erreur lors de la sélection du dataset");
+    }
+  }
+
+  updateChartTypeInfo() {
+    const infoContainer = this.modalElement?.querySelector("[data-chart-type-info]");
+    if (!infoContainer || !this.selectedDataset) return;
+
+    const requirements = ChartValidator.getRequiredVariablesForChartType(this.chartConfig.chartType);
+    const chartLabel = ChartValidator.getChartTypeLabel(this.chartConfig.chartType);
+
+    infoContainer.innerHTML = `
+            <div class="alert alert-info">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <div>
+                    <h3 class="font-bold">${chartLabel}</h3>
+                    <div class="text-xs space-y-1">
+                        ${requirements.map(req => `<div>• ${req.description}</div>`).join('')}
+                    </div>
+                </div>
+            </div>
+        `;
+  }
+
+  updateVariableSelectors() {
+    const selectorsContainer = this.modalElement?.querySelector("[data-variable-selectors]");
+    if (!selectorsContainer || !this.selectedDataset) return;
+
+    const requirements = ChartValidator.getRequiredVariablesForChartType(this.chartConfig.chartType);
+
+    selectorsContainer.innerHTML = "";
+
+    requirements.forEach((req) => {
+      const selectorDiv = document.createElement("div");
+      selectorDiv.className = "form-control";
+
+      const allowMultiple = typeof req.count === 'object' && req.count.min;
+      const filteredVars = this.datasetVariables.filter(v => v.type === req.type);
+
+      selectorDiv.innerHTML = `
+                <label class="label">
+                    <span class="label-text font-semibold">${req.description}</span>
+                    <span class="label-text-alt badge ${req.type === 'numeric' ? 'badge-primary' : 'badge-secondary'}">
+                        ${req.type === 'numeric' ? 'Numérique' : 'Catégorielle'}
+                    </span>
+                </label>
+                <select class="select select-bordered" data-role="${req.role}" ${allowMultiple ? 'multiple size="3"' : ''}>
+                    ${!allowMultiple ? '<option value="">Sélectionner une variable</option>' : ''}
+                    ${filteredVars.map(v => `<option value="${v.id}">${v.name}</option>`).join('')}
+                </select>
+            `;
+
+      const select = selectorDiv.querySelector("select");
+      select.addEventListener("change", () => this.updateSelectedVariables());
+
+      selectorsContainer.appendChild(selectorDiv);
+    });
+
+    if (this.isEditMode && this.selectedVariables.length > 0) {
+      this.selectedVariables.forEach(sv => {
+        const select = selectorsContainer.querySelector(`[data-role="${sv.role}"]`);
+        if (select) {
+          if (select.multiple) {
+            Array.from(select.options).forEach(opt => {
+              if (parseInt(opt.value) === sv.variableId) {
+                opt.selected = true;
+              }
+            });
+          } else {
+            select.value = sv.variableId;
+          }
+        }
       });
     }
 
-    event.currentTarget.classList.add("border-primary", "ring-2", "ring-primary");
-    this.selectedCSV = {
-      filename: event.currentTarget.dataset.csvFile,
-    };
-    this.chartConfig.csvFile = this.selectedCSV.filename;
+    this.updateSelectedVariables();
+  }
+
+  updateSelectedVariables() {
+    const selectorsContainer = this.modalElement?.querySelector("[data-variable-selectors]");
+    if (!selectorsContainer) return;
+
+    this.selectedVariables = [];
+
+    const selects = selectorsContainer.querySelectorAll("select");
+    selects.forEach((select) => {
+      const role = select.dataset.role;
+      if (select.multiple) {
+        Array.from(select.selectedOptions).forEach(option => {
+          if (option.value) {
+            const variable = this.datasetVariables.find(v => v.id === parseInt(option.value));
+            this.selectedVariables.push({
+              variableId: parseInt(option.value),
+              name: variable.name,
+              role: role
+            });
+          }
+        });
+      } else {
+        if (select.value) {
+          const variable = this.datasetVariables.find(v => v.id === parseInt(select.value));
+          this.selectedVariables.push({
+            variableId: parseInt(select.value),
+            name: variable.name,
+            role: role
+          });
+        }
+      }
+    });
+
+    this.chartConfig.selectedVariables = this.selectedVariables;
   }
 
   insertChart() {
-    if (!this.chartConfig.csvFile) {
-      alert("Veuillez sélectionner un fichier CSV");
+    const validation = ChartValidator.validate(
+      this.chartConfig.chartType,
+      this.selectedVariables,
+      this.datasetVariables
+    );
+
+    if (!validation.valid) {
+      this.showValidationErrors(validation.errors);
       return;
     }
 
@@ -365,6 +542,28 @@ export default class extends Controller {
     }
 
     this.closeModal();
+  }
+
+  showValidationErrors(errors) {
+    const errorsContainer = this.modalElement?.querySelector("[data-validation-errors]");
+    if (!errorsContainer) return;
+
+    errorsContainer.innerHTML = `
+            <div class="alert alert-error">
+                <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                <div>
+                    <h3 class="font-bold">Erreurs de configuration</h3>
+                    <ul class="list-disc list-inside text-sm">
+                        ${errors.map(err => `<li>${err}</li>`).join('')}
+                    </ul>
+                </div>
+            </div>
+        `;
+    errorsContainer.classList.remove("hidden");
+
+    setTimeout(() => {
+      errorsContainer.classList.add("hidden");
+    }, 5000);
   }
 
   handleDragOver(event, uploadZone) {
@@ -416,22 +615,10 @@ export default class extends Controller {
 
       const data = await CSVService.uploadCSV(file);
 
-      this.selectedCSV = {
-        filename: data.filename,
-      };
-      this.chartConfig.csvFile = data.filename;
-
-      await this.loadCSVFiles();
-
-      const libraryTab = this.modalElement.querySelector('[data-tab="library"]');
-      if (libraryTab) {
-        libraryTab.click();
-      }
-
-      const gallery = this.modalElement.querySelector("[data-gallery]");
-      const uploadedCard = gallery?.querySelector(`[data-csv-file="${data.filename}"]`);
-      if (uploadedCard) {
-        uploadedCard.classList.add("border-primary", "ring-2", "ring-primary");
+      if (data.datasetId) {
+        this.closeModal();
+        window.location.href = `/api/csv/dataset/${data.datasetId}/configure`;
+        return;
       }
     } catch (error) {
       alert(error.message || "Erreur lors du téléversement du fichier");
@@ -442,7 +629,7 @@ export default class extends Controller {
                         <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
                     </svg>
                     <p class="text-base-content/70">Cliquez ou glissez un fichier CSV ici</p>
-                    <p class="text-sm text-base-content/50 mt-2">CSV (max 2MB)</p>
+                    <p class="text-sm text-base-content/50 mt-2">CSV (max 2MB) - Vous serez redirigé vers la configuration des variables</p>
                 `;
       }
     }

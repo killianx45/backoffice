@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Api;
 
 use App\Service\ThemeService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -12,8 +12,7 @@ class ThemeApiController extends AbstractController
 {
     public function __construct(
         private ThemeService $themeService
-    ) {
-    }
+    ) {}
 
     #[Route('/active', name: 'api_theme_active', methods: ['GET'])]
     public function getActiveTheme(): JsonResponse

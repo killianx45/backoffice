@@ -2,6 +2,9 @@
 
 namespace App\Controller;
 
+use App\Entity\CsvDataset;
+use App\Entity\CsvVariable;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -26,37 +29,20 @@ class CSVController extends AbstractController
         ]);
     }
 
-    #[Route('/files', name: 'app_csv_list', methods: ['GET'])]
-    public function list(): JsonResponse
+    #[Route('/dataset/{id}/configure', name: 'app_csv_configure', methods: ['GET'])]
+    public function configure(CsvDataset $dataset): Response
     {
-        $csvDirectory = $this->getParameter('kernel.project_dir') . '/public/media/csv';
-
-        if (!is_dir($csvDirectory)) {
-            return $this->json(['csvFiles' => []]);
+        if ($dataset->getUploadedBy() !== $this->getUser()) {
+            throw $this->createAccessDeniedException();
         }
 
-        $files = array_diff(scandir($csvDirectory), ['.', '..', '.gitignore']);
-        $csvFiles = [];
-
-        foreach ($files as $file) {
-            $filePath = $csvDirectory . '/' . $file;
-            if (is_file($filePath) && pathinfo($file, PATHINFO_EXTENSION) === 'csv') {
-                $csvFiles[] = [
-                    'filename' => $file,
-                    'url' => '/media/csv/' . $file,
-                    'size' => filesize($filePath),
-                    'uploadedAt' => filemtime($filePath),
-                ];
-            }
-        }
-
-        usort($csvFiles, fn($a, $b) => $b['uploadedAt'] <=> $a['uploadedAt']);
-
-        return $this->json(['csvFiles' => $csvFiles]);
+        return $this->render('csv/configure.html.twig', [
+            'dataset' => $dataset,
+        ]);
     }
 
     #[Route('/upload', name: 'app_csv_upload', methods: ['POST'])]
-    public function upload(Request $request, SluggerInterface $slugger): JsonResponse
+    public function upload(Request $request, SluggerInterface $slugger, EntityManagerInterface $em): JsonResponse
     {
         $file = $request->files->get('file');
 
@@ -85,16 +71,133 @@ class CSVController extends AbstractController
             }
 
             $file->move($csvDirectory, $newFilename);
+            $filePath = $csvDirectory . '/' . $newFilename;
+
+            $analysisResult = $this->analyzeCSV($filePath);
+
+            $dataset = new CsvDataset();
+            $dataset->setFilename($newFilename);
+            $dataset->setOriginalName($file->getClientOriginalName());
+            $dataset->setUploadedBy($this->getUser());
+            $dataset->setFileSize(filesize($filePath));
+            $dataset->setRowCount($analysisResult['rowCount']);
+
+            foreach ($analysisResult['variables'] as $varData) {
+                $variable = new CsvVariable();
+                $variable->setName($varData['name']);
+                $variable->setType($varData['type']);
+                $variable->setColumnIndex($varData['columnIndex']);
+                $variable->setSampleValues($varData['sampleValues']);
+                $dataset->addVariable($variable);
+            }
+
+            $em->persist($dataset);
+            $em->flush();
 
             return $this->json([
                 'success' => true,
+                'datasetId' => $dataset->getId(),
                 'filename' => $newFilename,
                 'url' => '/media/csv/' . $newFilename,
+                'variables' => array_map(fn($v) => [
+                    'id' => $v->getId(),
+                    'name' => $v->getName(),
+                    'type' => $v->getType(),
+                    'columnIndex' => $v->getColumnIndex(),
+                    'sampleValues' => $v->getSampleValues()
+                ], $dataset->getVariables()->toArray()),
                 'message' => 'Fichier CSV uploadé avec succès'
             ]);
         } catch (FileException $e) {
             return $this->json(['error' => 'Erreur lors de l\'upload du fichier'], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
+    }
+
+    private function analyzeCSV(string $filePath): array
+    {
+        $handle = fopen($filePath, 'r');
+        if (!$handle) {
+            throw new \RuntimeException('Cannot open CSV file');
+        }
+
+        $delimiter = $this->detectDelimiter($filePath);
+        $headers = fgetcsv($handle, 0, $delimiter);
+
+        if (!$headers) {
+            fclose($handle);
+            throw new \RuntimeException('CSV file has no headers');
+        }
+
+        $dataRows = [];
+        $rowCount = 0;
+        while (($row = fgetcsv($handle, 0, $delimiter)) !== false && $rowCount < 100) {
+            $dataRows[] = $row;
+            $rowCount++;
+        }
+
+        $totalRows = $rowCount;
+        while (fgetcsv($handle, 0, $delimiter) !== false) {
+            $totalRows++;
+        }
+        fclose($handle);
+
+        $variables = [];
+        foreach ($headers as $index => $header) {
+            $columnValues = array_column($dataRows, $index);
+            $isNumeric = $this->isNumericColumn($columnValues);
+
+            $sampleValues = array_slice(array_filter($columnValues, fn($v) => $v !== ''), 0, 5);
+
+            $variables[] = [
+                'name' => trim($header),
+                'type' => $isNumeric ? CsvVariable::TYPE_NUMERIC : CsvVariable::TYPE_CATEGORICAL,
+                'columnIndex' => $index,
+                'sampleValues' => $sampleValues
+            ];
+        }
+
+        return [
+            'rowCount' => $totalRows,
+            'variables' => $variables
+        ];
+    }
+
+    private function detectDelimiter(string $filePath): string
+    {
+        $handle = fopen($filePath, 'r');
+        $firstLine = fgets($handle);
+        fclose($handle);
+
+        $delimiters = [',', ';', "\t", '|'];
+        $maxCount = 0;
+        $detectedDelimiter = ',';
+
+        foreach ($delimiters as $delimiter) {
+            $count = substr_count($firstLine, $delimiter);
+            if ($count > $maxCount) {
+                $maxCount = $count;
+                $detectedDelimiter = $delimiter;
+            }
+        }
+
+        return $detectedDelimiter;
+    }
+
+    private function isNumericColumn(array $values): bool
+    {
+        $nonEmptyValues = array_filter($values, fn($v) => $v !== '' && $v !== null);
+
+        if (empty($nonEmptyValues)) {
+            return false;
+        }
+
+        foreach ($nonEmptyValues as $value) {
+            if (!is_numeric($value)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     #[Route('/delete/{filename}', name: 'app_csv_delete', methods: ['DELETE'])]

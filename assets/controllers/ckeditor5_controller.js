@@ -316,17 +316,19 @@ export default class extends Controller {
             if (isEditMode && elementToEdit) {
                 const modelElement = this.editor.editing.mapper.toModelElement(elementToEdit);
                 if (modelElement) {
-                    writer.setAttribute('csvFile', chartConfig.csvFile, modelElement);
+                    writer.setAttribute('datasetId', chartConfig.datasetId, modelElement);
                     writer.setAttribute('chartType', chartConfig.chartType, modelElement);
                     writer.setAttribute('title', chartConfig.title, modelElement);
+                    writer.setAttribute('selectedVariables', JSON.stringify(chartConfig.selectedVariables), modelElement);
                     writer.setAttribute('xAxisLabel', chartConfig.xAxisLabel, modelElement);
                     writer.setAttribute('yAxisLabel', chartConfig.yAxisLabel, modelElement);
                 }
             } else {
                 const chartElement = writer.createElement('chartWidget', {
-                    csvFile: chartConfig.csvFile,
+                    datasetId: chartConfig.datasetId,
                     chartType: chartConfig.chartType,
                     title: chartConfig.title,
+                    selectedVariables: JSON.stringify(chartConfig.selectedVariables),
                     xAxisLabel: chartConfig.xAxisLabel,
                     yAxisLabel: chartConfig.yAxisLabel
                 });
@@ -398,9 +400,10 @@ export default class extends Controller {
         const modelElement = this.editor.editing.mapper.toModelElement(viewElement);
         if (modelElement) {
             const chartData = {
-                csvFile: modelElement.getAttribute('csvFile'),
+                datasetId: modelElement.getAttribute('datasetId'),
                 chartType: modelElement.getAttribute('chartType'),
                 title: modelElement.getAttribute('title'),
+                selectedVariables: modelElement.getAttribute('selectedVariables'),
                 xAxisLabel: modelElement.getAttribute('xAxisLabel'),
                 yAxisLabel: modelElement.getAttribute('yAxisLabel')
             };

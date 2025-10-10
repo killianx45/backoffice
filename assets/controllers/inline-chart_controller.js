@@ -16,13 +16,14 @@ export default class extends Controller {
   }
 
   async renderChart(chartElement) {
-    const csvFile = chartElement.getAttribute("data-csv-file");
+    const datasetId = chartElement.getAttribute("data-dataset-id");
     const chartType = chartElement.getAttribute("data-chart-type");
     const title = chartElement.getAttribute("data-title");
+    const selectedVariablesStr = chartElement.getAttribute("data-selected-variables");
     const xAxisLabel = chartElement.getAttribute("data-x-axis-label");
     const yAxisLabel = chartElement.getAttribute("data-y-axis-label");
 
-    if (!csvFile || !chartType) {
+    if (!datasetId || !chartType || !selectedVariablesStr) {
       console.error("Chart configuration incomplete", chartElement);
       return;
     }
@@ -35,60 +36,90 @@ export default class extends Controller {
     chartElement.appendChild(canvas);
 
     try {
-      const theme = await this.fetchActiveTheme();
-      const csvUrl = `/media/csv/${csvFile}`;
-      const response = await fetch(csvUrl);
+      const selectedVariables = JSON.parse(selectedVariablesStr);
 
-      if (!response.ok) {
-        throw new Error(`Failed to load CSV: ${response.statusText}`);
+      const datasetResponse = await fetch(`/api/datasets/${datasetId}`);
+      if (!datasetResponse.ok) {
+        throw new Error(`Failed to load dataset: ${datasetResponse.statusText}`);
+      }
+      const datasetData = await datasetResponse.json();
+      const dataset = datasetData.dataset;
+
+      const csvUrl = dataset.url;
+      const csvResponse = await fetch(csvUrl);
+      if (!csvResponse.ok) {
+        throw new Error(`Failed to load CSV: ${csvResponse.statusText}`);
       }
 
-      const csvText = await response.text();
+      const csvText = await csvResponse.text();
       const parsedCSV = CSVParser.parse(csvText);
 
+      const theme = await this.fetchActiveTheme();
       const themeColors = theme ? this.generateThemeColorPalette(theme) : null;
 
-      const chartData = CSVParser.toChartData(parsedCSV, chartType, themeColors);
+      const chartData = CSVParser.toChartDataAdvanced(parsedCSV, chartType, selectedVariables, themeColors);
+
+      const chartOptions = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: true,
+            position: "top",
+          },
+          title: {
+            display: !!title,
+            text: title || "",
+            font: {
+              size: 16,
+              weight: "bold",
+            },
+          },
+        },
+      };
+
+      if (chartType !== 'pie' && chartType !== 'scatter') {
+        chartOptions.scales = {
+          x: {
+            title: {
+              display: !!xAxisLabel,
+              text: xAxisLabel || "",
+            },
+          },
+          y: {
+            title: {
+              display: !!yAxisLabel,
+              text: yAxisLabel || "",
+            },
+            beginAtZero: true,
+          },
+        };
+      }
+
+      if (chartType === 'scatter') {
+        chartOptions.scales = {
+          x: {
+            type: 'linear',
+            title: {
+              display: !!xAxisLabel,
+              text: xAxisLabel || "",
+            },
+          },
+          y: {
+            type: 'linear',
+            title: {
+              display: !!yAxisLabel,
+              text: yAxisLabel || "",
+            },
+            beginAtZero: true,
+          },
+        };
+      }
 
       const config = {
         type: chartType,
-        data: {
-          labels: chartData.labels,
-          datasets: chartData.datasets,
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: {
-              display: true,
-              position: "top",
-            },
-            title: {
-              display: !!title,
-              text: title || "",
-              font: {
-                size: 16,
-                weight: "bold",
-              },
-            },
-          },
-          scales: {
-            x: {
-              title: {
-                display: !!xAxisLabel,
-                text: xAxisLabel || "",
-              },
-            },
-            y: {
-              title: {
-                display: !!yAxisLabel,
-                text: yAxisLabel || "",
-              },
-              beginAtZero: true,
-            },
-          },
-        },
+        data: chartData,
+        options: chartOptions,
       };
 
       new Chart(canvas, config);

@@ -22,18 +22,23 @@ export default class extends Controller {
 
     async loadCSVFiles() {
         try {
-            const csvFiles = await CSVService.loadCSVFiles();
+            const response = await fetch('/api/datasets/all');
+            if (!response.ok) {
+                throw new Error('Erreur lors du chargement des datasets');
+            }
+            const data = await response.json();
+            const datasets = data.datasets;
 
             this.csvGridTarget.innerHTML = '';
 
-            if (csvFiles.length === 0) {
+            if (datasets.length === 0) {
                 this.showEmptyState();
             } else {
-                csvFiles.forEach(csv => this.createCSVCard(csv));
+                datasets.forEach(dataset => this.createDatasetCard(dataset));
             }
         } catch (error) {
-            console.error('Erreur lors du chargement des CSV:', error);
-            this.showFlash('Erreur lors du chargement des fichiers CSV', 'error');
+            console.error('Erreur lors du chargement des datasets:', error);
+            this.showFlash('Erreur lors du chargement des datasets', 'error');
         }
     }
 
@@ -51,9 +56,13 @@ export default class extends Controller {
         this.csvGridTarget.appendChild(emptyState);
     }
 
-    createCSVCard(csv) {
+    createDatasetCard(dataset) {
         const card = document.createElement('div');
         card.className = 'card bg-base-100 shadow-sm border border-base-300 hover:shadow-md transition-shadow';
+
+        const statusBadge = dataset.isConfigured
+            ? '<span class="badge badge-success badge-sm">Configuré</span>'
+            : '<span class="badge badge-warning badge-sm">Non configuré</span>';
 
         card.innerHTML = `
             <div class="card-body p-4">
@@ -62,17 +71,26 @@ export default class extends Controller {
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                     </svg>
                     <div class="flex-1 min-w-0">
-                        <h3 class="font-medium text-sm truncate" title="${csv.filename}">${csv.filename}</h3>
-                        <p class="text-xs text-base-content/60 mt-1">${CSVService.formatFileSize(csv.size)}</p>
-                        <p class="text-xs text-base-content/60">${CSVService.formatDate(csv.uploadedAt)}</p>
+                        <h3 class="font-medium text-sm truncate" title="${dataset.originalName}">${dataset.originalName}</h3>
+                        <p class="text-xs text-base-content/60 mt-1">${this.formatFileSize(dataset.fileSize)}</p>
+                        <p class="text-xs text-base-content/60">${dataset.rowCount} lignes · ${dataset.variableCount} variables</p>
+                        <div class="mt-2">${statusBadge}</div>
                     </div>
                 </div>
 
                 <div class="card-actions justify-end gap-2">
+                    ${!dataset.isConfigured ? `
+                        <a
+                            href="/api/csv/dataset/${dataset.id}/configure"
+                            class="btn btn-xs btn-primary"
+                        >
+                            Configurer
+                        </a>
+                    ` : ''}
                     <button
                         class="btn btn-xs btn-ghost"
                         data-action="click->csv-library#openPreview"
-                        data-filename="${csv.filename}"
+                        data-filename="${dataset.filename}"
                     >
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -83,7 +101,8 @@ export default class extends Controller {
                     <button
                         class="btn btn-xs btn-error"
                         data-action="click->csv-library#openDeleteModal"
-                        data-filename="${csv.filename}"
+                        data-filename="${dataset.filename}"
+                        data-dataset-id="${dataset.id}"
                     >
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -94,6 +113,14 @@ export default class extends Controller {
         `;
 
         this.csvGridTarget.appendChild(card);
+    }
+
+    formatFileSize(bytes) {
+        if (bytes === 0) return "0 Bytes";
+        const k = 1024;
+        const sizes = ["Bytes", "KB", "MB"];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return Math.round(bytes / Math.pow(k, i) * 100) / 100 + " " + sizes[i];
     }
 
     handleDragOver(event) {
@@ -127,50 +154,65 @@ export default class extends Controller {
     async uploadFiles(files) {
         if (files.length === 0) return;
 
-        this.uploadProgressTarget.classList.remove('hidden');
-        let completed = 0;
-        const total = files.length;
-
-        for (const file of files) {
-            try {
-                this.progressTextTarget.textContent = `Upload de ${file.name}...`;
-
-                await CSVService.uploadCSV(file);
-
-                completed++;
-                const percent = Math.round((completed / total) * 100);
-                this.progressBarTarget.value = percent;
-                this.progressPercentTarget.textContent = `${percent}%`;
-            } catch (error) {
-                console.error('Erreur upload:', error);
-                this.showFlash(error.message || 'Erreur lors de l\'upload', 'error');
-            }
+        if (files.length > 1) {
+            this.showFlash('Veuillez uploader un seul fichier à la fois pour la configuration', 'warning');
+            return;
         }
 
-        this.uploadProgressTarget.classList.add('hidden');
-        this.progressBarTarget.value = 0;
-        this.showFlash(`${completed} fichier(s) uploadé(s) avec succès`, 'success');
+        const file = files[0];
 
-        await this.loadCSVFiles();
+        this.uploadProgressTarget.classList.remove('hidden');
+        this.progressTextTarget.textContent = `Upload de ${file.name}...`;
+
+        try {
+            const data = await CSVService.uploadCSV(file);
+
+            if (data.datasetId) {
+                this.showFlash('Fichier uploadé avec succès. Redirection vers la configuration...', 'success');
+                setTimeout(() => {
+                    window.location.href = `/api/csv/dataset/${data.datasetId}/configure`;
+                }, 1000);
+            } else {
+                this.uploadProgressTarget.classList.add('hidden');
+                this.showFlash('Fichier uploadé avec succès', 'success');
+                await this.loadCSVFiles();
+            }
+        } catch (error) {
+            console.error('Erreur upload:', error);
+            this.uploadProgressTarget.classList.add('hidden');
+            this.showFlash(error.message || 'Erreur lors de l\'upload', 'error');
+        }
     }
 
     openDeleteModal(event) {
+        const datasetId = event.currentTarget.dataset.datasetId;
         const filename = event.currentTarget.dataset.filename;
         this.currentFileToDelete = filename;
+        this.currentDatasetToDelete = datasetId;
         this.deleteModalTarget.showModal();
     }
 
     closeDeleteModal() {
         this.deleteModalTarget.close();
         this.currentFileToDelete = null;
+        this.currentDatasetToDelete = null;
     }
 
     async confirmDelete() {
-        if (!this.currentFileToDelete) return;
+        if (!this.currentFileToDelete || !this.currentDatasetToDelete) return;
 
         try {
             await CSVService.deleteCSV(this.currentFileToDelete);
-            this.showFlash('Fichier supprimé avec succès', 'success');
+
+            const deleteResponse = await fetch(`/api/datasets/${this.currentDatasetToDelete}`, {
+                method: 'DELETE'
+            });
+
+            if (!deleteResponse.ok) {
+                throw new Error('Erreur lors de la suppression du dataset');
+            }
+
+            this.showFlash('Dataset supprimé avec succès', 'success');
             this.closeDeleteModal();
             await this.loadCSVFiles();
         } catch (error) {

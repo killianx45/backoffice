@@ -1,0 +1,94 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Configuration du jeu de données{% endblock %}
+
+{% block body %}
+<div class="max-w-6xl mx-auto p-6" data-controller="dataset-config" data-dataset-config-dataset-id-value="{{ dataset.id }}">
+    <div class="mb-6">
+        <h1 class="text-3xl font-bold mb-2">Configuration du jeu de données</h1>
+        <p class="text-base-content/70">Définissez le type de chaque variable (catégorielle ou numérique)</p>
+    </div>
+
+    <div class="card bg-base-100 shadow-xl mb-6">
+        <div class="card-body">
+            <h2 class="card-title">Informations du fichier</h2>
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <span class="font-semibold">Nom original:</span> {{ dataset.originalName }}
+                </div>
+                <div>
+                    <span class="font-semibold">Lignes:</span> {{ dataset.rowCount }}
+                </div>
+                <div>
+                    <span class="font-semibold">Taille:</span> {{ (dataset.fileSize / 1024)|number_format(2) }} KB
+                </div>
+                <div>
+                    <span class="font-semibold">Variables:</span> {{ dataset.variables|length }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card bg-base-100 shadow-xl">
+        <div class="card-body">
+            <h2 class="card-title mb-4">Variables détectées</h2>
+
+            <div class="alert alert-info mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <div>
+                    <h3 class="font-bold">Types de variables</h3>
+                    <div class="text-xs">
+                        <strong>Numérique:</strong> Valeurs numériques (ex: 10, 25.5, 100) - utilisé pour graphiques scatter, histogrammes<br>
+                        <strong>Catégorielle:</strong> Catégories/labels (ex: "Paris", "Rouge", "2023") - utilisé pour axes de graphiques bar, pie
+                    </div>
+                </div>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="table table-zebra w-full">
+                    <thead>
+                        <tr>
+                            <th>Variable</th>
+                            <th>Type détecté</th>
+                            <th>Exemples de valeurs</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for variable in dataset.variables %}
+                        <tr data-variable-id="{{ variable.id }}" data-original-type="{{ variable.type }}" data-dataset-config-target="variableRow">
+                            <td class="font-semibold">{{ variable.name }}</td>
+                            <td>
+                                <span class="badge {% if variable.type == 'numeric' %}badge-primary{% else %}badge-secondary{% endif %}">
+                                    {% if variable.type == 'numeric' %}Numérique{% else %}Catégorielle{% endif %}
+                                </span>
+                            </td>
+                            <td>
+                                <div class="text-sm text-base-content/70">
+                                    {% for value in variable.sampleValues|slice(0, 3) %}
+                                        <span class="badge badge-ghost badge-sm">{{ value }}</span>
+                                    {% endfor %}
+                                </div>
+                            </td>
+                            <td>
+                                <select class="select select-bordered select-sm" data-action="change->dataset-config#toggleVariableType">
+                                    <option value="categorical" {% if variable.type == 'categorical' %}selected{% endif %}>Catégorielle</option>
+                                    <option value="numeric" {% if variable.type == 'numeric' %}selected{% endif %}>Numérique</option>
+                                </select>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="card-actions justify-end mt-6">
+                <button class="btn btn-ghost" data-action="click->dataset-config#cancel">Annuler</button>
+                <button class="btn btn-primary" data-action="click->dataset-config#confirmConfiguration">
+                    Confirmer la configuration
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,13 +1,4 @@
 export class CSVService {
-    static async loadCSVFiles() {
-        const response = await fetch("/api/csv/files");
-        if (!response.ok) {
-            throw new Error("Erreur lors du chargement des fichiers CSV");
-        }
-        const data = await response.json();
-        return data.csvFiles;
-    }
-
     static async uploadCSV(file) {
         if (!this.validateFile(file)) {
             throw new Error("Fichier invalide");
@@ -117,14 +108,4 @@ export class CSVService {
         return Math.round(bytes / Math.pow(k, i) * 100) / 100 + " " + sizes[i];
     }
 
-    static formatDate(timestamp) {
-        const date = new Date(timestamp * 1000);
-        return date.toLocaleDateString("fr-FR", {
-            day: "2-digit",
-            month: "2-digit",
-            year: "numeric",
-            hour: "2-digit",
-            minute: "2-digit",
-        });
-    }
 }
