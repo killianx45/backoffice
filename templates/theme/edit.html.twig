@@ -1,0 +1,251 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ isNew ? 'Créer un thème' : 'Modifier ' ~ theme.name }}{% endblock %}
+
+{% block body %}
+<div class="p-6 max-w-full mx-auto">
+    <div class="mb-6 flex justify-between items-center">
+        <div>
+            <h1 class="text-3xl font-bold mb-2">{{ isNew ? 'Créer un thème' : 'Modifier le thème' }}</h1>
+            <p class="opacity-70">Personnalisez l'apparence de votre site</p>
+        </div>
+        <a href="{{ path('app_theme_index') }}" class="text-sm text-base-content/60 hover:text-base-content">
+            Retour
+        </a>
+    </div>
+
+    {{ form_start(form, {'attr': {'data-controller': 'theme-editor', 'data-action': 'input->theme-editor#updatePreview change->theme-editor#updatePreview'}}) }}
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="space-y-6">
+            <div class="card border bg-base-100 shadow-sm">
+                <div class="card-body">
+                    <h2 class="card-title text-xl mb-4">Informations générales</h2>
+
+                    <div class="space-y-4">
+                        <div>
+                            {{ form_label(form.name) }}
+                            {{ form_widget(form.name) }}
+                            {{ form_errors(form.name) }}
+                        </div>
+
+                        <div>
+                            {{ form_label(form.slug) }}
+                            {{ form_widget(form.slug) }}
+                            {{ form_errors(form.slug) }}
+                            {{ form_help(form.slug) }}
+                        </div>
+
+                        <div>
+                            {{ form_label(form.description) }}
+                            {{ form_widget(form.description) }}
+                            {{ form_errors(form.description) }}
+                        </div>
+
+                        <div class="form-control">
+                            <label class="label cursor-pointer justify-start gap-3">
+                                {{ form_widget(form.isActive) }}
+                                <span class="label-text">{{ form_label(form.isActive) }}</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card border bg-base-100 shadow-sm">
+                <div class="card-body p-0">
+                    <div role="tablist" class="tabs tabs-lifted">
+                        <input type="radio" name="config_tabs" role="tab" class="tab" aria-label="Mise en page" checked />
+                        <div role="tabpanel" class="tab-content bg-base-100 border-base-300 p-6">
+                            <h3 class="font-bold text-lg mb-4">Mise en page</h3>
+                            <div class="space-y-4">
+                                {% for child in form.configuration.layout %}
+                                    <div>
+                                        {{ form_label(child) }}
+                                        {{ form_widget(child) }}
+                                        {{ form_errors(child) }}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <input type="radio" name="config_tabs" role="tab" class="tab" aria-label="Typographie" />
+                        <div role="tabpanel" class="tab-content bg-base-100 border-base-300 p-6">
+                            <h3 class="font-bold text-lg mb-4">Typographie</h3>
+                            <div class="space-y-4">
+                                {% for child in form.configuration.typography %}
+                                    <div>
+                                        {{ form_label(child) }}
+                                        {{ form_widget(child) }}
+                                        {{ form_errors(child) }}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <input type="radio" name="config_tabs" role="tab" class="tab" aria-label="Couleurs" />
+                        <div role="tabpanel" class="tab-content bg-base-100 border-base-300 p-6">
+                            <h3 class="font-bold text-lg mb-4">Couleurs</h3>
+                            <div class="space-y-4">
+                                <div>
+                                    {{ form_label(form.configuration.colors.primary) }}
+                                    {{ form_widget(form.configuration.colors.primary) }}
+                                    {{ form_errors(form.configuration.colors.primary) }}
+                                </div>
+
+                                <div>
+                                    {{ form_label(form.configuration.colors.secondary) }}
+                                    {{ form_widget(form.configuration.colors.secondary) }}
+                                    {{ form_errors(form.configuration.colors.secondary) }}
+                                </div>
+
+                                <div>
+                                    {{ form_label(form.configuration.colors.accent) }}
+                                    {{ form_widget(form.configuration.colors.accent) }}
+                                    {{ form_errors(form.configuration.colors.accent) }}
+                                </div>
+
+                                <div>
+                                    {{ form_label(form.configuration.colors.base100) }}
+                                    {{ form_widget(form.configuration.colors.base100) }}
+                                    {{ form_errors(form.configuration.colors.base100) }}
+                                </div>
+
+                                <div>
+                                    {{ form_label(form.configuration.colors.base200) }}
+                                    {{ form_widget(form.configuration.colors.base200) }}
+                                    {{ form_errors(form.configuration.colors.base200) }}
+                                </div>
+
+                                <div>
+                                    {{ form_label(form.configuration.colors.base300) }}
+                                    {{ form_widget(form.configuration.colors.base300) }}
+                                    {{ form_errors(form.configuration.colors.base300) }}
+                                </div>
+
+                                <div>
+                                    {{ form_label(form.configuration.colors.titleOverlay) }}
+                                    {{ form_widget(form.configuration.colors.titleOverlay) }}
+                                    {{ form_errors(form.configuration.colors.titleOverlay) }}
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">Palette de graphiques (5 couleurs)</label>
+                                    <div class="grid grid-cols-5 gap-2">
+                                        {% for child in form.configuration.colors.chartPalette %}
+                                            {{ form_widget(child) }}
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <input type="radio" name="config_tabs" role="tab" class="tab" aria-label="Graphiques" />
+                        <div role="tabpanel" class="tab-content bg-base-100 border-base-300 p-6">
+                            <h3 class="font-bold text-lg mb-4">Graphiques</h3>
+                            <div class="space-y-4">
+                                {% for child in form.configuration.charts %}
+                                    <div>
+                                        {% if child.vars.block_prefixes[1] == 'checkbox' %}
+                                            <label class="label cursor-pointer justify-start gap-3">
+                                                {{ form_widget(child) }}
+                                                <span class="label-text">{{ form_label(child) }}</span>
+                                            </label>
+                                        {% else %}
+                                            {{ form_label(child) }}
+                                            {{ form_widget(child) }}
+                                        {% endif %}
+                                        {{ form_errors(child) }}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <input type="radio" name="config_tabs" role="tab" class="tab" aria-label="Composants" />
+                        <div role="tabpanel" class="tab-content bg-base-100 border-base-300 p-6">
+                            <h3 class="font-bold text-lg mb-4">Composants</h3>
+                            <div class="space-y-4">
+                                {% for child in form.configuration.components %}
+                                    <div>
+                                        {{ form_label(child) }}
+                                        {{ form_widget(child) }}
+                                        {{ form_errors(child) }}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex gap-3">
+                <button type="submit" class="btn border border-base-content bg-base-content text-base-100 hover:opacity-90">
+                    {{ isNew ? 'Créer le thème' : 'Enregistrer les modifications' }}
+                </button>
+                <a href="{{ path('app_theme_index') }}" class="btn border border-base-300 bg-base-100">
+                    Annuler
+                </a>
+            </div>
+        </div>
+
+        <div class="lg:sticky lg:top-6 lg:h-screen lg:overflow-auto">
+            <div class="card border bg-base-100 shadow-sm">
+                <div class="card-body">
+                    <h2 class="card-title text-xl mb-4">Aperçu en direct</h2>
+
+                    <div class="preview-container bg-base-200 p-4 rounded-lg" data-theme-editor-target="preview">
+                        <div class="preview-article mx-auto">
+                            <div class="preview-image-container mb-6 relative rounded overflow-hidden">
+                                <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop"
+                                     alt="Image de démonstration"
+                                     class="w-full h-64 object-cover">
+                                <div class="preview-gradient absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent pointer-events-none"></div>
+                                <h1 class="preview-title text-3xl font-bold text-white absolute bottom-8 left-8 right-8">
+                                    Exemple de titre d'article
+                                </h1>
+                            </div>
+
+                            <div class="preview-content preview-card border rounded mb-6 bg-white border-base-300 p-8">
+                                <p class="mb-4">
+                                    Ceci est un exemple de contenu d'article. Le texte s'adapte automatiquement selon les paramètres de typographie que vous choisissez.
+                                </p>
+
+                                <h2 class="preview-heading mb-3 text-base-content font-semibold">Sous-titre de section</h2>
+
+                                <p class="mb-4">
+                                    Vous pouvez personnaliser la <a href="#" class="preview-link underline text-accent">couleur des liens</a>,
+                                    l'alignement du texte, et bien plus encore. Les modifications sont visibles en temps réel.
+                                </p>
+
+                                <h3 class="preview-heading mb-3 text-base-content font-semibold">Exemple de graphique</h3>
+
+                                <div class="my-6">
+                                    <canvas data-theme-editor-target="chart" width="400" height="200"></canvas>
+                                </div>
+
+                                <p class="mb-4">
+                                    Le thème s'applique également aux graphiques, avec une palette de couleurs personnalisable.
+                                </p>
+
+                                <div class="mt-6">
+                                    <button class="preview-button btn btn-sm bg-base-content text-base-100 border-base-content hover:opacity-90">
+                                        Bouton exemple
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{ form_end(form) }}
+</div>
+
+<style>
+.preview-container {
+    min-height: 600px;
+}
+</style>
+{% endblock %}

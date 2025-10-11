@@ -4,9 +4,14 @@
 
 {% block body %}
 <div class="p-6 max-w-7xl mx-auto">
-    <div class="mb-8">
-        <h1 class="text-3xl font-bold mb-2">Thèmes</h1>
-        <p class="opacity-70">Sélectionnez un thème pour personnaliser l'apparence de vos articles</p>
+    <div class="mb-8 flex justify-between items-start">
+        <div>
+            <h1 class="text-3xl font-bold mb-2">Thèmes</h1>
+            <p class="opacity-70">Sélectionnez un thème pour personnaliser l'apparence de vos articles</p>
+        </div>
+        <a href="{{ path('app_theme_new') }}" class="btn border border-base-content bg-base-content text-base-100 hover:opacity-90">
+            + Créer un thème
+        </a>
     </div>
 
     {% for message in app.flashes('success') %}
@@ -62,6 +67,9 @@
                     </div>
 
                     <div class="card-actions justify-end gap-2">
+                        <a href="{{ path('app_theme_edit', {'id': theme.id}) }}" class="btn btn-sm border border-base-300 hover:border-base-content">
+                            Modifier
+                        </a>
                         {% if not theme.isActive %}
                             <form method="post" action="{{ path('app_theme_activate', {'id': theme.id}) }}" class="inline">
                                 <input type="hidden" name="_token" value="{{ csrf_token('activate' ~ theme.id) }}">

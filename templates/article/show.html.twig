@@ -8,53 +8,98 @@
 {% block body %}
 <div class="container mx-auto px-6 py-12"
      style="max-width: {% if themeConfig and themeConfig.layout.articleWidth == 'narrow' %}600px{% elseif themeConfig and themeConfig.layout.articleWidth == 'medium' %}800px{% elseif themeConfig and themeConfig.layout.articleWidth == 'wide' %}1200px{% else %}800px{% endif %};">
-    <div class="mb-8 flex justify-between items-start">
-        <div class="flex-1">
-            <h1 class="text-3xl font-semibold text-base-content mb-3">{{ article.title }}</h1>
 
-            <div class="flex items-center gap-3 text-sm text-base-content/60">
+    {% if article.featuredImage %}
+    <div class="mb-8 relative rounded-lg overflow-hidden">
+        <img src="{{ vich_uploader_asset(article, 'featuredImageFile') }}"
+             alt="{{ article.title }}"
+             class="w-full {% if themeConfig.layout.featuredImageSize == 'small' %}h-48{% elseif themeConfig.layout.featuredImageSize == 'medium' %}h-64{% elseif themeConfig.layout.featuredImageSize == 'large' %}h-96{% else %}h-screen max-h-[600px]{% endif %} object-cover"
+             style="font-family: {{ themeConfig and themeConfig.typography.headingFont == 'darker-grotesque' ? 'Darker Grotesque' : 'Montserrat' }}">
+
+        {% if themeConfig.layout.titlePosition starts with 'overlay' %}
+        <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent"></div>
+        <div class="absolute {% if themeConfig.layout.titlePosition == 'overlay-top' %}top-8{% elseif themeConfig.layout.titlePosition == 'overlay-center' %}top-1/2 -translate-y-1/2{% else %}bottom-8{% endif %} left-8 right-8">
+            <h1 class="font-bold text-white mb-3 {% if themeConfig and themeConfig.typography.headingSize == 'small' %}text-[2rem]{% elseif themeConfig and themeConfig.typography.headingSize == 'large' %}text-[3rem]{% else %}text-4xl{% endif %}"
+                style="font-family: {{ themeConfig and themeConfig.typography.headingFont == 'darker-grotesque' ? 'Darker Grotesque' : 'Montserrat' }}">
+                {{ article.title }}
+            </h1>
+            <div class="flex items-center gap-3 text-sm text-white/90">
                 <div class="flex items-center gap-2">
-                    <div class="w-7 h-7 rounded-full bg-base-300 flex items-center justify-center overflow-hidden">
+                    <div class="w-7 h-7 rounded-full bg-white/20 flex items-center justify-center overflow-hidden">
                         {% if article.author.avatar %}
                             <img src="{{ asset('uploads/avatars/' ~ article.author.avatar) }}" alt="Avatar de {{ article.author.prenom }}" class="w-full h-full object-cover">
                         {% else %}
-                            <span class="text-xs font-medium text-base-content/70">{{ article.author.prenom|first }}{{ article.author.nom|first }}</span>
+                            <span class="text-xs font-medium">{{ article.author.prenom|first }}{{ article.author.nom|first }}</span>
                         {% endif %}
                     </div>
                     <span>{{ article.author.prenom }} {{ article.author.nom }}</span>
                 </div>
-                <span class="text-base-content/40">•</span>
+                <span class="text-white/60">•</span>
+                <span>{{ article.createdAt|date('d/m/Y') }}</span>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    {% if not article.featuredImage or not (themeConfig.layout.titlePosition starts with 'overlay') %}
+    <div class="mb-8 flex justify-between items-start">
+        <div class="flex-1">
+            <h1 class="font-bold mb-3 {% if themeConfig and themeConfig.typography.headingSize == 'small' %}text-[2rem]{% elseif themeConfig and themeConfig.typography.headingSize == 'large' %}text-[3rem]{% else %}text-4xl{% endif %}"
+                style="color: {{ themeConfig ? themeConfig.colors.primary : '#171717' }};
+                       font-family: {{ themeConfig and themeConfig.typography.headingFont == 'darker-grotesque' ? 'Darker Grotesque' : 'Montserrat' }};">
+                {{ article.title }}
+            </h1>
+
+            <div class="flex items-center gap-3 text-sm" style="color: {{ themeConfig ? themeConfig.colors.secondary : '#262626' }};">
+                <div class="flex items-center gap-2">
+                    <div class="w-7 h-7 rounded-full flex items-center justify-center overflow-hidden" style="background-color: {{ themeConfig ? themeConfig.colors.base300 : '#e8e8e8' }};">
+                        {% if article.author.avatar %}
+                            <img src="{{ asset('uploads/avatars/' ~ article.author.avatar) }}" alt="Avatar de {{ article.author.prenom }}" class="w-full h-full object-cover">
+                        {% else %}
+                            <span class="text-xs font-medium">{{ article.author.prenom|first }}{{ article.author.nom|first }}</span>
+                        {% endif %}
+                    </div>
+                    <span>{{ article.author.prenom }} {{ article.author.nom }}</span>
+                </div>
+                <span class="opacity-40">•</span>
                 <span>{{ article.createdAt|date('d/m/Y') }}</span>
                 {% if article.createdAt != article.updatedAt %}
-                <span class="text-xs text-base-content/40">(modifié le {{ article.updatedAt|date('d/m/Y') }})</span>
+                <span class="text-xs opacity-40">(modifié le {{ article.updatedAt|date('d/m/Y') }})</span>
                 {% endif %}
             </div>
         </div>
 
         <div class="flex gap-2">
-            <a href="{{ path('app_article_index') }}" class="text-sm text-base-content/60 hover:text-base-content transition-colors px-3 py-2">Retour</a>
+            <a href="{{ path('app_article_index') }}" class="text-sm px-3 py-2 opacity-70" style="color: {{ themeConfig ? themeConfig.colors.secondary : '#262626' }};">Retour</a>
             {% if is_granted('ARTICLE_EDIT', article) %}
-            <a href="{{ path('app_article_edit', {'id': article.id}) }}" class="text-sm border border-base-content text-base-content hover:bg-base-content hover:text-base-100 transition-colors px-4 py-2 rounded-lg">Modifier</a>
+            <a href="{{ path('app_article_edit', {'id': article.id}) }}"
+               class="text-sm px-4 py-2 rounded-lg border transition-colors"
+               style="border-color: {{ themeConfig ? themeConfig.colors.primary : '#171717' }}; color: {{ themeConfig ? themeConfig.colors.primary : '#171717' }};">
+                Modifier
+            </a>
             {% endif %}
         </div>
     </div>
-
-    {% if article.featuredImage %}
-    <figure class="mb-8 rounded-lg overflow-hidden border border-base-300">
-        <img src="{{ vich_uploader_asset(article, 'featuredImageFile') }}"
-             alt="{{ article.title }}"
-             class="w-full max-h-96 object-cover">
-    </figure>
+    {% else %}
+    <div class="mb-4 flex justify-end gap-2">
+        <a href="{{ path('app_article_index') }}" class="text-sm px-3 py-2 opacity-70" style="color: {{ themeConfig ? themeConfig.colors.secondary : '#262626' }};">Retour</a>
+        {% if is_granted('ARTICLE_EDIT', article) %}
+        <a href="{{ path('app_article_edit', {'id': article.id}) }}"
+           class="text-sm px-4 py-2 rounded-lg border transition-colors"
+           style="border-color: {{ themeConfig ? themeConfig.colors.primary : '#171717' }}; color: {{ themeConfig ? themeConfig.colors.primary : '#171717' }};">
+            Modifier
+        </a>
+        {% endif %}
+    </div>
     {% endif %}
 
-    <div class="border border-base-300 rounded-lg bg-base-100 mb-8"
-         style="padding: {% if themeConfig and themeConfig.layout.spacing == 'compact' %}1.5rem{% elseif themeConfig and themeConfig.layout.spacing == 'comfortable' %}2rem{% else %}2.5rem{% endif %};">
-        <div class="article-content"
+    <div class="mb-8 {% if themeConfig.components.cardStyle == 'bordered' %}border{% elseif themeConfig.components.cardStyle == 'elevated' %}shadow-lg{% endif %} {% if themeConfig and themeConfig.layout.spacing == 'compact' %}p-6{% elseif themeConfig and themeConfig.layout.spacing == 'comfortable' %}p-8{% elseif themeConfig and themeConfig.layout.spacing == 'spacious' %}p-10{% else %}p-8{% endif %} {% if themeConfig.components.borderRadius == 'none' %}rounded-none{% elseif themeConfig.components.borderRadius == 'small' %}rounded{% elseif themeConfig.components.borderRadius == 'large' %}rounded-2xl{% else %}rounded-lg{% endif %}"
+         style="background-color: {{ themeConfig ? themeConfig.colors.base100 : '#ffffff' }};
+                border-color: {{ themeConfig ? themeConfig.colors.base300 : '#e8e8e8' }};">
+        <div class="article-content {% if themeConfig and themeConfig.layout.contentAlignment == 'center' %}text-center{% elseif themeConfig and themeConfig.layout.contentAlignment == 'justify' %}text-justify{% else %}text-left{% endif %} {% if themeConfig and themeConfig.typography.bodySize == 'small' %}text-sm{% elseif themeConfig and themeConfig.typography.bodySize == 'large' %}text-lg{% else %}text-base{% endif %} {% if themeConfig and themeConfig.typography.lineHeight == 'tight' %}leading-snug{% elseif themeConfig and themeConfig.typography.lineHeight == 'relaxed' %}leading-relaxed{% else %}leading-normal{% endif %}"
              data-controller="inline-chart"
-             style="text-align: {{ themeConfig ? themeConfig.layout.contentAlignment : 'left' }};
-                    font-family: {{ themeConfig and themeConfig.typography.bodyFont == 'montserrat' ? 'Montserrat' : 'Darker Grotesque' }};
-                    font-size: {% if themeConfig and themeConfig.typography.bodySize == 'small' %}0.9rem{% elseif themeConfig and themeConfig.typography.bodySize == 'large' %}1.1rem{% else %}1rem{% endif %};
-                    line-height: {% if themeConfig and themeConfig.typography.lineHeight == 'tight' %}1.4{% elseif themeConfig and themeConfig.typography.lineHeight == 'relaxed' %}1.8{% else %}1.6{% endif %};">
+             style="font-family: {{ themeConfig and themeConfig.typography.bodyFont == 'montserrat' ? 'Montserrat' : 'Darker Grotesque' }};">
             {{ article.description|raw }}
         </div>
     </div>
@@ -67,38 +112,63 @@
         .article-content h5,
         .article-content h6 {
             font-family: {{ themeConfig and themeConfig.typography.headingFont == 'darker-grotesque' ? 'Darker Grotesque' : 'Montserrat' }};
-            color: {{ themeConfig ? themeConfig.colors.primary : 'hsl(0, 0%, 9%)' }};
+            color: {{ themeConfig ? themeConfig.colors.primary : '#171717' }};
             {% if themeConfig and themeConfig.typography.headingSize == 'small' %}
             font-size: 0.9em;
             {% elseif themeConfig and themeConfig.typography.headingSize == 'large' %}
             font-size: 1.3em;
             {% endif %}
+            margin-bottom: 0.75rem;
+            font-weight: 600;
         }
 
         .article-content blockquote {
-            border-left-color: {{ themeConfig ? themeConfig.colors.accent : 'hsl(0, 0%, 15%)' }};
+            border-left-color: {{ themeConfig ? themeConfig.colors.accent : '#262626' }};
             border-left-width: 4px;
             padding-left: 1rem;
+            margin: 1rem 0;
             font-style: italic;
             opacity: 0.8;
         }
 
         .article-content a {
-            color: {{ themeConfig ? themeConfig.colors.accent : 'hsl(0, 0%, 15%)' }};
+            color: {{ themeConfig ? themeConfig.colors.accent : '#262626' }};
             text-decoration: underline;
+            transition: opacity 0.2s;
+        }
+
+        .article-content a:hover {
+            opacity: 0.7;
         }
 
         .article-content code {
-            background-color: {{ themeConfig ? themeConfig.colors.base200 : 'hsl(0, 0%, 98%)' }};
-            padding: 0.25rem 0.5rem;
-            border-radius: 0.25rem;
+            background-color: {{ themeConfig ? themeConfig.colors.base200 : '#fafafa' }};
+            color: {{ themeConfig ? themeConfig.colors.primary : '#171717' }};
         }
 
-        .article-content pre {
-            background-color: {{ themeConfig ? themeConfig.colors.base200 : 'hsl(0, 0%, 98%)' }};
-            padding: 1rem;
-            border-radius: 0.5rem;
-            overflow-x: auto;
+        .article-content pre code {
+            background: none;
+        }
+
+        .article-content img {
+            border-radius: {% if themeConfig.components.borderRadius == 'none' %}0{% elseif themeConfig.components.borderRadius == 'small' %}0.25rem{% elseif themeConfig.components.borderRadius == 'large' %}1rem{% else %}0.5rem{% endif %};
+        }
+
+        .article-content table {
+            width: 100%;
+            margin: 1.5rem 0;
+            border-collapse: collapse;
+        }
+
+        .article-content th,
+        .article-content td {
+            padding: 0.75rem;
+            border: 1px solid {{ themeConfig ? themeConfig.colors.base300 : '#e8e8e8' }};
+        }
+
+        .article-content th {
+            background-color: {{ themeConfig ? themeConfig.colors.base200 : '#fafafa' }};
+            font-weight: 600;
         }
     </style>
 </div>

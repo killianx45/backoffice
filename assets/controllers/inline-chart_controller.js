@@ -64,8 +64,10 @@ export default class extends Controller {
         maintainAspectRatio: false,
         plugins: {
           legend: {
-            display: true,
-            position: "top",
+            display: theme && theme.configuration.charts.legendPosition !== 'none',
+            position: theme && theme.configuration.charts.legendPosition !== 'none'
+              ? (theme.configuration.charts.legendPosition || "top")
+              : "top",
           },
           title: {
             display: !!title,
