@@ -27,7 +27,7 @@
                 <div class="flex items-center gap-2">
                     <div class="w-7 h-7 rounded-full bg-white/20 flex items-center justify-center overflow-hidden">
                         {% if article.author.avatar %}
-                            <img src="{{ asset('uploads/avatars/' ~ article.author.avatar) }}" alt="Avatar de {{ article.author.prenom }}" class="w-full h-full object-cover">
+                            <img src="{{ asset('uploads/avatars/' ~ article.author.avatar) }}" alt="{{ 'common.avatar_alt'|trans({'%name%': article.author.prenom}) }}" class="w-full h-full object-cover">
                         {% else %}
                             <span class="text-xs font-medium">{{ article.author.prenom|first }}{{ article.author.nom|first }}</span>
                         {% endif %}
@@ -55,7 +55,7 @@
                 <div class="flex items-center gap-2">
                     <div class="w-7 h-7 rounded-full flex items-center justify-center overflow-hidden" style="background-color: {{ themeConfig ? themeConfig.colors.base300 : '#e8e8e8' }};">
                         {% if article.author.avatar %}
-                            <img src="{{ asset('uploads/avatars/' ~ article.author.avatar) }}" alt="Avatar de {{ article.author.prenom }}" class="w-full h-full object-cover">
+                            <img src="{{ asset('uploads/avatars/' ~ article.author.avatar) }}" alt="{{ 'common.avatar_alt'|trans({'%name%': article.author.prenom}) }}" class="w-full h-full object-cover">
                         {% else %}
                             <span class="text-xs font-medium">{{ article.author.prenom|first }}{{ article.author.nom|first }}</span>
                         {% endif %}
@@ -65,30 +65,30 @@
                 <span class="opacity-40">•</span>
                 <span>{{ article.createdAt|date('d/m/Y') }}</span>
                 {% if article.createdAt != article.updatedAt %}
-                <span class="text-xs opacity-40">(modifié le {{ article.updatedAt|date('d/m/Y') }})</span>
+                <span class="text-xs opacity-40">{{ 'article.modified_on'|trans({'%date%': article.updatedAt|date('d/m/Y')}) }}</span>
                 {% endif %}
             </div>
         </div>
 
         <div class="flex gap-2">
-            <a href="{{ path('app_article_index') }}" class="text-sm px-3 py-2 opacity-70" style="color: {{ themeConfig ? themeConfig.colors.secondary : '#262626' }};">Retour</a>
+            <a href="{{ path('app_article_index') }}" class="text-sm px-3 py-2 opacity-70" style="color: {{ themeConfig ? themeConfig.colors.secondary : '#262626' }};">{{ 'button.back'|trans }}</a>
             {% if is_granted('ARTICLE_EDIT', article) %}
             <a href="{{ path('app_article_edit', {'id': article.id}) }}"
                class="text-sm px-4 py-2 rounded-lg border transition-colors"
                style="border-color: {{ themeConfig ? themeConfig.colors.primary : '#171717' }}; color: {{ themeConfig ? themeConfig.colors.primary : '#171717' }};">
-                Modifier
+                {{ 'button.edit'|trans }}
             </a>
             {% endif %}
         </div>
     </div>
     {% else %}
     <div class="mb-4 flex justify-end gap-2">
-        <a href="{{ path('app_article_index') }}" class="text-sm px-3 py-2 opacity-70" style="color: {{ themeConfig ? themeConfig.colors.secondary : '#262626' }};">Retour</a>
+        <a href="{{ path('app_article_index') }}" class="text-sm px-3 py-2 opacity-70" style="color: {{ themeConfig ? themeConfig.colors.secondary : '#262626' }};">{{ 'button.back'|trans }}</a>
         {% if is_granted('ARTICLE_EDIT', article) %}
         <a href="{{ path('app_article_edit', {'id': article.id}) }}"
            class="text-sm px-4 py-2 rounded-lg border transition-colors"
            style="border-color: {{ themeConfig ? themeConfig.colors.primary : '#171717' }}; color: {{ themeConfig ? themeConfig.colors.primary : '#171717' }};">
-            Modifier
+            {{ 'button.edit'|trans }}
         </a>
         {% endif %}
     </div>

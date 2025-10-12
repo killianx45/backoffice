@@ -1,16 +1,16 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Gestion des thèmes{% endblock %}
+{% block title %}{{ 'theme.title.list'|trans }}{% endblock %}
 
 {% block body %}
 <div class="p-6 max-w-7xl mx-auto">
     <div class="mb-8 flex justify-between items-start">
         <div>
-            <h1 class="text-3xl font-bold mb-2">Thèmes</h1>
-            <p class="opacity-70">Sélectionnez un thème pour personnaliser l'apparence de vos articles</p>
+            <h1 class="text-3xl font-bold mb-2">{{ 'theme.heading'|trans }}</h1>
+            <p class="opacity-70">{{ 'theme.subtitle.list'|trans }}</p>
         </div>
         <a href="{{ path('app_theme_new') }}" class="btn border border-base-content bg-base-content text-base-100 hover:opacity-90">
-            + Créer un thème
+            {{ 'theme.button.create_theme'|trans }}
         </a>
     </div>
 
@@ -31,7 +31,7 @@
                         <div>
                             <h2 class="card-title text-xl">{{ theme.name }}</h2>
                             {% if theme.isActive %}
-                                <div class="badge badge-sm mt-2 bg-base-content text-base-100">Actif</div>
+                                <div class="badge badge-sm mt-2 bg-base-content text-base-100">{{ 'theme.badge.active'|trans }}</div>
                             {% endif %}
                         </div>
                     </div>
@@ -39,7 +39,7 @@
                     <p class="opacity-70 mb-4">{{ theme.description }}</p>
 
                     <div class="mb-4 p-4 bg-base-200 rounded-lg">
-                        <div class="text-xs font-medium opacity-60 mb-2">Aperçu des couleurs</div>
+                        <div class="text-xs font-medium opacity-60 mb-2">{{ 'theme.preview.colors'|trans }}</div>
                         <div class="flex gap-2">
                             {% for color in theme.configuration.colors.chartPalette|slice(0, 5) %}
                                 <div class="w-8 h-8 rounded" style="background: {{ color }};"></div>
@@ -49,36 +49,36 @@
 
                     <div class="grid grid-cols-2 gap-4 mb-4 text-sm">
                         <div>
-                            <span class="opacity-60">Layout:</span>
+                            <span class="opacity-60">{{ 'theme.preview.layout'|trans }}</span>
                             <span class="font-medium ml-1">{{ theme.configuration.layout.articleWidth|capitalize }}</span>
                         </div>
                         <div>
-                            <span class="opacity-60">Espacement:</span>
+                            <span class="opacity-60">{{ 'theme.preview.spacing'|trans }}</span>
                             <span class="font-medium ml-1">{{ theme.configuration.layout.spacing|capitalize }}</span>
                         </div>
                         <div>
-                            <span class="opacity-60">Graphiques:</span>
+                            <span class="opacity-60">{{ 'theme.preview.charts'|trans }}</span>
                             <span class="font-medium ml-1">{{ theme.configuration.charts.colorScheme|capitalize }}</span>
                         </div>
                         <div>
-                            <span class="opacity-60">Style:</span>
+                            <span class="opacity-60">{{ 'theme.preview.style'|trans }}</span>
                             <span class="font-medium ml-1">{{ theme.configuration.components.cardStyle|capitalize }}</span>
                         </div>
                     </div>
 
                     <div class="card-actions justify-end gap-2">
                         <a href="{{ path('app_theme_edit', {'id': theme.id}) }}" class="btn btn-sm border border-base-300 hover:border-base-content">
-                            Modifier
+                            {{ 'button.edit'|trans }}
                         </a>
                         {% if not theme.isActive %}
                             <form method="post" action="{{ path('app_theme_activate', {'id': theme.id}) }}" class="inline">
                                 <input type="hidden" name="_token" value="{{ csrf_token('activate' ~ theme.id) }}">
                                 <button type="submit" class="btn btn-sm border border-base-content bg-base-content text-base-100 hover:opacity-90">
-                                    Activer
+                                    {{ 'button.activate'|trans }}
                                 </button>
                             </form>
                         {% else %}
-                            <button class="btn btn-sm btn-disabled">Thème actuel</button>
+                            <button class="btn btn-sm btn-disabled">{{ 'theme.badge.current'|trans }}</button>
                         {% endif %}
                     </div>
                 </div>

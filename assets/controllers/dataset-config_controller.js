@@ -1,4 +1,5 @@
 import { Controller } from '@hotwired/stimulus';
+import { apiUrl } from "../services/locale-helper";
 
 export default class extends Controller {
     static targets = ['variableRow', 'saveButton', 'cancelButton'];
@@ -17,7 +18,7 @@ export default class extends Controller {
         const newType = select.value;
 
         try {
-            const response = await fetch(`/api/datasets/${this.datasetIdValue}/variables/${variableId}`, {
+            const response = await fetch(apiUrl(`api/datasets/${this.datasetIdValue}/variables/${variableId}`), {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json'
@@ -45,7 +46,7 @@ export default class extends Controller {
 
     async confirmConfiguration() {
         try {
-            const response = await fetch(`/api/datasets/${this.datasetIdValue}/configure`, {
+            const response = await fetch(apiUrl(`api/datasets/${this.datasetIdValue}/configure`), {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -57,7 +58,7 @@ export default class extends Controller {
             if (data.success) {
                 this.showSuccess('Configuration enregistrée avec succès');
                 setTimeout(() => {
-                    window.location.href = '/api/csv/cms/csv';
+                    window.location.href = apiUrl('cms/csv');
                 }, 1500);
             } else {
                 this.showError(data.error || 'Erreur lors de la configuration');
@@ -70,7 +71,7 @@ export default class extends Controller {
 
     cancel() {
         if (confirm('Êtes-vous sûr de vouloir annuler la configuration ?')) {
-            window.location.href = '/api/csv/cms/csv';
+            window.location.href = apiUrl('cms/csv');
         }
     }
 

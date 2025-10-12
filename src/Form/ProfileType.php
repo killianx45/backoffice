@@ -20,7 +20,7 @@ class ProfileType extends AbstractType
     {
         $builder
             ->add('avatar', FileType::class, [
-                'label' => 'Photo de profil',
+                'label' => 'profile.label.avatar',
                 'mapped' => false,
                 'required' => false,
                 'constraints' => [
@@ -31,12 +31,12 @@ class ProfileType extends AbstractType
                             'image/png',
                             'image/webp',
                         ],
-                        'mimeTypesMessage' => 'Veuillez télécharger une image valide (JPEG, PNG, ou WebP)',
+                        'mimeTypesMessage' => 'profile.error.avatar_invalid',
                     ])
                 ],
             ])
             ->add('nom', TextType::class, [
-                'label' => 'Nom',
+                'label' => 'profile.label.lastname',
                 'disabled' => true,
                 'attr' => [
                     'readonly' => true,
@@ -44,7 +44,7 @@ class ProfileType extends AbstractType
                 ],
             ])
             ->add('prenom', TextType::class, [
-                'label' => 'Prénom',
+                'label' => 'profile.label.firstname',
                 'disabled' => true,
                 'attr' => [
                     'readonly' => true,
@@ -52,7 +52,7 @@ class ProfileType extends AbstractType
                 ],
             ])
             ->add('email', EmailType::class, [
-                'label' => 'Email',
+                'label' => 'profile.label.email',
                 'disabled' => true,
                 'attr' => [
                     'readonly' => true,
@@ -64,17 +64,23 @@ class ProfileType extends AbstractType
                 'mapped' => false,
                 'required' => false,
                 'first_options' => [
-                    'label' => 'Nouveau mot de passe',
-                    'attr' => ['autocomplete' => 'new-password'],
+                    'label' => 'profile.label.new_password',
+                    'attr' => [
+                        'autocomplete' => 'new-password',
+                        'placeholder' => 'profile.placeholder.password',
+                    ],
                 ],
                 'second_options' => [
-                    'label' => 'Confirmer le mot de passe',
-                    'attr' => ['autocomplete' => 'new-password'],
+                    'label' => 'profile.label.confirm_password',
+                    'attr' => [
+                        'autocomplete' => 'new-password',
+                        'placeholder' => 'profile.placeholder.password',
+                    ],
                 ],
                 'constraints' => [
                     new Length([
                         'min' => 6,
-                        'minMessage' => 'Votre mot de passe doit contenir au moins {{ limit }} caractères',
+                        'minMessage' => 'profile.error.password_min_length',
                         'max' => 4096,
                     ]),
                 ],
@@ -86,6 +92,7 @@ class ProfileType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => User::class,
+            'translation_domain' => 'forms',
         ]);
     }
 }

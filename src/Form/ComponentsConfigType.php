@@ -13,30 +13,30 @@ class ComponentsConfigType extends AbstractType
     {
         $builder
             ->add('cardStyle', ChoiceType::class, [
-                'label' => 'Style des cartes',
+                'label' => 'components.label.card_style',
                 'choices' => [
-                    'Bordure' => 'bordered',
-                    'Élevé' => 'elevated',
-                    'Plat' => 'flat',
+                    'components.choice.card_style.bordered' => 'bordered',
+                    'components.choice.card_style.elevated' => 'elevated',
+                    'components.choice.card_style.flat' => 'flat',
                 ],
                 'attr' => ['class' => 'select select-bordered w-full'],
             ])
             ->add('buttonStyle', ChoiceType::class, [
-                'label' => 'Style des boutons',
+                'label' => 'components.label.button_style',
                 'choices' => [
-                    'Solide' => 'solid',
-                    'Contour' => 'outline',
-                    'Fantôme' => 'ghost',
+                    'components.choice.button_style.solid' => 'solid',
+                    'components.choice.button_style.outline' => 'outline',
+                    'components.choice.button_style.ghost' => 'ghost',
                 ],
                 'attr' => ['class' => 'select select-bordered w-full'],
             ])
             ->add('borderRadius', ChoiceType::class, [
-                'label' => 'Arrondi des bordures',
+                'label' => 'components.label.border_radius',
                 'choices' => [
-                    'Aucun' => 'none',
-                    'Petit' => 'small',
-                    'Moyen' => 'medium',
-                    'Grand' => 'large',
+                    'components.choice.border_radius.none' => 'none',
+                    'components.choice.border_radius.small' => 'small',
+                    'components.choice.border_radius.medium' => 'medium',
+                    'components.choice.border_radius.large' => 'large',
                 ],
                 'attr' => ['class' => 'select select-bordered w-full'],
             ]);
@@ -46,6 +46,7 @@ class ComponentsConfigType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => null,
+            'translation_domain' => 'forms',
         ]);
     }
 }

@@ -1,0 +1,41 @@
+# Registration validation
+registration:
+  agree_terms:
+    required: You must agree to our terms.
+  password:
+    blank: Please enter a password
+    too_short: Your password should be at least {{ limit }} characters
+    min_message: Your password should be at least {{ limit }} characters
+
+# Profile validation
+profile:
+  avatar:
+    invalid: Please upload a valid image (JPEG, PNG, or WebP)
+  password:
+    too_short: Your password must be at least {{ limit }} characters
+
+# Article validation
+article:
+  title:
+    blank: Title cannot be blank
+    too_short: Title must be at least {{ limit }} characters
+  content:
+    blank: Content cannot be blank
+  image:
+    invalid: Please upload a valid image (JPEG, PNG, GIF, WebP)
+
+# Theme validation
+theme:
+  name:
+    blank: Theme name cannot be blank
+  slug:
+    blank: Identifier cannot be blank
+    invalid: Identifier must contain only lowercase letters, numbers and hyphens
+
+# Common validation
+common:
+  email:
+    invalid: Please enter a valid email address
+    blank: Email cannot be blank
+  required: This field is required
+  not_blank: This field cannot be blank

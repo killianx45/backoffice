@@ -14,7 +14,7 @@ class ColorsConfigType extends AbstractType
     {
         $builder
             ->add('primary', ColorType::class, [
-                'label' => 'Couleur primaire',
+                'label' => 'colors.label.primary',
                 'html5' => true,
                 'attr' => [
                     'class' => 'w-full h-12 rounded cursor-pointer',
@@ -23,7 +23,7 @@ class ColorsConfigType extends AbstractType
                 ],
             ])
             ->add('secondary', ColorType::class, [
-                'label' => 'Couleur secondaire',
+                'label' => 'colors.label.secondary',
                 'html5' => true,
                 'attr' => [
                     'class' => 'w-full h-12 rounded cursor-pointer',
@@ -32,7 +32,7 @@ class ColorsConfigType extends AbstractType
                 ],
             ])
             ->add('accent', ColorType::class, [
-                'label' => 'Couleur d\'accent',
+                'label' => 'colors.label.accent',
                 'html5' => true,
                 'attr' => [
                     'class' => 'w-full h-12 rounded cursor-pointer',
@@ -41,7 +41,7 @@ class ColorsConfigType extends AbstractType
                 ],
             ])
             ->add('base100', ColorType::class, [
-                'label' => 'Couleur de fond principale',
+                'label' => 'colors.label.background_primary',
                 'html5' => true,
                 'attr' => [
                     'class' => 'w-full h-12 rounded cursor-pointer',
@@ -50,7 +50,7 @@ class ColorsConfigType extends AbstractType
                 ],
             ])
             ->add('base200', ColorType::class, [
-                'label' => 'Couleur de fond secondaire',
+                'label' => 'colors.label.background_secondary',
                 'html5' => true,
                 'attr' => [
                     'class' => 'w-full h-12 rounded cursor-pointer',
@@ -59,7 +59,7 @@ class ColorsConfigType extends AbstractType
                 ],
             ])
             ->add('base300', ColorType::class, [
-                'label' => 'Couleur de bordure',
+                'label' => 'colors.label.border',
                 'html5' => true,
                 'attr' => [
                     'class' => 'w-full h-12 rounded cursor-pointer',
@@ -68,7 +68,7 @@ class ColorsConfigType extends AbstractType
                 ],
             ])
             ->add('titleOverlay', ColorType::class, [
-                'label' => 'Couleur de fond du titre sur image',
+                'label' => 'colors.label.title_overlay_bg',
                 'html5' => true,
                 'required' => false,
                 'attr' => [
@@ -78,7 +78,7 @@ class ColorsConfigType extends AbstractType
                 ],
             ])
             ->add('chartPalette', CollectionType::class, [
-                'label' => 'Palette de couleurs pour les graphiques',
+                'label' => 'colors.label.chart_colors',
                 'entry_type' => ColorType::class,
                 'entry_options' => [
                     'label' => false,
@@ -100,6 +100,7 @@ class ColorsConfigType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => null,
+            'translation_domain' => 'forms',
         ]);
     }
 }

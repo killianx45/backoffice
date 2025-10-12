@@ -1,13 +1,13 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Connexion{% endblock %}
+{% block title %}{{ 'login.title'|trans }}{% endblock %}
 
 {% block body %}
     <div class="min-h-screen flex items-center justify-center px-6 py-12 bg-base-100">
         <div class="w-full max-w-md border border-base-300 rounded-lg p-8 bg-base-100">
             <div class="mb-8">
                 <h2 class="text-2xl font-semibold text-base-content text-center">
-                    Connexion
+                    {{ 'login.title'|trans }}
                 </h2>
             </div>
 
@@ -22,14 +22,14 @@
 
             {% if app.user %}
                 <div class="border border-base-300 bg-base-100 rounded-lg p-4 mb-6">
-                    <span class="text-sm text-base-content/80">Vous êtes connecté en tant que {{ app.user.userIdentifier }}, <a href="{{ path('app_logout') }}" class="text-base-content underline hover:no-underline">Se déconnecter</a></span>
+                    <span class="text-sm text-base-content/80">{{ 'login.already_logged_in'|trans({'%username%': app.user.userIdentifier}) }} <a href="{{ path('app_logout') }}" class="text-base-content underline hover:no-underline">{{ 'nav.logout'|trans }}</a></span>
                 </div>
             {% endif %}
 
             <form method="post">
                 <div class="mb-6">
                     <label class="block text-sm font-medium text-base-content mb-2" for="username">
-                        Email
+                        {{ 'login.email.label'|trans({}, 'security') }}
                     </label>
                     <input
                         type="email"
@@ -40,13 +40,13 @@
                         autocomplete="email"
                         required
                         autofocus
-                        placeholder="votre@email.com"
+                        placeholder="{{ 'login.email.placeholder'|trans({}, 'security') }}"
                     >
                 </div>
 
                 <div class="mb-6">
                     <label class="block text-sm font-medium text-base-content mb-2" for="password">
-                        Mot de passe
+                        {{ 'login.password.label'|trans({}, 'security') }}
                     </label>
                     <input
                         type="password"
@@ -55,14 +55,14 @@
                         class="w-full px-4 py-2 border border-base-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-base-content/20 text-sm bg-base-100"
                         autocomplete="current-password"
                         required
-                        placeholder="••••••••"
+                        placeholder="{{ 'login.password.placeholder'|trans({}, 'security') }}"
                     >
                 </div>
 
                 <input type="hidden" name="_csrf_token" data-controller="csrf-protection" value="{{ csrf_token('authenticate') }}">
 
                 <button class="w-full border border-base-content bg-base-content text-base-100 hover:opacity-90 transition-opacity px-4 py-2 rounded-lg text-sm font-medium mt-2" type="submit">
-                    Se connecter
+                    {{ 'login.button.submit'|trans({}, 'security') }}
                 </button>
             </form>
 
@@ -71,14 +71,14 @@
                     <div class="w-full border-t border-base-300"></div>
                 </div>
                 <div class="relative flex justify-center text-xs">
-                    <span class="px-2 bg-base-100 text-base-content/60">OU</span>
+                    <span class="px-2 bg-base-100 text-base-content/60">{{ 'common.or'|trans }}</span>
                 </div>
             </div>
 
             <div class="text-center">
                 <p class="text-sm text-base-content/60">
-                    Pas encore de compte ?
-                    <a href="{{ path('app_register') }}" class="text-base-content underline hover:no-underline">Créer un compte</a>
+                    {{ 'login.no_account'|trans }}
+                    <a href="{{ path('app_register') }}" class="text-base-content underline hover:no-underline">{{ 'button.create'|trans }}</a>
                 </p>
             </div>
         </div>

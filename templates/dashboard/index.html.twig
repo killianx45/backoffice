@@ -1,21 +1,20 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Tableau de bord{% endblock %}
+{% block title %}{{ 'dashboard.title'|trans }}{% endblock %}
 
 {% block body %}
 <div class="container mx-auto px-6 py-12 max-w-7xl">
     {# Section de bienvenue #}
     <div class="mb-12">
-        <h1 class="text-3xl font-semibold mb-2 text-base-content">Bienvenue, {{ app.user.prenom }}</h1>
-        <p class="text-base-content/60 text-sm">Gérez votre contenu et vos publications</p>
+        <h1 class="text-3xl font-semibold mb-2 text-base-content">{{ 'message.welcome'|trans({'%name%': app.user.prenom}) }}</h1>
+        <p class="text-base-content/60 text-sm">{{ 'dashboard.subtitle'|trans }}</p>
     </div>
 
     {# Section d'explication du CMS #}
     <div class="mb-12 border border-base-300 rounded-lg p-6 bg-base-100">
-        <h2 class="text-xl font-medium mb-4 text-base-content">À propos de ce CMS</h2>
+        <h2 class="text-xl font-medium mb-4 text-base-content">{{ 'dashboard.about.title'|trans }}</h2>
         <p class="text-base-content/70 text-sm mb-6 leading-relaxed">
-            Ce système de gestion de contenu vous permet de gérer efficacement votre site web.
-            Selon votre rôle, vous avez accès à différentes fonctionnalités.
+            {{ 'dashboard.about.description'|trans }}
         </p>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div class="flex items-start gap-3">
@@ -25,8 +24,8 @@
                     </svg>
                 </div>
                 <div>
-                    <p class="font-medium text-sm text-base-content">Articles</p>
-                    <p class="text-xs text-base-content/60 mt-1">Créez et publiez du contenu pour votre site</p>
+                    <p class="font-medium text-sm text-base-content">{{ 'dashboard.features.articles.title'|trans }}</p>
+                    <p class="text-xs text-base-content/60 mt-1">{{ 'dashboard.features.articles.description'|trans }}</p>
                 </div>
             </div>
             <div class="flex items-start gap-3">
@@ -36,8 +35,8 @@
                     </svg>
                 </div>
                 <div>
-                    <p class="font-medium text-sm text-base-content">Images</p>
-                    <p class="text-xs text-base-content/60 mt-1">Gérez votre bibliothèque de médias</p>
+                    <p class="font-medium text-sm text-base-content">{{ 'dashboard.features.images.title'|trans }}</p>
+                    <p class="text-xs text-base-content/60 mt-1">{{ 'dashboard.features.images.description'|trans }}</p>
                 </div>
             </div>
             <div class="flex items-start gap-3">
@@ -47,8 +46,8 @@
                     </svg>
                 </div>
                 <div>
-                    <p class="font-medium text-sm text-base-content">CSV & Graphiques</p>
-                    <p class="text-xs text-base-content/60 mt-1">Importez des données et créez des visualisations</p>
+                    <p class="font-medium text-sm text-base-content">{{ 'dashboard.features.csv.title'|trans }}</p>
+                    <p class="text-xs text-base-content/60 mt-1">{{ 'dashboard.features.csv.description'|trans }}</p>
                 </div>
             </div>
             <div class="flex items-start gap-3">
@@ -58,8 +57,8 @@
                     </svg>
                 </div>
                 <div>
-                    <p class="font-medium text-sm text-base-content">Thèmes</p>
-                    <p class="text-xs text-base-content/60 mt-1">Personnalisez l'apparence de votre site</p>
+                    <p class="font-medium text-sm text-base-content">{{ 'dashboard.features.themes.title'|trans }}</p>
+                    <p class="text-xs text-base-content/60 mt-1">{{ 'dashboard.features.themes.description'|trans }}</p>
                 </div>
             </div>
         </div>
@@ -67,7 +66,7 @@
 
     {# Actions rapides #}
     <div class="mb-12">
-        <h2 class="text-xl font-medium mb-6 text-base-content">Actions rapides</h2>
+        <h2 class="text-xl font-medium mb-6 text-base-content">{{ 'dashboard.quick_actions.title'|trans }}</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {% for action in quick_actions %}
                 <a href="{% if action.route == '#' %}#{% else %}{{ path(action.route) }}{% endif %}"
@@ -97,8 +96,8 @@
                             {% endif %}
                         </div>
                         <div class="flex-1">
-                            <h3 class="font-medium text-sm mb-1 text-base-content">{{ action.title }}</h3>
-                            <p class="text-xs text-base-content/60">{{ action.description }}</p>
+                            <h3 class="font-medium text-sm mb-1 text-base-content">{{ action.title|trans }}</h3>
+                            <p class="text-xs text-base-content/60">{{ action.description|trans }}</p>
                         </div>
                     </div>
                 </a>
@@ -110,10 +109,10 @@
     {% if recent_articles|length > 0 %}
     <div class="mb-12">
         <div class="flex justify-between items-center mb-6">
-            <h2 class="text-xl font-medium text-base-content">Articles récents</h2>
+            <h2 class="text-xl font-medium text-base-content">{{ 'dashboard.recent_articles.title'|trans }}</h2>
             {% if is_granted('ROLE_AUTEUR') or is_granted('ROLE_EDITEUR') or is_granted('ROLE_ADMIN') %}
                 <a href="{{ path('app_article_index') }}" class="text-sm text-base-content/60 hover:text-base-content transition-colors flex items-center gap-1">
-                    Voir tout
+                    {{ 'button.view_all'|trans }}
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                     </svg>
@@ -124,9 +123,9 @@
             <table class="w-full">
                 <thead class="border-b border-base-300">
                     <tr class="text-left">
-                        <th class="px-6 py-3 text-xs font-medium text-base-content/60">Titre</th>
-                        <th class="px-6 py-3 text-xs font-medium text-base-content/60">Auteur</th>
-                        <th class="px-6 py-3 text-xs font-medium text-base-content/60">Date</th>
+                        <th class="px-6 py-3 text-xs font-medium text-base-content/60">{{ 'dashboard.recent_articles.table.title'|trans }}</th>
+                        <th class="px-6 py-3 text-xs font-medium text-base-content/60">{{ 'dashboard.recent_articles.table.author'|trans }}</th>
+                        <th class="px-6 py-3 text-xs font-medium text-base-content/60">{{ 'dashboard.recent_articles.table.date'|trans }}</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-base-300">
@@ -158,10 +157,9 @@
                 </svg>
             </div>
             <div>
-                <p class="font-medium text-sm text-base-content mb-1">Astuce</p>
+                <p class="font-medium text-sm text-base-content mb-1">{{ 'dashboard.tip.label'|trans }}</p>
                 <p class="text-xs text-base-content/60 leading-relaxed">
-                    Utilisez le menu de navigation sur la gauche pour accéder rapidement à toutes les fonctionnalités du CMS.
-                    Chaque section dispose d'une interface intuitive pour vous guider dans vos tâches.
+                    {{ 'dashboard.tip.text'|trans }}
                 </p>
             </div>
         </div>

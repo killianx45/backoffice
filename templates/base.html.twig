@@ -6,8 +6,8 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0"
     />
-    <title>{% block title %}CMS Backoffice{% endblock %}</title>
-    <meta name="description" content="{% block meta_description %}Backoffice CMS - Gestion de contenu, articles, médias et utilisateurs{% endblock %}" />
+    <title>{% block title %}{{ 'meta.title.default'|trans }}{% endblock %}</title>
+    <meta name="description" content="{% block meta_description %}{{ 'meta.description.default'|trans }}{% endblock %}" />
     <meta name="robots" content="{% block meta_robots %}noindex, nofollow{% endblock %}" />
     {% block stylesheets %}
       {{ encore_entry_link_tags('app') }}
@@ -30,7 +30,7 @@
             </label>
           </div>
           <div class="flex-1">
-            <a class="btn btn-ghost text-xl">CMS Backoffice</a>
+            <a class="btn btn-ghost text-xl">{{ 'meta.title.default'|trans }}</a>
           </div>
         </div>
         <main class="flex-1 p-6">

@@ -1,0 +1,21 @@
+# Security & Authentication
+auth:
+  error:
+    invalid_credentials: Identifiants invalides
+    account_disabled: Votre compte a été désactivé
+    too_many_attempts: Trop de tentatives. Veuillez réessayer plus tard
+
+# Login
+login:
+  title: Connexion
+  email:
+    label: Email
+    placeholder: votre@email.com
+  password:
+    label: Mot de passe
+    placeholder: ••••••••
+  button:
+    submit: Se connecter
+  link:
+    register: Créer un compte
+    forgot_password: Mot de passe oublié ?

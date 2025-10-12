@@ -1,13 +1,13 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Inscription{% endblock %}
+{% block title %}{{ 'registration.title'|trans }}{% endblock %}
 
 {% block body %}
     <div class="min-h-screen flex items-center justify-center px-6 py-12 bg-base-100">
         <div class="w-full max-w-md border border-base-300 rounded-lg p-8 bg-base-100">
             <div class="mb-8">
                 <h2 class="text-2xl font-semibold text-base-content text-center">
-                    Créer un compte
+                    {{ 'registration.heading'|trans }}
                 </h2>
             </div>
 
@@ -56,9 +56,9 @@
 
                 <div class="mb-6">
                     <label class="block text-sm font-medium text-base-content mb-2">
-                        Mot de passe
+                        {{ form_label(registrationForm.plainPassword) }}
                     </label>
-                    {{ form_widget(registrationForm.plainPassword, {'attr': {'class': 'w-full px-4 py-2 border border-base-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-base-content/20 text-sm bg-base-100', 'placeholder': '••••••••'}}) }}
+                    {{ form_widget(registrationForm.plainPassword, {'attr': {'class': 'w-full px-4 py-2 border border-base-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-base-content/20 text-sm bg-base-100'}}) }}
                     <div class="text-xs text-base-content/60 mt-1">{{ form_errors(registrationForm.plainPassword) }}</div>
                 </div>
 
@@ -71,7 +71,7 @@
                 </div>
 
                 <button type="submit" class="w-full border border-base-content bg-base-content text-base-100 hover:opacity-90 transition-opacity px-4 py-2 rounded-lg text-sm font-medium mt-2">
-                    Créer mon compte
+                    {{ 'button.submit'|trans }}
                 </button>
             {{ form_end(registrationForm) }}
 
@@ -80,14 +80,14 @@
                     <div class="w-full border-t border-base-300"></div>
                 </div>
                 <div class="relative flex justify-center text-xs">
-                    <span class="px-2 bg-base-100 text-base-content/60">OU</span>
+                    <span class="px-2 bg-base-100 text-base-content/60">{{ 'common.or'|trans }}</span>
                 </div>
             </div>
 
             <div class="text-center">
                 <p class="text-sm text-base-content/60">
-                    Vous avez déjà un compte ?
-                    <a href="{{ path('app_login') }}" class="text-base-content underline hover:no-underline">Se connecter</a>
+                    {{ 'registration.already_have_account'|trans }}
+                    <a href="{{ path('app_login') }}" class="text-base-content underline hover:no-underline">{{ 'button.submit'|trans }}</a>
                 </p>
             </div>
         </div>

@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\String\Slugger\SluggerInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[Route('/cms/theme')]
 #[IsGranted('ROLE_DESIGNEUR')]
@@ -20,7 +21,8 @@ class ThemeController extends AbstractController
     public function __construct(
         private ThemeService $themeService,
         private EntityManagerInterface $entityManager,
-        private SluggerInterface $slugger
+        private SluggerInterface $slugger,
+        private TranslatorInterface $translator
     ) {
     }
 
@@ -61,7 +63,7 @@ class ThemeController extends AbstractController
                 $this->entityManager->flush();
             }
 
-            $this->addFlash('success', sprintf('Le thème "%s" a été créé avec succès.', $theme->getName()));
+            $this->addFlash('success', $this->translator->trans('theme.flash.created', ['%name%' => $theme->getName()]));
 
             return $this->redirectToRoute('app_theme_index');
         }
@@ -94,7 +96,7 @@ class ThemeController extends AbstractController
 
             $this->entityManager->flush();
 
-            $this->addFlash('success', sprintf('Le thème "%s" a été modifié avec succès.', $theme->getName()));
+            $this->addFlash('success', $this->translator->trans('theme.flash.updated', ['%name%' => $theme->getName()]));
 
             return $this->redirectToRoute('app_theme_index');
         }
@@ -111,7 +113,7 @@ class ThemeController extends AbstractController
     {
         $this->themeService->setActiveTheme($theme);
 
-        $this->addFlash('success', sprintf('Le thème "%s" a été activé avec succès.', $theme->getName()));
+        $this->addFlash('success', $this->translator->trans('theme.flash.activated', ['%name%' => $theme->getName()]));
 
         return $this->redirectToRoute('app_theme_index');
     }

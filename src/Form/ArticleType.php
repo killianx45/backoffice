@@ -18,14 +18,14 @@ class ArticleType extends AbstractType
     {
         $builder
             ->add('title', TextType::class, [
-                'label' => 'Titre',
+                'label' => 'article.label.title',
                 'attr' => [
                     'class' => 'input input-bordered w-full',
-                    'placeholder' => 'Entrez le titre de l\'article'
+                    'placeholder' => 'article.placeholder.title',
                 ],
             ])
             ->add('description', TextareaType::class, [
-                'label' => 'Description',
+                'label' => 'article.label.description',
                 'required' => false,
                 'attr' => [
                     'class' => 'textarea textarea-bordered w-full',
@@ -40,12 +40,12 @@ class ArticleType extends AbstractType
                 ],
             ])
             ->add('featuredImageFile', FileType::class, [
-                'label' => 'Image principale',
+                'label' => 'article.label.image',
                 'required' => false,
                 'mapped' => false,
                 'attr' => [
                     'class' => 'file-input file-input-bordered w-full',
-                    'accept' => 'image/*'
+                    'accept' => 'image/*',
                 ],
                 'constraints' => [
                     new Image([
@@ -56,7 +56,7 @@ class ArticleType extends AbstractType
                             'image/gif',
                             'image/webp',
                         ],
-                        'mimeTypesMessage' => 'Veuillez uploader une image valide (JPEG, PNG, GIF, WebP)',
+                        'mimeTypesMessage' => 'article.error.image_invalid',
                     ])
                 ],
             ])
@@ -67,6 +67,7 @@ class ArticleType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Article::class,
+            'translation_domain' => 'forms',
         ]);
     }
 }

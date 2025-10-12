@@ -32,6 +32,7 @@ class ConfigurationType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => null,
+            'translation_domain' => 'forms',
             'attr' => [
                 'data-controller' => 'theme-editor',
                 'data-action' => 'input->theme-editor#updatePreview change->theme-editor#updatePreview',

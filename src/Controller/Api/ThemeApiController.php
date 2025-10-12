@@ -6,12 +6,14 @@ use App\Service\ThemeService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[Route('/api/theme')]
 class ThemeApiController extends AbstractController
 {
     public function __construct(
-        private ThemeService $themeService
+        private ThemeService $themeService,
+        private TranslatorInterface $translator
     ) {}
 
     #[Route('/active', name: 'api_theme_active', methods: ['GET'])]
@@ -21,7 +23,7 @@ class ThemeApiController extends AbstractController
 
         if (!$theme) {
             return $this->json([
-                'error' => 'No active theme found',
+                'error' => $this->translator->trans('api.theme.error.no_active'),
             ], 404);
         }
 
@@ -42,7 +44,7 @@ class ThemeApiController extends AbstractController
 
         if (empty($theme)) {
             return $this->json([
-                'error' => 'Theme not found',
+                'error' => $this->translator->trans('api.theme.error.not_found'),
             ], 404);
         }
 

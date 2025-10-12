@@ -33,16 +33,16 @@ final class DashboardController extends AbstractController
         // Articles - pour Auteurs, Éditeurs et Admins
         if ($this->isGranted('ROLE_AUTEUR') || $this->isGranted('ROLE_EDITEUR') || $this->isGranted('ROLE_ADMIN')) {
             $actions[] = [
-                'title' => 'Gérer les articles',
-                'description' => 'Créez, modifiez et publiez vos articles',
+                'title' => 'dashboard.quick_actions.articles.title',
+                'description' => 'dashboard.quick_actions.articles.description',
                 'icon' => 'article',
                 'route' => 'app_article_index',
                 'color' => 'primary',
             ];
 
             $actions[] = [
-                'title' => 'Bibliothèque d\'images',
-                'description' => 'Gérez vos médias et images',
+                'title' => 'dashboard.quick_actions.media.title',
+                'description' => 'dashboard.quick_actions.media.description',
                 'icon' => 'image',
                 'route' => 'app_media_index',
                 'color' => 'secondary',
@@ -52,8 +52,8 @@ final class DashboardController extends AbstractController
         // CSV - pour Fournisseurs et Admins
         if ($this->isGranted('ROLE_FOURNISSEUR') || $this->isGranted('ROLE_ADMIN')) {
             $actions[] = [
-                'title' => 'Fichiers CSV',
-                'description' => 'Importez et visualisez vos données',
+                'title' => 'dashboard.quick_actions.csv.title',
+                'description' => 'dashboard.quick_actions.csv.description',
                 'icon' => 'csv',
                 'route' => 'app_csv_index',
                 'color' => 'accent',
@@ -63,8 +63,8 @@ final class DashboardController extends AbstractController
         // Thème - pour Designers et Admins
         if ($this->isGranted('ROLE_DESIGNEUR') || $this->isGranted('ROLE_ADMIN')) {
             $actions[] = [
-                'title' => 'Personnaliser le thème',
-                'description' => 'Modifiez l\'apparence du site',
+                'title' => 'dashboard.quick_actions.theme.title',
+                'description' => 'dashboard.quick_actions.theme.description',
                 'icon' => 'theme',
                 'route' => 'app_theme_index',
                 'color' => 'info',
@@ -74,8 +74,8 @@ final class DashboardController extends AbstractController
         // Utilisateurs - pour Admins uniquement
         if ($this->isGranted('ROLE_ADMIN')) {
             $actions[] = [
-                'title' => 'Gestion des utilisateurs',
-                'description' => 'Gérez les rôles et permissions',
+                'title' => 'dashboard.quick_actions.users.title',
+                'description' => 'dashboard.quick_actions.users.description',
                 'icon' => 'users',
                 'route' => 'app_user_index',
                 'color' => 'warning',

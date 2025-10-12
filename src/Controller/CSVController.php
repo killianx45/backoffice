@@ -13,13 +13,18 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\String\Slugger\SluggerInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
-#[Route('/api/csv')]
 #[IsGranted('ROLE_FOURNISSEUR')]
 class CSVController extends AbstractController
 {
     private const MAX_FILE_SIZE = 2 * 1024 * 1024;
     private const ALLOWED_MIME_TYPES = ['text/csv', 'text/plain', 'application/csv'];
+
+    public function __construct(
+        private readonly TranslatorInterface $translator
+    ) {
+    }
 
     #[Route('/cms/csv', name: 'app_csv_index')]
     public function index(): Response
@@ -29,7 +34,7 @@ class CSVController extends AbstractController
         ]);
     }
 
-    #[Route('/dataset/{id}/configure', name: 'app_csv_configure', methods: ['GET'])]
+    #[Route('/api/csv/dataset/{id}/configure', name: 'app_csv_configure', methods: ['GET'])]
     public function configure(CsvDataset $dataset): Response
     {
         if ($dataset->getUploadedBy() !== $this->getUser()) {
@@ -41,22 +46,22 @@ class CSVController extends AbstractController
         ]);
     }
 
-    #[Route('/upload', name: 'app_csv_upload', methods: ['POST'])]
+    #[Route('/api/csv/upload', name: 'app_csv_upload', methods: ['POST'])]
     public function upload(Request $request, SluggerInterface $slugger, EntityManagerInterface $em): JsonResponse
     {
         $file = $request->files->get('file');
 
         if (!$file) {
-            return $this->json(['error' => 'Aucun fichier fourni'], Response::HTTP_BAD_REQUEST);
+            return $this->json(['error' => $this->translator->trans('csv.error.no_file')], Response::HTTP_BAD_REQUEST);
         }
 
         if ($file->getSize() > self::MAX_FILE_SIZE) {
-            return $this->json(['error' => 'Le fichier est trop volumineux (max 2MB)'], Response::HTTP_BAD_REQUEST);
+            return $this->json(['error' => $this->translator->trans('csv.error.file_too_large')], Response::HTTP_BAD_REQUEST);
         }
 
         $mimeType = $file->getMimeType();
         if (!in_array($mimeType, self::ALLOWED_MIME_TYPES)) {
-            return $this->json(['error' => 'Type de fichier non autorisé. Seuls les fichiers CSV sont acceptés.'], Response::HTTP_BAD_REQUEST);
+            return $this->json(['error' => $this->translator->trans('csv.error.invalid_type')], Response::HTTP_BAD_REQUEST);
         }
 
         $originalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
@@ -106,10 +111,10 @@ class CSVController extends AbstractController
                     'columnIndex' => $v->getColumnIndex(),
                     'sampleValues' => $v->getSampleValues()
                 ], $dataset->getVariables()->toArray()),
-                'message' => 'Fichier CSV uploadé avec succès'
+                'message' => $this->translator->trans('csv.success.uploaded')
             ]);
         } catch (FileException $e) {
-            return $this->json(['error' => 'Erreur lors de l\'upload du fichier'], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return $this->json(['error' => $this->translator->trans('csv.error.upload_failed')], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -200,36 +205,36 @@ class CSVController extends AbstractController
         return true;
     }
 
-    #[Route('/delete/{filename}', name: 'app_csv_delete', methods: ['DELETE'])]
+    #[Route('/api/csv/delete/{filename}', name: 'app_csv_delete', methods: ['DELETE'])]
     public function delete(string $filename): JsonResponse
     {
         $csvDirectory = $this->getParameter('kernel.project_dir') . '/public/media/csv';
         $filePath = $csvDirectory . '/' . $filename;
 
         if (!file_exists($filePath)) {
-            return $this->json(['error' => 'Fichier introuvable'], Response::HTTP_NOT_FOUND);
+            return $this->json(['error' => $this->translator->trans('csv.error.not_found')], Response::HTTP_NOT_FOUND);
         }
 
         if (!str_ends_with($filename, '.csv')) {
-            return $this->json(['error' => 'Type de fichier invalide'], Response::HTTP_BAD_REQUEST);
+            return $this->json(['error' => $this->translator->trans('csv.error.invalid_file_type')], Response::HTTP_BAD_REQUEST);
         }
 
         try {
             unlink($filePath);
-            return $this->json(['success' => true, 'message' => 'Fichier supprimé avec succès']);
+            return $this->json(['success' => true, 'message' => $this->translator->trans('csv.success.deleted')]);
         } catch (\Exception $e) {
-            return $this->json(['error' => 'Erreur lors de la suppression du fichier'], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return $this->json(['error' => $this->translator->trans('csv.error.delete_failed')], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
-    #[Route('/preview/{filename}', name: 'app_csv_preview', methods: ['GET'])]
+    #[Route('/api/csv/preview/{filename}', name: 'app_csv_preview', methods: ['GET'])]
     public function preview(string $filename): JsonResponse
     {
         $csvDirectory = $this->getParameter('kernel.project_dir') . '/public/media/csv';
         $filePath = $csvDirectory . '/' . $filename;
 
         if (!file_exists($filePath)) {
-            return $this->json(['error' => 'Fichier introuvable'], Response::HTTP_NOT_FOUND);
+            return $this->json(['error' => $this->translator->trans('csv.error.not_found')], Response::HTTP_NOT_FOUND);
         }
 
         try {
@@ -243,7 +248,7 @@ class CSVController extends AbstractController
                 'lineCount' => count(explode("\n", $content))
             ]);
         } catch (\Exception $e) {
-            return $this->json(['error' => 'Erreur lors de la lecture du fichier'], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return $this->json(['error' => $this->translator->trans('csv.error.read_failed')], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 }

@@ -13,13 +13,13 @@ class ChartsConfigType extends AbstractType
     {
         $builder
             ->add('legendPosition', ChoiceType::class, [
-                'label' => 'Position de la légende',
+                'label' => 'charts.label.legend_position',
                 'choices' => [
-                    'Haut' => 'top',
-                    'Bas' => 'bottom',
-                    'Gauche' => 'left',
-                    'Droite' => 'right',
-                    'Aucune' => 'none',
+                    'charts.choice.legend_position.top' => 'top',
+                    'charts.choice.legend_position.bottom' => 'bottom',
+                    'charts.choice.legend_position.left' => 'left',
+                    'charts.choice.legend_position.right' => 'right',
+                    'charts.choice.legend_position.none' => 'none',
                 ],
                 'attr' => ['class' => 'select select-bordered w-full'],
             ]);
@@ -29,6 +29,7 @@ class ChartsConfigType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => null,
+            'translation_domain' => 'forms',
         ]);
     }
 }

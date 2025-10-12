@@ -1,0 +1,23 @@
+<div class="language-switcher flex items-center gap-2">
+    {% set current_route = app.current_route %}
+    {% set route_params = app.current_route_parameters %}
+
+    {% for locale in ['fr', 'en'] %}
+        {% set is_active = app.request.locale == locale %}
+        {% if current_route %}
+            <a href="{{ path(current_route, route_params|merge({_locale: locale})) }}"
+               class="btn btn-sm {{ is_active ? 'btn-primary' : 'btn-ghost' }}"
+               aria-label="Switch to {{ locale == 'fr' ? 'French' : 'English' }}"
+               {{ is_active ? 'aria-current="true"' : '' }}>
+                {{ locale|upper }}
+            </a>
+        {% else %}
+            <a href="{{ path('app_login', {_locale: locale}) }}"
+               class="btn btn-sm {{ is_active ? 'btn-primary' : 'btn-ghost' }}"
+               aria-label="Switch to {{ locale == 'fr' ? 'French' : 'English' }}"
+               {{ is_active ? 'aria-current="true"' : '' }}>
+                {{ locale|upper }}
+            </a>
+        {% endif %}
+    {% endfor %}
+</div>

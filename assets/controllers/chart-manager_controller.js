@@ -1,6 +1,7 @@
 import { Controller } from "@hotwired/stimulus";
 import { CSVService } from "../services/csv-service";
 import { ChartValidator } from "../utils/chart-validator";
+import { apiUrl } from "../services/locale-helper";
 
 export default class extends Controller {
   connect() {
@@ -60,7 +61,7 @@ export default class extends Controller {
 
     if (this.chartConfig.datasetId) {
       try {
-        const response = await fetch(`/api/datasets/${this.chartConfig.datasetId}`);
+        const response = await fetch(apiUrl(`api/datasets/${this.chartConfig.datasetId}`));
         const data = await response.json();
         this.selectedDataset = data.dataset;
         this.datasetVariables = data.dataset.variables;
@@ -327,7 +328,7 @@ export default class extends Controller {
     if (!gallery) return;
 
     try {
-      const response = await fetch("/api/datasets");
+      const response = await fetch(apiUrl("api/datasets"));
       const data = await response.json();
       const datasets = data.datasets;
 
@@ -381,7 +382,7 @@ export default class extends Controller {
 
   async selectDataset(datasetId) {
     try {
-      const response = await fetch(`/api/datasets/${datasetId}`);
+      const response = await fetch(apiUrl(`api/datasets/${datasetId}`));
       const data = await response.json();
       this.selectedDataset = data.dataset;
       this.datasetVariables = data.dataset.variables;
@@ -617,7 +618,7 @@ export default class extends Controller {
 
       if (data.datasetId) {
         this.closeModal();
-        window.location.href = `/api/csv/dataset/${data.datasetId}/configure`;
+        window.location.href = apiUrl(`api/csv/dataset/${data.datasetId}/configure`);
         return;
       }
     } catch (error) {

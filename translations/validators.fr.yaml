@@ -1,0 +1,41 @@
+# Registration validation
+registration:
+  agree_terms:
+    required: Vous devez accepter nos conditions d'utilisation.
+  password:
+    blank: Veuillez saisir un mot de passe
+    too_short: Votre mot de passe doit contenir au moins {{ limit }} caractères
+    min_message: Votre mot de passe doit contenir au moins {{ limit }} caractères
+
+# Profile validation
+profile:
+  avatar:
+    invalid: Veuillez télécharger une image valide (JPEG, PNG, ou WebP)
+  password:
+    too_short: Votre mot de passe doit contenir au moins {{ limit }} caractères
+
+# Article validation
+article:
+  title:
+    blank: Le titre ne peut pas être vide
+    too_short: Le titre doit contenir au moins {{ limit }} caractères
+  content:
+    blank: Le contenu ne peut pas être vide
+  image:
+    invalid: Veuillez uploader une image valide (JPEG, PNG, GIF, WebP)
+
+# Theme validation
+theme:
+  name:
+    blank: Le nom du thème ne peut pas être vide
+  slug:
+    blank: L'identifiant ne peut pas être vide
+    invalid: L'identifiant doit contenir uniquement des lettres minuscules, chiffres et tirets
+
+# Common validation
+common:
+  email:
+    invalid: Veuillez saisir une adresse email valide
+    blank: L'email ne peut pas être vide
+  required: Ce champ est obligatoire
+  not_blank: Ce champ ne peut pas être vide

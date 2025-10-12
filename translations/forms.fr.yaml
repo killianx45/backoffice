@@ -1,0 +1,153 @@
+# Registration Form
+registration:
+  label:
+    lastname: Nom
+    firstname: Prénom
+    email: Email
+    password: Mot de passe
+    agree_terms: J'accepte les conditions d'utilisation
+  placeholder:
+    lastname: Doe
+    firstname: John
+    email: john.doe@email.com
+    password: ••••••••
+  error:
+    agree_terms: Vous devez accepter les conditions d'utilisation
+    password_required: Veuillez entrer un mot de passe
+    password_min_length: Votre mot de passe doit contenir au moins {{ limit }} caractères
+
+# Profile Form
+profile:
+  label:
+    avatar: Photo de profil
+    lastname: Nom
+    firstname: Prénom
+    email: Email
+    new_password: Nouveau mot de passe
+    confirm_password: Confirmer le mot de passe
+  placeholder:
+    password: ••••••••
+  error:
+    avatar_invalid: Veuillez télécharger une image valide (JPEG, PNG, ou WebP)
+    password_min_length: Votre mot de passe doit contenir au moins {{ limit }} caractères
+
+# Article Form
+article:
+  label:
+    title: Titre
+    description: Description
+    content: Contenu
+    image: Image principale
+  placeholder:
+    title: Entrez le titre de l'article
+  button:
+    select_image: Sélectionner une image
+  error:
+    image_invalid: Veuillez uploader une image valide (JPEG, PNG, GIF, WebP)
+
+# Theme Form
+theme:
+  label:
+    name: Nom du thème
+    slug: Identifiant (slug)
+    description: Description
+    is_active: Activer ce thème
+  placeholder:
+    slug: mon-theme
+  help:
+    slug: Caractères minuscules, chiffres et tirets uniquement
+
+# Typography Config
+typography:
+  label:
+    title_font: Police des titres
+    body_font: Police du corps de texte
+    title_size: Taille des titres
+    body_size: Taille du corps de texte
+    line_height: Hauteur de ligne
+  choice:
+    size:
+      small: Petit
+      medium: Moyen
+      large: Grand
+    line_height:
+      tight: Serré
+      normal: Normal
+      relaxed: Relâché
+
+# Colors Config
+colors:
+  label:
+    primary: Couleur primaire
+    secondary: Couleur secondaire
+    accent: Couleur d'accent
+    background_primary: Couleur de fond principale
+    background_secondary: Couleur de fond secondaire
+    border: Couleur de bordure
+    title_overlay_bg: Couleur de fond du titre sur image
+    chart_colors: Palette de couleurs pour les graphiques
+
+# Components Config
+components:
+  label:
+    card_style: Style des cartes
+    button_style: Style des boutons
+    border_radius: Arrondi des bordures
+  choice:
+    card_style:
+      bordered: Bordure
+      elevated: Élevé
+      flat: Plat
+    button_style:
+      solid: Solide
+      outline: Contour
+      ghost: Fantôme
+    border_radius:
+      none: Aucun
+      small: Petit
+      medium: Moyen
+      large: Grand
+
+# Layout Config
+layout:
+  label:
+    article_width: Largeur de l'article
+    featured_image_size: Taille de l'image mise en avant
+    content_alignment: Alignement du contenu
+    spacing: Espacement
+    title_position: Position du titre
+  choice:
+    article_width:
+      narrow: Étroit (600px)
+      medium: Moyen (800px)
+      wide: Large (1200px)
+    image_size:
+      small: Petite
+      medium: Moyenne
+      large: Grande
+      full: Pleine largeur
+    alignment:
+      left: Gauche
+      center: Centre
+      justify: Justifié
+    spacing:
+      compact: Compact
+      comfortable: Confortable
+      spacious: Spacieux
+    title_position:
+      above: Au-dessus de l'image
+      overlay_top: Sur l'image (haut)
+      overlay_center: Sur l'image (centre)
+      overlay_bottom: Sur l'image (bas)
+
+# Charts Config
+charts:
+  label:
+    legend_position: Position de la légende
+  choice:
+    legend_position:
+      top: Haut
+      bottom: Bas
+      left: Gauche
+      right: Droite
+      none: Aucune

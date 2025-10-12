@@ -1,12 +1,12 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Mon Profil{% endblock %}
+{% block title %}{{ 'user.title.profile'|trans }}{% endblock %}
 
 {% block body %}
 <div class="container mx-auto px-6 py-12 max-w-2xl">
     <div class="mb-8">
-        <h1 class="text-3xl font-semibold text-base-content">Mon Profil</h1>
-        <p class="text-sm text-base-content/60 mt-1">Gérez votre avatar et mot de passe</p>
+        <h1 class="text-3xl font-semibold text-base-content">{{ 'user.title.profile'|trans }}</h1>
+        <p class="text-sm text-base-content/60 mt-1">{{ 'user.subtitle.profile'|trans }}</p>
     </div>
 
     {% for message in app.flashes('success') %}
@@ -32,17 +32,17 @@
                 </div>
 
                 <div class="w-full">
-                    <label class="text-sm font-medium text-base-content/80 mb-2 block">Photo de profil</label>
+                    <label class="text-sm font-medium text-base-content/80 mb-2 block">{{ 'user.profile.avatar.title'|trans }}</label>
                     {{ form_widget(form.avatar, {'attr': {'class': 'file-input file-input-bordered w-full border-base-300 bg-base-100 text-base-content/80', 'accept': 'image/jpeg,image/png,image/webp'}}) }}
-                    <p class="text-xs text-base-content/50 mt-1">Format accepté : JPEG, PNG, WebP (max 2MB)</p>
+                    <p class="text-xs text-base-content/50 mt-1">{{ 'user.profile.avatar.format_hint'|trans }}</p>
                     {{ form_errors(form.avatar) }}
                 </div>
             </div>
 
             {# Personal Information (Read-only) #}
             <div class="space-y-4">
-                <h3 class="text-sm font-medium text-base-content/80">Informations personnelles</h3>
-                <p class="text-xs text-base-content/50">Ces informations ne peuvent pas être modifiées</p>
+                <h3 class="text-sm font-medium text-base-content/80">{{ 'user.profile.info.title'|trans }}</h3>
+                <p class="text-xs text-base-content/50">{{ 'user.profile.info.readonly'|trans }}</p>
 
                 <div>
                     <label class="text-sm text-base-content/70 mb-2 block">{{ form_label(form.nom) }}</label>
@@ -65,8 +65,8 @@
 
             {# Password Change Section #}
             <div class="space-y-4 pt-6 border-t border-base-300">
-                <h3 class="text-sm font-medium text-base-content/80">Changer le mot de passe</h3>
-                <p class="text-xs text-base-content/50">Laissez vide pour conserver le mot de passe actuel</p>
+                <h3 class="text-sm font-medium text-base-content/80">{{ 'user.profile.password.title'|trans }}</h3>
+                <p class="text-xs text-base-content/50">{{ 'user.profile.password.hint'|trans }}</p>
 
                 <div>
                     <label class="text-sm text-base-content/70 mb-2 block">{{ form_label(form.plainPassword.first) }}</label>
@@ -84,10 +84,10 @@
             {# Action Buttons #}
             <div class="flex gap-3 pt-6">
                 <a href="{{ path('app_dashboard') }}" class="flex-1 px-4 py-2 text-sm text-center border border-base-300 rounded-lg hover:bg-base-200 transition-colors">
-                    Annuler
+                    {{ 'button.cancel'|trans }}
                 </a>
                 <button type="submit" class="flex-1 px-4 py-2 text-sm border border-base-content bg-base-content text-base-100 rounded-lg hover:opacity-90 transition-opacity">
-                    Enregistrer les modifications
+                    {{ 'button.save_changes'|trans }}
                 </button>
             </div>
 

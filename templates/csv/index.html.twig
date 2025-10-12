@@ -1,13 +1,13 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Gestion des CSV{% endblock %}
+{% block title %}{{ 'csv.title.list'|trans }}{% endblock %}
 
 {% block body %}
 <div class="drawer-content flex flex-col p-6 py-12" data-controller="csv-library">
     <div class="max-w-7xl mx-auto w-full">
         <div class="mb-8">
-            <h1 class="text-3xl font-semibold text-base-content">Gestion des Datasets</h1>
-            <p class="text-base-content/60 mt-1 text-sm">Uploadez et configurez vos fichiers CSV pour créer des graphiques</p>
+            <h1 class="text-3xl font-semibold text-base-content">{{ 'csv.heading'|trans }}</h1>
+            <p class="text-base-content/60 mt-1 text-sm">{{ 'csv.description'|trans }}</p>
         </div>
 
         <div id="flash-container" class="mb-6"></div>
@@ -29,14 +29,14 @@
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto mb-4 text-base-content/30" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                 </svg>
-                <p class="text-base font-medium text-base-content mb-2">Glissez-déposez vos fichiers CSV ici</p>
-                <p class="text-sm text-base-content/60 mb-1">ou cliquez pour sélectionner</p>
-                <p class="text-xs text-base-content/40">Max 2MB par fichier</p>
+                <p class="text-base font-medium text-base-content mb-2">{{ 'csv.upload.drag_drop'|trans }}</p>
+                <p class="text-sm text-base-content/60 mb-1">{{ 'csv.upload.or_click'|trans }}</p>
+                <p class="text-xs text-base-content/40">{{ 'csv.upload.max_size'|trans }}</p>
             </div>
 
             <div class="mt-6 hidden" data-csv-library-target="uploadProgress">
                 <div class="flex items-center justify-between mb-2">
-                    <span class="text-sm font-medium text-base-content" data-csv-library-target="progressText">Upload en cours...</span>
+                    <span class="text-sm font-medium text-base-content" data-csv-library-target="progressText">{{ 'csv.upload.progress'|trans }}</span>
                     <span class="text-sm text-base-content/60" data-csv-library-target="progressPercent">0%</span>
                 </div>
                 <div class="w-full bg-base-300 rounded-full h-2 overflow-hidden">
@@ -46,8 +46,8 @@
         </div>
 
         <div class="mb-6">
-            <h2 class="text-xl font-medium text-base-content">Mes Datasets</h2>
-            <p class="text-sm text-base-content/60 mt-1">Les datasets doivent être configurés avant d'être utilisés dans les articles</p>
+            <h2 class="text-xl font-medium text-base-content">{{ 'csv.list.heading'|trans }}</h2>
+            <p class="text-sm text-base-content/60 mt-1">{{ 'csv.list.description'|trans }}</p>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4" data-csv-library-target="csvGrid">
@@ -55,11 +55,11 @@
 
         <dialog class="modal" data-csv-library-target="deleteModal">
             <div class="modal-box border border-base-300 bg-base-100 shadow-lg">
-                <h3 class="font-medium text-lg text-base-content">Confirmer la suppression</h3>
-                <p class="py-4 text-sm text-base-content/70">Êtes-vous sûr de vouloir supprimer ce fichier CSV ?</p>
+                <h3 class="font-medium text-lg text-base-content">{{ 'csv.modal.delete.title'|trans }}</h3>
+                <p class="py-4 text-sm text-base-content/70">{{ 'csv.modal.delete.confirm'|trans }}</p>
                 <div class="modal-action">
-                    <button class="px-4 py-2 text-sm border border-base-300 rounded-lg hover:bg-base-200 transition-colors" data-action="click->csv-library#closeDeleteModal">Annuler</button>
-                    <button class="px-4 py-2 text-sm border border-base-content bg-base-content text-base-100 rounded-lg hover:opacity-90 transition-opacity" data-action="click->csv-library#confirmDelete">Supprimer</button>
+                    <button class="px-4 py-2 text-sm border border-base-300 rounded-lg hover:bg-base-200 transition-colors" data-action="click->csv-library#closeDeleteModal">{{ 'csv.modal.delete.cancel'|trans }}</button>
+                    <button class="px-4 py-2 text-sm border border-base-content bg-base-content text-base-100 rounded-lg hover:opacity-90 transition-opacity" data-action="click->csv-library#confirmDelete">{{ 'csv.modal.delete.delete'|trans }}</button>
                 </div>
             </div>
             <form method="dialog" class="modal-backdrop">
@@ -69,12 +69,12 @@
 
         <dialog class="modal" data-csv-library-target="previewModal">
             <div class="modal-box max-w-3xl border border-base-300 bg-base-100 shadow-lg">
-                <h3 class="font-medium text-lg text-base-content mb-4">Aperçu du fichier</h3>
+                <h3 class="font-medium text-lg text-base-content mb-4">{{ 'csv.modal.preview.title'|trans }}</h3>
                 <div class="bg-base-200 p-4 rounded-lg overflow-x-auto border border-base-300">
                     <pre class="text-xs text-base-content" data-csv-library-target="previewContent"></pre>
                 </div>
                 <div class="modal-action">
-                    <button class="px-4 py-2 text-sm border border-base-300 rounded-lg hover:bg-base-200 transition-colors" data-action="click->csv-library#closePreviewModal">Fermer</button>
+                    <button class="px-4 py-2 text-sm border border-base-300 rounded-lg hover:bg-base-200 transition-colors" data-action="click->csv-library#closePreviewModal">{{ 'csv.modal.preview.close'|trans }}</button>
                 </div>
             </div>
             <form method="dialog" class="modal-backdrop">

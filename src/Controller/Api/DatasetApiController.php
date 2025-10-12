@@ -12,10 +12,14 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[Route('/api/datasets')]
 class DatasetApiController extends AbstractController
 {
+    public function __construct(
+        private TranslatorInterface $translator
+    ) {}
     #[Route('', name: 'app_api_datasets_list', methods: ['GET'])]
     #[IsGranted('ROLE_AUTEUR')]
     public function list(CsvDatasetRepository $repository): JsonResponse
@@ -97,14 +101,14 @@ class DatasetApiController extends AbstractController
         $variable = $dataset->getVariables()->filter(fn(CsvVariable $v) => $v->getId() === $variableId)->first();
 
         if (!$variable) {
-            return $this->json(['error' => 'Variable not found'], Response::HTTP_NOT_FOUND);
+            return $this->json(['error' => $this->translator->trans('api.dataset.error.variable_not_found')], Response::HTTP_NOT_FOUND);
         }
 
         $data = json_decode($request->getContent(), true);
 
         if (isset($data['type'])) {
             if (!in_array($data['type'], [CsvVariable::TYPE_CATEGORICAL, CsvVariable::TYPE_NUMERIC])) {
-                return $this->json(['error' => 'Invalid variable type'], Response::HTTP_BAD_REQUEST);
+                return $this->json(['error' => $this->translator->trans('api.dataset.error.invalid_type')], Response::HTTP_BAD_REQUEST);
             }
             $variable->setType($data['type']);
         }
@@ -132,7 +136,7 @@ class DatasetApiController extends AbstractController
 
         return $this->json([
             'success' => true,
-            'message' => 'Dataset configured successfully'
+            'message' => $this->translator->trans('api.dataset.success.configured')
         ]);
     }
 
@@ -141,7 +145,7 @@ class DatasetApiController extends AbstractController
     public function delete(CsvDataset $dataset, EntityManagerInterface $em): JsonResponse
     {
         if ($dataset->getUploadedBy() !== $this->getUser()) {
-            return $this->json(['error' => 'Vous n\'avez pas la permission de supprimer ce dataset'], Response::HTTP_FORBIDDEN);
+            return $this->json(['error' => $this->translator->trans('api.dataset.error.permission_denied')], Response::HTTP_FORBIDDEN);
         }
 
         $em->remove($dataset);
@@ -149,7 +153,7 @@ class DatasetApiController extends AbstractController
 
         return $this->json([
             'success' => true,
-            'message' => 'Dataset supprimé avec succès'
+            'message' => $this->translator->trans('api.dataset.success.deleted')
         ]);
     }
 }

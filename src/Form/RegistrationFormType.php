@@ -17,30 +17,47 @@ class RegistrationFormType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('nom')
-            ->add('prenom')
-            ->add('email')
+            ->add('nom', null, [
+                'label' => 'registration.label.lastname',
+                'attr' => [
+                    'placeholder' => 'registration.placeholder.lastname',
+                ],
+            ])
+            ->add('prenom', null, [
+                'label' => 'registration.label.firstname',
+                'attr' => [
+                    'placeholder' => 'registration.placeholder.firstname',
+                ],
+            ])
+            ->add('email', null, [
+                'label' => 'registration.label.email',
+                'attr' => [
+                    'placeholder' => 'registration.placeholder.email',
+                ],
+            ])
             ->add('agreeTerms', CheckboxType::class, [
+                'label' => 'registration.label.agree_terms',
                 'mapped' => false,
                 'constraints' => [
                     new IsTrue([
-                        'message' => 'You should agree to our terms.',
+                        'message' => 'registration.error.agree_terms',
                     ]),
                 ],
             ])
             ->add('plainPassword', PasswordType::class, [
-                // instead of being set onto the object directly,
-                // this is read and encoded in the controller
+                'label' => 'registration.label.password',
                 'mapped' => false,
-                'attr' => ['autocomplete' => 'new-password'],
+                'attr' => [
+                    'autocomplete' => 'new-password',
+                    'placeholder' => 'registration.placeholder.password',
+                ],
                 'constraints' => [
                     new NotBlank([
-                        'message' => 'Please enter a password',
+                        'message' => 'registration.error.password_required',
                     ]),
                     new Length([
                         'min' => 6,
-                        'minMessage' => 'Your password should be at least {{ limit }} characters',
-                        // max length allowed by Symfony for security reasons
+                        'minMessage' => 'registration.error.password_min_length',
                         'max' => 4096,
                     ]),
                 ],
@@ -52,6 +69,7 @@ class RegistrationFormType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => User::class,
+            'translation_domain' => 'forms',
         ]);
     }
 }

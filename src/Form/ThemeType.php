@@ -16,21 +16,24 @@ class ThemeType extends AbstractType
     {
         $builder
             ->add('name', TextType::class, [
-                'label' => 'Nom du thème',
+                'label' => 'theme.label.name',
                 'attr' => ['class' => 'input input-bordered w-full'],
             ])
             ->add('slug', TextType::class, [
-                'label' => 'Identifiant (slug)',
-                'attr' => ['class' => 'input input-bordered w-full', 'placeholder' => 'mon-theme'],
-                'help' => 'Caractères minuscules, chiffres et tirets uniquement',
+                'label' => 'theme.label.slug',
+                'attr' => [
+                    'class' => 'input input-bordered w-full',
+                    'placeholder' => 'theme.placeholder.slug',
+                ],
+                'help' => 'theme.help.slug',
             ])
             ->add('description', TextareaType::class, [
-                'label' => 'Description',
+                'label' => 'theme.label.description',
                 'required' => false,
                 'attr' => ['class' => 'textarea textarea-bordered w-full', 'rows' => 3],
             ])
             ->add('isActive', CheckboxType::class, [
-                'label' => 'Activer ce thème',
+                'label' => 'theme.label.is_active',
                 'required' => false,
                 'attr' => ['class' => 'checkbox'],
             ])
@@ -44,6 +47,7 @@ class ThemeType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Theme::class,
+            'translation_domain' => 'forms',
         ]);
     }
 }

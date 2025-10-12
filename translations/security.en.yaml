@@ -1,0 +1,21 @@
+# Security & Authentication
+auth:
+  error:
+    invalid_credentials: Invalid credentials
+    account_disabled: Your account has been disabled
+    too_many_attempts: Too many attempts. Please try again later
+
+# Login
+login:
+  title: Login
+  email:
+    label: Email
+    placeholder: your@email.com
+  password:
+    label: Password
+    placeholder: ••••••••
+  button:
+    submit: Log in
+  link:
+    register: Create account
+    forgot_password: Forgot password?

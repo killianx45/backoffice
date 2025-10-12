@@ -1,18 +1,18 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Médiathèque{% endblock %}
+{% block title %}{{ 'media.title'|trans }}{% endblock %}
 
 {% block body %}
 <div class="container mx-auto px-6 py-12 max-w-7xl" data-controller="media-library">
     <div class="mb-8">
-        <h1 class="text-3xl font-semibold text-base-content">Médiathèque</h1>
-        <p class="text-sm text-base-content/60 mt-1">Gérez vos images et médias</p>
+        <h1 class="text-3xl font-semibold text-base-content">{{ 'media.title'|trans }}</h1>
+        <p class="text-sm text-base-content/60 mt-1">{{ 'media.subtitle'|trans }}</p>
     </div>
 
     <div id="flash-container" class="mb-6"></div>
 
     <div class="border border-base-300 rounded-lg p-6 bg-base-100 mb-12">
-        <h2 class="text-xl font-medium text-base-content mb-6">Ajouter des images</h2>
+        <h2 class="text-xl font-medium text-base-content mb-6">{{ 'media.upload.title'|trans }}</h2>
 
         <div
             class="border-2 border-dashed border-base-300 rounded-lg p-12 text-center hover:border-base-content/30 transition-colors cursor-pointer bg-base-100"
@@ -22,9 +22,9 @@
             <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto mb-4 text-base-content/30" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
             </svg>
-            <p class="text-base font-medium text-base-content mb-2">Glissez-déposez vos images ici</p>
-            <p class="text-sm text-base-content/60 mb-1">ou cliquez pour sélectionner des fichiers</p>
-            <p class="text-xs text-base-content/40">JPG, PNG, GIF, WebP - Max 5MB</p>
+            <p class="text-base font-medium text-base-content mb-2">{{ 'media.upload.drag_drop'|trans }}</p>
+            <p class="text-sm text-base-content/60 mb-1">{{ 'media.upload.or_click'|trans }}</p>
+            <p class="text-xs text-base-content/40">{{ 'media.upload.formats'|trans }}</p>
 
             <input
                 type="file"
@@ -40,12 +40,12 @@
             <div class="w-full bg-base-300 rounded-full h-2 overflow-hidden">
                 <div class="bg-base-content h-2 transition-all duration-300" data-media-library-target="progressBar" style="width: 0%"></div>
             </div>
-            <p class="text-sm text-center mt-3 text-base-content/60" data-media-library-target="progressText">Upload en cours...</p>
+            <p class="text-sm text-center mt-3 text-base-content/60" data-media-library-target="progressText">{{ 'media.upload.progress'|trans }}</p>
         </div>
     </div>
 
     <div class="mb-6">
-        <h2 class="text-xl font-medium text-base-content">Images</h2>
+        <h2 class="text-xl font-medium text-base-content">{{ 'media.images'|trans }}</h2>
     </div>
 
     <div
@@ -65,17 +65,17 @@
             <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto mb-4 text-base-content/20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
             </svg>
-            <span class="text-sm text-base-content/60">Aucune image dans la médiathèque</span>
+            <span class="text-sm text-base-content/60">{{ 'media.no_images'|trans }}</span>
         </div>
     </div>
 
     <dialog class="modal" data-media-library-target="deleteModal">
         <div class="modal-box border border-base-300 bg-base-100 shadow-lg">
-            <h3 class="font-medium text-lg text-base-content">Confirmer la suppression</h3>
-            <p class="py-4 text-sm text-base-content/70">Êtes-vous sûr de vouloir supprimer cette image ? Cette action est irréversible.</p>
+            <h3 class="font-medium text-lg text-base-content">{{ 'media.modal.confirm_delete.title'|trans }}</h3>
+            <p class="py-4 text-sm text-base-content/70">{{ 'media.modal.confirm_delete.message'|trans }}</p>
             <div class="modal-action">
-                <button class="px-4 py-2 text-sm border border-base-300 rounded-lg hover:bg-base-200 transition-colors" data-action="click->media-library#closeDeleteModal">Annuler</button>
-                <button class="px-4 py-2 text-sm border border-base-content bg-base-content text-base-100 rounded-lg hover:opacity-90 transition-opacity" data-action="click->media-library#confirmDelete">Supprimer</button>
+                <button class="px-4 py-2 text-sm border border-base-300 rounded-lg hover:bg-base-200 transition-colors" data-action="click->media-library#closeDeleteModal">{{ 'button.cancel'|trans }}</button>
+                <button class="px-4 py-2 text-sm border border-base-content bg-base-content text-base-100 rounded-lg hover:opacity-90 transition-opacity" data-action="click->media-library#confirmDelete">{{ 'button.delete'|trans }}</button>
             </div>
         </div>
         <form method="dialog" class="modal-backdrop">

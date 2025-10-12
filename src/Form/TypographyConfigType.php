@@ -13,7 +13,7 @@ class TypographyConfigType extends AbstractType
     {
         $builder
             ->add('headingFont', ChoiceType::class, [
-                'label' => 'Police des titres',
+                'label' => 'typography.label.title_font',
                 'choices' => [
                     'Montserrat' => 'montserrat',
                     'Darker Grotesque' => 'darker-grotesque',
@@ -21,7 +21,7 @@ class TypographyConfigType extends AbstractType
                 'attr' => ['class' => 'select select-bordered w-full'],
             ])
             ->add('bodyFont', ChoiceType::class, [
-                'label' => 'Police du corps de texte',
+                'label' => 'typography.label.body_font',
                 'choices' => [
                     'Montserrat' => 'montserrat',
                     'Darker Grotesque' => 'darker-grotesque',
@@ -29,29 +29,29 @@ class TypographyConfigType extends AbstractType
                 'attr' => ['class' => 'select select-bordered w-full'],
             ])
             ->add('headingSize', ChoiceType::class, [
-                'label' => 'Taille des titres',
+                'label' => 'typography.label.title_size',
                 'choices' => [
-                    'Petit' => 'small',
-                    'Moyen' => 'medium',
-                    'Grand' => 'large',
+                    'typography.choice.size.small' => 'small',
+                    'typography.choice.size.medium' => 'medium',
+                    'typography.choice.size.large' => 'large',
                 ],
                 'attr' => ['class' => 'select select-bordered w-full'],
             ])
             ->add('bodySize', ChoiceType::class, [
-                'label' => 'Taille du corps de texte',
+                'label' => 'typography.label.body_size',
                 'choices' => [
-                    'Petit' => 'small',
-                    'Moyen' => 'medium',
-                    'Grand' => 'large',
+                    'typography.choice.size.small' => 'small',
+                    'typography.choice.size.medium' => 'medium',
+                    'typography.choice.size.large' => 'large',
                 ],
                 'attr' => ['class' => 'select select-bordered w-full'],
             ])
             ->add('lineHeight', ChoiceType::class, [
-                'label' => 'Hauteur de ligne',
+                'label' => 'typography.label.line_height',
                 'choices' => [
-                    'Serré' => 'tight',
-                    'Normal' => 'normal',
-                    'Relâché' => 'relaxed',
+                    'typography.choice.line_height.tight' => 'tight',
+                    'typography.choice.line_height.normal' => 'normal',
+                    'typography.choice.line_height.relaxed' => 'relaxed',
                 ],
                 'attr' => ['class' => 'select select-bordered w-full'],
             ]);
@@ -61,6 +61,7 @@ class TypographyConfigType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => null,
+            'translation_domain' => 'forms',
         ]);
     }
 }

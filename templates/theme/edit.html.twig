@@ -1,16 +1,16 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ isNew ? 'Créer un thème' : 'Modifier ' ~ theme.name }}{% endblock %}
+{% block title %}{{ isNew ? 'theme.title.create'|trans : ('theme.title.edit'|trans({'%name%': theme.name})) }}{% endblock %}
 
 {% block body %}
 <div class="p-6 max-w-full mx-auto">
     <div class="mb-6 flex justify-between items-center">
         <div>
-            <h1 class="text-3xl font-bold mb-2">{{ isNew ? 'Créer un thème' : 'Modifier le thème' }}</h1>
-            <p class="opacity-70">Personnalisez l'apparence de votre site</p>
+            <h1 class="text-3xl font-bold mb-2">{{ isNew ? 'theme.edit.heading.create'|trans : 'theme.edit.heading.edit'|trans }}</h1>
+            <p class="opacity-70">{{ 'theme.edit.description'|trans }}</p>
         </div>
         <a href="{{ path('app_theme_index') }}" class="text-sm text-base-content/60 hover:text-base-content">
-            Retour
+            {{ 'theme.actions.back'|trans }}
         </a>
     </div>
 
@@ -20,7 +20,7 @@
         <div class="space-y-6">
             <div class="card border bg-base-100 shadow-sm">
                 <div class="card-body">
-                    <h2 class="card-title text-xl mb-4">Informations générales</h2>
+                    <h2 class="card-title text-xl mb-4">{{ 'theme.edit.section.general'|trans }}</h2>
 
                     <div class="space-y-4">
                         <div>
@@ -55,9 +55,9 @@
             <div class="card border bg-base-100 shadow-sm">
                 <div class="card-body p-0">
                     <div role="tablist" class="tabs tabs-lifted">
-                        <input type="radio" name="config_tabs" role="tab" class="tab" aria-label="Mise en page" checked />
+                        <input type="radio" name="config_tabs" role="tab" class="tab" aria-label="{{ 'theme.edit.tabs.layout'|trans }}" checked />
                         <div role="tabpanel" class="tab-content bg-base-100 border-base-300 p-6">
-                            <h3 class="font-bold text-lg mb-4">Mise en page</h3>
+                            <h3 class="font-bold text-lg mb-4">{{ 'theme.edit.tabs.layout'|trans }}</h3>
                             <div class="space-y-4">
                                 {% for child in form.configuration.layout %}
                                     <div>
@@ -69,9 +69,9 @@
                             </div>
                         </div>
 
-                        <input type="radio" name="config_tabs" role="tab" class="tab" aria-label="Typographie" />
+                        <input type="radio" name="config_tabs" role="tab" class="tab" aria-label="{{ 'theme.edit.tabs.typography'|trans }}" />
                         <div role="tabpanel" class="tab-content bg-base-100 border-base-300 p-6">
-                            <h3 class="font-bold text-lg mb-4">Typographie</h3>
+                            <h3 class="font-bold text-lg mb-4">{{ 'theme.edit.tabs.typography'|trans }}</h3>
                             <div class="space-y-4">
                                 {% for child in form.configuration.typography %}
                                     <div>
@@ -83,9 +83,9 @@
                             </div>
                         </div>
 
-                        <input type="radio" name="config_tabs" role="tab" class="tab" aria-label="Couleurs" />
+                        <input type="radio" name="config_tabs" role="tab" class="tab" aria-label="{{ 'theme.edit.tabs.colors'|trans }}" />
                         <div role="tabpanel" class="tab-content bg-base-100 border-base-300 p-6">
-                            <h3 class="font-bold text-lg mb-4">Couleurs</h3>
+                            <h3 class="font-bold text-lg mb-4">{{ 'theme.edit.tabs.colors'|trans }}</h3>
                             <div class="space-y-4">
                                 <div>
                                     {{ form_label(form.configuration.colors.primary) }}
@@ -130,7 +130,7 @@
                                 </div>
 
                                 <div>
-                                    <label class="block text-sm font-medium mb-2">Palette de graphiques (5 couleurs)</label>
+                                    <label class="block text-sm font-medium mb-2">{{ 'theme.edit.colors.chart_palette'|trans }}</label>
                                     <div class="grid grid-cols-5 gap-2">
                                         {% for child in form.configuration.colors.chartPalette %}
                                             {{ form_widget(child) }}
@@ -140,9 +140,9 @@
                             </div>
                         </div>
 
-                        <input type="radio" name="config_tabs" role="tab" class="tab" aria-label="Graphiques" />
+                        <input type="radio" name="config_tabs" role="tab" class="tab" aria-label="{{ 'theme.edit.tabs.charts'|trans }}" />
                         <div role="tabpanel" class="tab-content bg-base-100 border-base-300 p-6">
-                            <h3 class="font-bold text-lg mb-4">Graphiques</h3>
+                            <h3 class="font-bold text-lg mb-4">{{ 'theme.edit.tabs.charts'|trans }}</h3>
                             <div class="space-y-4">
                                 {% for child in form.configuration.charts %}
                                     <div>
@@ -161,9 +161,9 @@
                             </div>
                         </div>
 
-                        <input type="radio" name="config_tabs" role="tab" class="tab" aria-label="Composants" />
+                        <input type="radio" name="config_tabs" role="tab" class="tab" aria-label="{{ 'theme.edit.tabs.components'|trans }}" />
                         <div role="tabpanel" class="tab-content bg-base-100 border-base-300 p-6">
-                            <h3 class="font-bold text-lg mb-4">Composants</h3>
+                            <h3 class="font-bold text-lg mb-4">{{ 'theme.edit.tabs.components'|trans }}</h3>
                             <div class="space-y-4">
                                 {% for child in form.configuration.components %}
                                     <div>
@@ -180,10 +180,10 @@
 
             <div class="flex gap-3">
                 <button type="submit" class="btn border border-base-content bg-base-content text-base-100 hover:opacity-90">
-                    {{ isNew ? 'Créer le thème' : 'Enregistrer les modifications' }}
+                    {{ isNew ? 'theme.actions.create_submit'|trans : 'theme.actions.save'|trans }}
                 </button>
                 <a href="{{ path('app_theme_index') }}" class="btn border border-base-300 bg-base-100">
-                    Annuler
+                    {{ 'theme.actions.cancel'|trans }}
                 </a>
             </div>
         </div>
@@ -191,45 +191,44 @@
         <div class="lg:sticky lg:top-6 lg:h-screen lg:overflow-auto">
             <div class="card border bg-base-100 shadow-sm">
                 <div class="card-body">
-                    <h2 class="card-title text-xl mb-4">Aperçu en direct</h2>
+                    <h2 class="card-title text-xl mb-4">{{ 'theme.live_preview.title'|trans }}</h2>
 
                     <div class="preview-container bg-base-200 p-4 rounded-lg" data-theme-editor-target="preview">
                         <div class="preview-article mx-auto">
                             <div class="preview-image-container mb-6 relative rounded overflow-hidden">
                                 <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop"
-                                     alt="Image de démonstration"
+                                     alt="{{ 'theme.live_preview.demo_image'|trans }}"
                                      class="w-full h-64 object-cover">
                                 <div class="preview-gradient absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent pointer-events-none"></div>
                                 <h1 class="preview-title text-3xl font-bold text-white absolute bottom-8 left-8 right-8">
-                                    Exemple de titre d'article
+                                    {{ 'theme.live_preview.article_title'|trans }}
                                 </h1>
                             </div>
 
                             <div class="preview-content preview-card border rounded mb-6 bg-white border-base-300 p-8">
                                 <p class="mb-4">
-                                    Ceci est un exemple de contenu d'article. Le texte s'adapte automatiquement selon les paramètres de typographie que vous choisissez.
+                                    {{ 'theme.live_preview.content_paragraph'|trans }}
                                 </p>
 
-                                <h2 class="preview-heading mb-3 text-base-content font-semibold">Sous-titre de section</h2>
+                                <h2 class="preview-heading mb-3 text-base-content font-semibold">{{ 'theme.live_preview.section_subtitle'|trans }}</h2>
 
                                 <p class="mb-4">
-                                    Vous pouvez personnaliser la <a href="#" class="preview-link underline text-accent">couleur des liens</a>,
-                                    l'alignement du texte, et bien plus encore. Les modifications sont visibles en temps réel.
+                                    {{ 'theme.live_preview.content_with_link'|trans({'%link%': '<a href="#" class="preview-link underline text-accent">' ~ ('theme.live_preview.link_text'|trans) ~ '</a>'})|raw }}
                                 </p>
 
-                                <h3 class="preview-heading mb-3 text-base-content font-semibold">Exemple de graphique</h3>
+                                <h3 class="preview-heading mb-3 text-base-content font-semibold">{{ 'theme.live_preview.chart_heading'|trans }}</h3>
 
                                 <div class="my-6">
                                     <canvas data-theme-editor-target="chart" width="400" height="200"></canvas>
                                 </div>
 
                                 <p class="mb-4">
-                                    Le thème s'applique également aux graphiques, avec une palette de couleurs personnalisable.
+                                    {{ 'theme.live_preview.chart_description'|trans }}
                                 </p>
 
                                 <div class="mt-6">
                                     <button class="preview-button btn btn-sm bg-base-content text-base-100 border-base-content hover:opacity-90">
-                                        Bouton exemple
+                                        {{ 'theme.live_preview.button_example'|trans }}
                                     </button>
                                 </div>
                             </div>

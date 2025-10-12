@@ -1,6 +1,7 @@
 import { Controller } from "@hotwired/stimulus";
 import Chart from "chart.js/auto";
 import { CSVParser } from "../utils/csv-parser";
+import { apiUrl } from "../services/locale-helper";
 
 export default class extends Controller {
   async connect() {
@@ -38,7 +39,7 @@ export default class extends Controller {
     try {
       const selectedVariables = JSON.parse(selectedVariablesStr);
 
-      const datasetResponse = await fetch(`/api/datasets/${datasetId}`);
+      const datasetResponse = await fetch(apiUrl(`api/datasets/${datasetId}`));
       if (!datasetResponse.ok) {
         throw new Error(`Failed to load dataset: ${datasetResponse.statusText}`);
       }
@@ -140,7 +141,7 @@ export default class extends Controller {
 
   async fetchActiveTheme() {
     try {
-      const response = await fetch("/api/theme/active");
+      const response = await fetch(apiUrl("api/theme/active"));
       if (!response.ok) {
         return null;
       }

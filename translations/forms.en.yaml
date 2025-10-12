@@ -1,0 +1,144 @@
+# Registration Form
+registration:
+  label:
+    lastname: Last name
+    firstname: First name
+    email: Email
+    password: Password
+    agree_terms: I agree to the terms of use
+  placeholder:
+    lastname: Doe
+    firstname: John
+    email: john.doe@email.com
+    password: ••••••••
+
+# Profile Form
+profile:
+  label:
+    avatar: Profile picture
+    lastname: Last name
+    firstname: First name
+    email: Email
+    new_password: New password
+    confirm_password: Confirm password
+  placeholder:
+    password: ••••••••
+
+# Article Form
+article:
+  label:
+    title: Title
+    description: Description
+    content: Content
+    image: Featured image
+  placeholder:
+    title: Enter article title
+  button:
+    select_image: Select image
+
+# Theme Form
+theme:
+  label:
+    name: Theme name
+    slug: Identifier (slug)
+    description: Description
+    is_active: Activate this theme
+  placeholder:
+    slug: my-theme
+  help:
+    slug: Lowercase letters, numbers and hyphens only
+
+# Typography Config
+typography:
+  label:
+    title_font: Title font
+    body_font: Body font
+    title_size: Title size
+    body_size: Body size
+    line_height: Line height
+  choice:
+    size:
+      small: Small
+      medium: Medium
+      large: Large
+    line_height:
+      tight: Tight
+      normal: Normal
+      relaxed: Relaxed
+
+# Colors Config
+colors:
+  label:
+    primary: Primary color
+    secondary: Secondary color
+    accent: Accent color
+    background_primary: Primary background color
+    background_secondary: Secondary background color
+    border: Border color
+    title_overlay_bg: Title overlay background color
+    chart_colors: Chart color palette
+
+# Components Config
+components:
+  label:
+    card_style: Card style
+    button_style: Button style
+    border_radius: Border radius
+  choice:
+    card_style:
+      bordered: Bordered
+      elevated: Elevated
+      flat: Flat
+    button_style:
+      solid: Solid
+      outline: Outline
+      ghost: Ghost
+    border_radius:
+      none: None
+      small: Small
+      medium: Medium
+      large: Large
+
+# Layout Config
+layout:
+  label:
+    article_width: Article width
+    featured_image_size: Featured image size
+    content_alignment: Content alignment
+    spacing: Spacing
+    title_position: Title position
+  choice:
+    article_width:
+      narrow: Narrow (600px)
+      medium: Medium (800px)
+      wide: Wide (1200px)
+    image_size:
+      small: Small
+      medium: Medium
+      large: Large
+      full: Full width
+    alignment:
+      left: Left
+      center: Center
+      justify: Justified
+    spacing:
+      compact: Compact
+      comfortable: Comfortable
+      spacious: Spacious
+    title_position:
+      above: Above image
+      overlay_top: On image (top)
+      overlay_center: On image (center)
+      overlay_bottom: On image (bottom)
+
+# Charts Config
+charts:
+  label:
+    legend_position: Legend position
+  choice:
+    legend_position:
+      top: Top
+      bottom: Bottom
+      left: Left
+      right: Right
+      none: None

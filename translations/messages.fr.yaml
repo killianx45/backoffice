@@ -1,0 +1,395 @@
+# Navigation
+nav:
+  home: Accueil
+  dashboard: Tableau de bord
+  articles: Articles
+  images: Images
+  csv_charts: CSV / Graphiques
+  theme: Thème
+  users: Utilisateurs
+  profile: Mon profil
+  login: Connexion
+  logout: Déconnexion
+
+# Common buttons
+button:
+  submit: Envoyer
+  cancel: Annuler
+  save: Enregistrer
+  save_changes: Enregistrer les modifications
+  delete: Supprimer
+  confirm: Confirmer
+  close: Fermer
+  back: Retour
+  edit: Modifier
+  create: Créer
+  activate: Activer
+  view_all: Voir tout
+  select: Sélectionner
+  upload: Uploader
+
+# Common messages
+message:
+  welcome: Bienvenue, %name%
+  loading: Chargement en cours...
+  uploading: Upload en cours...
+  no_results: Aucun résultat trouvé
+  confirm_delete: Êtes-vous sûr de vouloir supprimer cet élément ?
+  action_irreversible: Cette action est irréversible.
+
+# Meta & SEO
+meta:
+  title:
+    default: CMS Backoffice
+    dashboard: Tableau de bord
+    articles: Articles
+    article_new: Nouvel article
+    article_edit: Modifier l'article
+    images: Médiathèque
+    csv: Gestion des CSV
+    csv_configure: Configuration du jeu de données
+    theme: Gestion des thèmes
+    users: Gestion des Utilisateurs
+    profile: Mon Profil
+    login: Connexion
+    register: Inscription
+  description:
+    default: Backoffice CMS - Gestion de contenu, articles, médias et utilisateurs
+
+# Dashboard
+dashboard:
+  title: Tableau de bord
+  subtitle: Gérez votre contenu et vos publications
+  about:
+    title: À propos de ce CMS
+    description: Ce système de gestion de contenu vous permet de gérer efficacement votre site web. Selon votre rôle, vous avez accès à différentes fonctionnalités.
+  features:
+    articles:
+      title: Articles
+      description: Créez et publiez du contenu pour votre site
+    images:
+      title: Images
+      description: Gérez votre bibliothèque de médias
+    csv:
+      title: CSV & Graphiques
+      description: Importez des données et créez des visualisations
+    themes:
+      title: Thèmes
+      description: Personnalisez l'apparence de votre site
+  quick_actions:
+    title: Actions rapides
+    articles:
+      title: Gérer les articles
+      description: Créez, modifiez et publiez vos articles
+    media:
+      title: Bibliothèque d'images
+      description: Gérez vos médias et images
+    csv:
+      title: Fichiers CSV
+      description: Importez et visualisez vos données
+    theme:
+      title: Personnaliser le thème
+      description: Modifiez l'apparence du site
+    users:
+      title: Gestion des utilisateurs
+      description: Gérez les rôles et permissions
+  recent_articles:
+    title: Articles récents
+    table:
+      title: Titre
+      author: Auteur
+      date: Date
+  tip:
+    label: Astuce
+    text: Utilisez le menu de navigation sur la gauche pour accéder rapidement à toutes les fonctionnalités du CMS. Chaque section dispose d'une interface intuitive pour vous guider dans vos tâches.
+
+# Article
+article:
+  title:
+    list: Articles
+    new: Nouvel article
+    edit: Modifier l'article
+    show: Article
+    create: Créer un article
+  subtitle:
+    list: Gérez vos articles et publications
+    new: Remplissez les informations ci-dessous pour créer un nouvel article
+  by_author: Par %author%
+  modified_on: (modifié le %date%)
+  no_articles: Aucun article trouvé
+  button:
+    update: Mettre à jour
+  flash:
+    created: Article créé avec succès
+    updated: Article modifié avec succès
+    deleted: Article supprimé avec succès
+  confirm_delete: Êtes-vous sûr de vouloir supprimer cet article ?
+
+# User
+user:
+  title:
+    list: Gestion des Utilisateurs
+    profile: Mon Profil
+  subtitle:
+    list: Gérez les rôles et permissions
+    profile: Gérez votre avatar et mot de passe
+  table:
+    id: ID
+    last_name: Nom
+    first_name: Prénom
+    email: Email
+    roles: Rôles
+    status: Statut
+    actions: Actions
+  status:
+    verified: Vérifié
+    not_verified: Non vérifié
+  role:
+    abonne: ABONNE
+    subscriber: ABONNE
+    auteur: Auteur
+    author: Auteur
+    editeur: Éditeur
+    editor: Éditeur
+    fournisseur: Fournisseur
+    provider: Fournisseur
+    designeur: Designer
+    designer: Designer
+    admin: Administrateur
+  modal:
+    edit_roles: Modifier les rôles de %name%
+  no_users: Aucun utilisateur trouvé.
+  profile:
+    avatar:
+      title: Photo de profil
+      format_hint: "Format accepté : JPEG, PNG, WebP (max 2MB)"
+    info:
+      title: Informations personnelles
+      readonly: Ces informations ne peuvent pas être modifiées
+    password:
+      title: Changer le mot de passe
+      hint: Laissez vide pour conserver le mot de passe actuel
+  flash:
+    roles_updated: Les rôles de l'utilisateur ont été mis à jour avec succès.
+    avatar_error: Une erreur est survenue lors de l'upload de l'avatar.
+    profile_updated: Votre profil a été mis à jour avec succès.
+
+# Media
+media:
+  title: Médiathèque
+  subtitle: Gérez vos images et médias
+  upload:
+    title: Ajouter des images
+    drag_drop: Glissez-déposez vos images ici
+    or_click: ou cliquez pour sélectionner des fichiers
+    formats: JPG, PNG, GIF, WebP - Max 5MB
+    progress: Upload en cours...
+  images: Images
+  no_images: Aucune image dans la médiathèque
+  modal:
+    confirm_delete:
+      title: Confirmer la suppression
+      message: Êtes-vous sûr de vouloir supprimer cette image ? Cette action est irréversible.
+  error:
+    no_file: Aucun fichier uploadé
+    file_too_large: Fichier trop volumineux (max 5MB)
+    invalid_type: Type de fichier non autorisé
+    upload_failed: "Erreur lors de l'upload: %message%"
+    not_found: Fichier introuvable
+    delete_failed: Erreur lors de la suppression
+  success:
+    deleted: Image supprimée
+
+# CSV
+csv:
+  title:
+    list: Gestion des CSV
+    configure: Configuration du jeu de données
+  heading: Gestion des Datasets
+  subtitle:
+    list: Uploadez et configurez vos fichiers CSV pour créer des graphiques
+    configure: Définissez le type de chaque variable (catégorielle ou numérique)
+  upload:
+    drag_drop: Glissez-déposez vos fichiers CSV ici
+    or_click: ou cliquez pour sélectionner
+    max_size: Max 2MB par fichier
+    progress: Upload en cours...
+  list:
+    heading: Mes Datasets
+    description: Les datasets doivent être configurés avant d'être utilisés dans les articles
+  modal:
+    delete:
+      title: Confirmer la suppression
+      confirm: Êtes-vous sûr de vouloir supprimer ce fichier CSV ?
+      cancel: Annuler
+      delete: Supprimer
+    preview:
+      title: Aperçu du fichier
+      close: Fermer
+  file_info:
+    title: Informations du fichier
+    original_name: "Nom original:"
+    rows: "Lignes:"
+    size: "Taille:"
+    variables: "Variables:"
+  variables:
+    title: Variables détectées
+    type_info:
+      title: Types de variables
+      numeric:
+        label: "Numérique:"
+        description: "Valeurs numériques (ex: 10, 25.5, 100) - utilisé pour graphiques scatter, histogrammes"
+      categorical:
+        label: "Catégorielle:"
+        description: "Catégories/labels (ex: \"Paris\", \"Rouge\", \"2023\") - utilisé pour axes de graphiques bar, pie"
+    table:
+      variable: Variable
+      detected_type: Type détecté
+      sample_values: Exemples de valeurs
+      actions: Actions
+      numeric: Numérique
+      categorical: Catégorielle
+  button:
+    confirm_config: Confirmer la configuration
+  error:
+    no_file: Aucun fichier fourni
+    file_too_large: Le fichier est trop volumineux (max 2MB)
+    invalid_type: Type de fichier non autorisé. Seuls les fichiers CSV sont acceptés.
+    upload_failed: Erreur lors de l'upload du fichier
+    not_found: Fichier introuvable
+    invalid_file_type: Type de fichier invalide
+    delete_failed: Erreur lors de la suppression du fichier
+    read_failed: Erreur lors de la lecture du fichier
+  success:
+    uploaded: Fichier CSV uploadé avec succès
+    deleted: Fichier supprimé avec succès
+    configured: Dataset configuré avec succès
+
+# Theme
+theme:
+  title:
+    list: Gestion des thèmes
+    create: Créer un thème
+    edit: Modifier le thème
+  heading: Thèmes
+  subtitle:
+    list: Sélectionnez un thème pour personnaliser l'apparence de vos articles
+    form: Personnalisez l'apparence de votre site
+  badge:
+    active: Actif
+    current: Thème actuel
+  preview:
+    colors: Aperçu des couleurs
+    layout: "Layout:"
+    spacing: "Espacement:"
+    charts: "Graphiques:"
+    style: "Style:"
+  button:
+    create_theme: + Créer un thème
+    update: Enregistrer les modifications
+  actions:
+    back: Retour à la liste
+    create_submit: Créer le thème
+    save: Enregistrer les modifications
+    cancel: Annuler
+  edit:
+    heading:
+      create: Créer un nouveau thème
+      edit: Modifier le thème
+    description: Personnalisez l'apparence de vos articles en temps réel
+    section:
+      general: Informations générales
+    tabs:
+      layout: Mise en page
+      typography: Typographie
+      colors: Couleurs
+      charts: Graphiques
+      components: Composants
+    colors:
+      chart_palette: Palette de graphiques (5 couleurs)
+  section:
+    general: Informations générales
+    layout: Mise en page
+    typography: Typographie
+    colors: Couleurs
+    chart_palette: Palette de graphiques (5 couleurs)
+    charts: Graphiques
+    components: Composants
+  live_preview:
+    title: Aperçu en direct
+    demo_image: Image de démonstration
+    article_title: Exemple de titre d'article
+    content_paragraph: Ceci est un exemple de contenu d'article. Le texte s'adapte automatiquement selon les paramètres de typographie que vous choisissez.
+    section_subtitle: Sous-titre de section
+    content_with_link: Vous pouvez personnaliser la couleur des %link%, l'alignement du texte, et bien plus encore. Les modifications sont visibles en temps réel.
+    link_text: liens
+    chart_heading: Exemple de graphique
+    chart_description: Le thème s'applique également aux graphiques, avec une palette de couleurs personnalisable.
+    button_example: Bouton exemple
+    sample_title: Exemple de titre d'article
+    sample_text_1: Ceci est un exemple de contenu d'article. Le texte s'adapte automatiquement selon les paramètres de typographie que vous choisissez.
+    sample_subtitle: Sous-titre de section
+    sample_text_2: Vous pouvez personnaliser la couleur des liens, l'alignement du texte, et bien plus encore. Les modifications sont visibles en temps réel.
+  button_save:
+    create: Créer le thème
+    update: Enregistrer les modifications
+  flash:
+    created: Le thème "%name%" a été créé avec succès.
+    updated: Le thème "%name%" a été modifié avec succès.
+    activated: Le thème "%name%" a été activé avec succès.
+
+# Registration
+registration:
+  title: Inscription
+  heading: Créer un compte
+  or: OU
+  already_have_account: Vous avez déjà un compte ?
+  email:
+    sender_name: Louise & Killian
+    confirmation_subject: Veuillez confirmer votre email
+    greeting: Bonjour ! Veuillez confirmer votre email !
+    instructions: Veuillez confirmer votre adresse email en cliquant sur le lien suivant :
+    button: Confirmer mon Email
+    expiry: Ce lien expirera dans %time%.
+    closing: Cordialement !
+  flash:
+    verification_success: Votre adresse email a été vérifiée.
+
+# Login
+login:
+  title: Connexion
+  already_logged_in: Vous êtes connecté en tant que %username%
+  no_account: Pas encore de compte ?
+
+# API
+api:
+  theme:
+    error:
+      no_active: Aucun thème actif trouvé
+      not_found: Thème non trouvé
+  dataset:
+    error:
+      variable_not_found: Variable non trouvée
+      invalid_type: Type de variable invalide
+      permission_denied: Vous n'avez pas la permission de supprimer ce dataset
+    success:
+      configured: Dataset configuré avec succès
+      deleted: Dataset supprimé avec succès
+
+# Error pages
+error:
+  404:
+    title: Page introuvable - 404
+    meta_description: La page que vous recherchez n'existe pas ou a été déplacée.
+    heading: Page introuvable
+    message: La page que vous recherchez n'existe pas ou a été déplacée.
+    help: Si vous pensez qu'il s'agit d'une erreur, veuillez contacter l'administrateur.
+    action:
+      dashboard: Retour au tableau de bord
+      back: Retour à la page précédente
+      login: Se connecter
+
+# Common
+common:
+  or: OU
+  avatar_alt: Avatar de %name%

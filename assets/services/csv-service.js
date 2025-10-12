@@ -1,3 +1,5 @@
+import { apiUrl } from './locale-helper';
+
 export class CSVService {
     static async uploadCSV(file) {
         if (!this.validateFile(file)) {
@@ -7,7 +9,7 @@ export class CSVService {
         const formData = new FormData();
         formData.append("file", file);
 
-        const response = await fetch("/api/csv/upload", {
+        const response = await fetch(apiUrl("api/csv/upload"), {
             method: "POST",
             body: formData,
         });
@@ -31,7 +33,7 @@ export class CSVService {
     }
 
     static async deleteCSV(filename) {
-        const response = await fetch(`/api/csv/delete/${filename}`, {
+        const response = await fetch(apiUrl(`api/csv/delete/${filename}`), {
             method: "DELETE",
         });
 
@@ -49,7 +51,7 @@ export class CSVService {
     }
 
     static async previewCSV(filename) {
-        const response = await fetch(`/api/csv/preview/${filename}`);
+        const response = await fetch(apiUrl(`api/csv/preview/${filename}`));
 
         if (response.status === 403) {
             throw new Error("Vous n'avez pas la permission de voir cet aperçu");

@@ -1,5 +1,6 @@
 import { Controller } from '@hotwired/stimulus';
 import { CSVService } from '../services/csv-service';
+import { apiUrl } from '../services/locale-helper';
 
 export default class extends Controller {
     static targets = [
@@ -22,7 +23,7 @@ export default class extends Controller {
 
     async loadCSVFiles() {
         try {
-            const response = await fetch('/api/datasets/all');
+            const response = await fetch(apiUrl('api/datasets/all'));
             if (!response.ok) {
                 throw new Error('Erreur lors du chargement des datasets');
             }
@@ -81,7 +82,7 @@ export default class extends Controller {
                 <div class="card-actions justify-end gap-2">
                     ${!dataset.isConfigured ? `
                         <a
-                            href="/api/csv/dataset/${dataset.id}/configure"
+                            href="${apiUrl(`api/csv/dataset/${dataset.id}/configure`)}"
                             class="btn btn-xs btn-primary"
                         >
                             Configurer
@@ -170,7 +171,7 @@ export default class extends Controller {
             if (data.datasetId) {
                 this.showFlash('Fichier uploadé avec succès. Redirection vers la configuration...', 'success');
                 setTimeout(() => {
-                    window.location.href = `/api/csv/dataset/${data.datasetId}/configure`;
+                    window.location.href = apiUrl(`api/csv/dataset/${data.datasetId}/configure`);
                 }, 1000);
             } else {
                 this.uploadProgressTarget.classList.add('hidden');
@@ -204,7 +205,7 @@ export default class extends Controller {
         try {
             await CSVService.deleteCSV(this.currentFileToDelete);
 
-            const deleteResponse = await fetch(`/api/datasets/${this.currentDatasetToDelete}`, {
+            const deleteResponse = await fetch(apiUrl(`api/datasets/${this.currentDatasetToDelete}`), {
                 method: 'DELETE'
             });
 

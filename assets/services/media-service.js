@@ -1,9 +1,11 @@
+import { apiUrl } from './locale-helper';
+
 export class MediaService {
   static MAX_FILE_SIZE = 5 * 1024 * 1024;
   static ALLOWED_TYPES = ["image/jpeg", "image/png", "image/gif", "image/webp"];
 
   static async loadImages() {
-    const response = await fetch("/api/media/images");
+    const response = await fetch(apiUrl("api/media/images"));
 
     if (!response.ok) {
       if (response.status === 403) {
@@ -30,7 +32,7 @@ export class MediaService {
     const formData = new FormData();
     formData.append("file", file);
 
-    const response = await fetch("/api/media/upload/image", {
+    const response = await fetch(apiUrl("api/media/upload/image"), {
       method: "POST",
       body: formData,
     });
@@ -57,7 +59,7 @@ export class MediaService {
   }
 
   static async deleteImage(filename) {
-    const response = await fetch(`/api/media/delete/image/${filename}`, {
+    const response = await fetch(apiUrl(`api/media/delete/image/${filename}`), {
       method: "DELETE",
     });
 

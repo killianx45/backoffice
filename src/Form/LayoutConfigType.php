@@ -13,49 +13,49 @@ class LayoutConfigType extends AbstractType
     {
         $builder
             ->add('articleWidth', ChoiceType::class, [
-                'label' => 'Largeur de l\'article',
+                'label' => 'layout.label.article_width',
                 'choices' => [
-                    'Étroit (600px)' => 'narrow',
-                    'Moyen (800px)' => 'medium',
-                    'Large (1200px)' => 'wide',
+                    'layout.choice.article_width.narrow' => 'narrow',
+                    'layout.choice.article_width.medium' => 'medium',
+                    'layout.choice.article_width.wide' => 'wide',
                 ],
                 'attr' => ['class' => 'select select-bordered w-full'],
             ])
             ->add('featuredImageSize', ChoiceType::class, [
-                'label' => 'Taille de l\'image mise en avant',
+                'label' => 'layout.label.featured_image_size',
                 'choices' => [
-                    'Petite' => 'small',
-                    'Moyenne' => 'medium',
-                    'Grande' => 'large',
-                    'Pleine largeur' => 'full',
+                    'layout.choice.image_size.small' => 'small',
+                    'layout.choice.image_size.medium' => 'medium',
+                    'layout.choice.image_size.large' => 'large',
+                    'layout.choice.image_size.full' => 'full',
                 ],
                 'attr' => ['class' => 'select select-bordered w-full'],
             ])
             ->add('contentAlignment', ChoiceType::class, [
-                'label' => 'Alignement du contenu',
+                'label' => 'layout.label.content_alignment',
                 'choices' => [
-                    'Gauche' => 'left',
-                    'Centre' => 'center',
-                    'Justifié' => 'justify',
+                    'layout.choice.alignment.left' => 'left',
+                    'layout.choice.alignment.center' => 'center',
+                    'layout.choice.alignment.justify' => 'justify',
                 ],
                 'attr' => ['class' => 'select select-bordered w-full'],
             ])
             ->add('spacing', ChoiceType::class, [
-                'label' => 'Espacement',
+                'label' => 'layout.label.spacing',
                 'choices' => [
-                    'Compact' => 'compact',
-                    'Confortable' => 'comfortable',
-                    'Spacieux' => 'spacious',
+                    'layout.choice.spacing.compact' => 'compact',
+                    'layout.choice.spacing.comfortable' => 'comfortable',
+                    'layout.choice.spacing.spacious' => 'spacious',
                 ],
                 'attr' => ['class' => 'select select-bordered w-full'],
             ])
             ->add('titlePosition', ChoiceType::class, [
-                'label' => 'Position du titre',
+                'label' => 'layout.label.title_position',
                 'choices' => [
-                    'Au-dessus de l\'image' => 'above',
-                    'Sur l\'image (haut)' => 'overlay-top',
-                    'Sur l\'image (centre)' => 'overlay-center',
-                    'Sur l\'image (bas)' => 'overlay-bottom',
+                    'layout.choice.title_position.above' => 'above',
+                    'layout.choice.title_position.overlay_top' => 'overlay-top',
+                    'layout.choice.title_position.overlay_center' => 'overlay-center',
+                    'layout.choice.title_position.overlay_bottom' => 'overlay-bottom',
                 ],
                 'attr' => ['class' => 'select select-bordered w-full'],
             ]);
@@ -65,6 +65,7 @@ class LayoutConfigType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => null,
+            'translation_domain' => 'forms',
         ]);
     }
 }

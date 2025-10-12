@@ -14,9 +14,15 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\String\Slugger\SluggerInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class UserController extends AbstractController
 {
+    public function __construct(
+        private readonly TranslatorInterface $translator
+    ) {
+    }
+
     #[Route('/admin/users', name: 'app_user_index', methods: ['GET'])]
     #[IsGranted('ROLE_ADMIN')]
     public function index(UserRepository $userRepository): Response
@@ -41,7 +47,7 @@ final class UserController extends AbstractController
         $user->setRoles($filteredRoles);
         $entityManager->flush();
 
-        $this->addFlash('success', 'Les rôles de l\'utilisateur ont été mis à jour avec succès.');
+        $this->addFlash('success', $this->translator->trans('user.flash.roles_updated'));
 
         return $this->redirectToRoute('app_user_index');
     }
@@ -89,7 +95,7 @@ final class UserController extends AbstractController
                     $avatarFile->move($avatarsDirectory, $newFilename);
                     $user->setAvatar($newFilename);
                 } catch (FileException $e) {
-                    $this->addFlash('error', 'Une erreur est survenue lors de l\'upload de l\'avatar.');
+                    $this->addFlash('error', $this->translator->trans('user.flash.avatar_error'));
                 }
             }
 
@@ -101,7 +107,7 @@ final class UserController extends AbstractController
             }
 
             $entityManager->flush();
-            $this->addFlash('success', 'Votre profil a été mis à jour avec succès.');
+            $this->addFlash('success', $this->translator->trans('user.flash.profile_updated'));
 
             return $this->redirectToRoute('app_profile');
         }

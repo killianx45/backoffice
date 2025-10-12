@@ -11,11 +11,16 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[Route('/cms/article')]
 #[IsGranted('ROLE_AUTEUR')]
 class ArticleController extends AbstractController
 {
+    public function __construct(
+        private readonly TranslatorInterface $translator
+    ) {
+    }
     #[Route('/', name: 'app_article_index', methods: ['GET'])]
     public function index(ArticleRepository $articleRepository): Response
     {
@@ -42,7 +47,7 @@ class ArticleController extends AbstractController
             $entityManager->persist($article);
             $entityManager->flush();
 
-            $this->addFlash('success', 'Article créé avec succès');
+            $this->addFlash('success', $this->translator->trans('article.flash.created'));
 
             return $this->redirectToRoute('app_article_index', [], Response::HTTP_SEE_OTHER);
         }
@@ -76,7 +81,7 @@ class ArticleController extends AbstractController
 
             $entityManager->flush();
 
-            $this->addFlash('success', 'Article modifié avec succès');
+            $this->addFlash('success', $this->translator->trans('article.flash.updated'));
 
             return $this->redirectToRoute('app_article_index', [], Response::HTTP_SEE_OTHER);
         }
@@ -95,7 +100,7 @@ class ArticleController extends AbstractController
             $entityManager->remove($article);
             $entityManager->flush();
 
-            $this->addFlash('success', 'Article supprimé avec succès');
+            $this->addFlash('success', $this->translator->trans('article.flash.deleted'));
         }
 
         return $this->redirectToRoute('app_article_index', [], Response::HTTP_SEE_OTHER);
