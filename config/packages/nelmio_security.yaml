@@ -1,0 +1,55 @@
+nelmio_security:
+    # CSP (Content Security Policy)
+    csp:
+        enforce:
+            default-src: 
+                - "'self'"
+            script-src: 
+                - "'self'"
+                - "'unsafe-inline'" # Nécessaire pour CKEditor et Chart.js
+                - "https://cdn.ckeditor.com"
+                - "https://cdn.jsdelivr.net"
+            style-src: 
+                - "'self'"
+                - "'unsafe-inline'" # Nécessaire pour les styles dynamiques
+                - "https://fonts.googleapis.com"
+            font-src:
+                - "'self'"
+                - "https://fonts.gstatic.com"
+                - "data:"
+            img-src: 
+                - "'self'"
+                - "data:"
+                - "blob:"
+                - "https:"
+            connect-src:
+                - "'self'"
+            frame-src: 
+                - "'none'"
+            object-src: 
+                - "'none'"
+            media-src: 
+                - "'self'"
+        
+    # Protection contre le clickjacking
+    clickjacking:
+        paths:
+            '^/.*': SAMEORIGIN
+    
+    # Prévention du MIME sniffing
+    content_type:
+        nosniff: true
+    
+    # Protection XSS intégrée du navigateur
+    xss_protection:
+        enabled: true
+        mode_block: true
+    
+    # Forcer HTTPS en production
+    forced_ssl:
+        enabled: false # À activer en production avec un certificat SSL
+        
+    # Référrer policy
+    referrer_policy:
+        policies: 
+            - "strict-origin-when-cross-origin"

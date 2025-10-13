@@ -56,30 +56,77 @@ export default class extends Controller {
     const sizeInMB = MediaService.formatFileSize(image.size);
     const date = MediaService.formatDate(image.modified);
 
-    card.innerHTML = `
-            <figure class="aspect-video bg-base-200">
-                <img src="${image.url}" alt="${image.filename}" class="w-full h-full object-cover">
-            </figure>
-            <div class="card-body p-4">
-                <h3 class="text-sm font-medium truncate" title="${image.filename}">${image.filename}</h3>
-                <div class="text-xs text-base-content/60 space-y-1">
-                    <p>${sizeInMB} MB</p>
-                    <p>${date}</p>
-                </div>
-                <div class="card-actions justify-end mt-2">
-                    <button
-                        class="btn btn-sm btn-error btn-outline"
-                        data-action="click->media-library#openDeleteModal"
-                        data-filename="${image.filename}"
-                    >
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                        </svg>
-                        Supprimer
-                    </button>
-                </div>
-            </div>
-        `;
+    // Create figure element
+    const figure = document.createElement("figure");
+    figure.className = "aspect-video bg-base-200";
+
+    // Create image element securely
+    const img = document.createElement("img");
+    img.src = image.url;
+    img.alt = image.filename;
+    img.className = "w-full h-full object-cover";
+    figure.appendChild(img);
+
+    // Create card body
+    const cardBody = document.createElement("div");
+    cardBody.className = "card-body p-4";
+
+    // Create title
+    const title = document.createElement("h3");
+    title.className = "text-sm font-medium truncate";
+    title.title = image.filename;
+    title.textContent = image.filename;
+
+    // Create info div
+    const infoDiv = document.createElement("div");
+    infoDiv.className = "text-xs text-base-content/60 space-y-1";
+
+    const sizeP = document.createElement("p");
+    sizeP.textContent = sizeInMB + " MB";
+    const dateP = document.createElement("p");
+    dateP.textContent = date;
+
+    infoDiv.appendChild(sizeP);
+    infoDiv.appendChild(dateP);
+
+    // Create actions
+    const actionsDiv = document.createElement("div");
+    actionsDiv.className = "card-actions justify-end mt-2";
+
+    const deleteBtn = document.createElement("button");
+    deleteBtn.className = "btn btn-sm btn-error btn-outline";
+    deleteBtn.setAttribute("data-action", "click->media-library#openDeleteModal");
+    deleteBtn.setAttribute("data-filename", image.filename);
+
+    // Create SVG icon
+    const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    svg.setAttribute("class", "h-4 w-4");
+    svg.setAttribute("fill", "none");
+    svg.setAttribute("viewBox", "0 0 24 24");
+    svg.setAttribute("stroke", "currentColor");
+
+    const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    path.setAttribute("stroke-linecap", "round");
+    path.setAttribute("stroke-linejoin", "round");
+    path.setAttribute("stroke-width", "2");
+    path.setAttribute(
+      "d",
+      "M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+    );
+    svg.appendChild(path);
+
+    deleteBtn.appendChild(svg);
+    deleteBtn.appendChild(document.createTextNode(" Supprimer"));
+
+    actionsDiv.appendChild(deleteBtn);
+
+    // Assemble card
+    cardBody.appendChild(title);
+    cardBody.appendChild(infoDiv);
+    cardBody.appendChild(actionsDiv);
+
+    card.appendChild(figure);
+    card.appendChild(cardBody);
 
     return card;
   }

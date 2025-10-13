@@ -23,8 +23,7 @@ class CSVController extends AbstractController
 
     public function __construct(
         private readonly TranslatorInterface $translator
-    ) {
-    }
+    ) {}
 
     #[Route('/cms/csv', name: 'app_csv_index')]
     public function index(): Response
@@ -208,6 +207,17 @@ class CSVController extends AbstractController
     #[Route('/api/csv/delete/{filename}', name: 'app_csv_delete', methods: ['DELETE'])]
     public function delete(string $filename): JsonResponse
     {
+        // Security: Validate filename to prevent directory traversal
+        if (
+            !preg_match('/^[a-zA-Z0-9._-]+\.csv$/', $filename) ||
+            strpos($filename, '..') !== false ||
+            strpos($filename, '/') !== false ||
+            strpos($filename, '\\') !== false
+        ) {
+            return $this->json(['error' => 'Invalid filename'], Response::HTTP_BAD_REQUEST);
+        }
+
+        $filename = basename($filename);
         $csvDirectory = $this->getParameter('kernel.project_dir') . '/public/media/csv';
         $filePath = $csvDirectory . '/' . $filename;
 

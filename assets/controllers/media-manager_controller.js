@@ -153,11 +153,13 @@ export default class extends Controller {
       gallery.innerHTML = "";
 
       if (images.length === 0) {
-        gallery.innerHTML = `
-                    <div class="col-span-4 text-center py-8">
-                        <p class="text-base-content/50">Aucune image disponible</p>
-                    </div>
-                `;
+        const emptyDiv = document.createElement("div");
+        emptyDiv.className = "col-span-4 text-center py-8";
+        const emptyText = document.createElement("p");
+        emptyText.className = "text-base-content/50";
+        emptyText.textContent = "Aucune image disponible";
+        emptyDiv.appendChild(emptyText);
+        gallery.appendChild(emptyDiv);
         return;
       }
 
@@ -166,19 +168,26 @@ export default class extends Controller {
         imageCard.className =
           "aspect-square bg-base-200 rounded-box overflow-hidden cursor-pointer border-2 border-transparent hover:border-primary transition-all";
         imageCard.dataset.imageUrl = image.url;
-        imageCard.innerHTML = `
-                    <img src="${image.url}" alt="${image.filename}" class="w-full h-full object-cover">
-                `;
+
+        // Secure image creation
+        const img = document.createElement("img");
+        img.src = image.url;
+        img.alt = image.filename;
+        img.className = "w-full h-full object-cover";
+        imageCard.appendChild(img);
+
         imageCard.addEventListener("click", (e) => this.selectImageFromGallery(e));
         gallery.appendChild(imageCard);
       });
     } catch (error) {
       if (gallery) {
-        gallery.innerHTML = `
-                    <div class="col-span-4 text-center py-8">
-                        <p class="text-error">${error.message || "Erreur lors du chargement des images"}</p>
-                    </div>
-                `;
+        const errorDiv = document.createElement("div");
+        errorDiv.className = "col-span-4 text-center py-8";
+        const errorText = document.createElement("p");
+        errorText.className = "text-error";
+        errorText.textContent = error.message || "Erreur lors du chargement des images";
+        errorDiv.appendChild(errorText);
+        gallery.appendChild(errorDiv);
       }
     }
   }
@@ -257,10 +266,15 @@ export default class extends Controller {
     }
 
     try {
-      uploadZone.innerHTML = `
-                <span class="loading loading-spinner loading-lg"></span>
-                <p class="mt-4">Téléversement en cours...</p>
-            `;
+      // Secure DOM manipulation instead of innerHTML
+      uploadZone.innerHTML = "";
+      const spinner = document.createElement("span");
+      spinner.className = "loading loading-spinner loading-lg";
+      const message = document.createElement("p");
+      message.className = "mt-4";
+      message.textContent = "Téléversement en cours...";
+      uploadZone.appendChild(spinner);
+      uploadZone.appendChild(message);
 
       const data = await MediaService.uploadImage(file);
 
@@ -281,13 +295,36 @@ export default class extends Controller {
       alert(error.message || "Erreur lors du téléversement du fichier");
     } finally {
       if (uploadZone) {
-        uploadZone.innerHTML = `
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-12 h-12 mx-auto mb-4 text-base-content/50">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
-                    </svg>
-                    <p class="text-base-content/70">Cliquez ou glissez une image ici</p>
-                    <p class="text-sm text-base-content/50 mt-2">PNG, JPG, GIF, WebP (max 5MB)</p>
-                `;
+        // Secure DOM reset
+        uploadZone.innerHTML = "";
+
+        const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+        svg.setAttribute("fill", "none");
+        svg.setAttribute("viewBox", "0 0 24 24");
+        svg.setAttribute("stroke-width", "1.5");
+        svg.setAttribute("stroke", "currentColor");
+        svg.setAttribute("class", "w-12 h-12 mx-auto mb-4 text-base-content/50");
+
+        const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        path.setAttribute("stroke-linecap", "round");
+        path.setAttribute("stroke-linejoin", "round");
+        path.setAttribute(
+          "d",
+          "M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5"
+        );
+        svg.appendChild(path);
+
+        const p1 = document.createElement("p");
+        p1.className = "text-base-content/70";
+        p1.textContent = "Cliquez ou glissez une image ici";
+
+        const p2 = document.createElement("p");
+        p2.className = "text-sm text-base-content/50 mt-2";
+        p2.textContent = "PNG, JPG, GIF, WebP (max 5MB)";
+
+        uploadZone.appendChild(svg);
+        uploadZone.appendChild(p1);
+        uploadZone.appendChild(p2);
       }
     }
   }

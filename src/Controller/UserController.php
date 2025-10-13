@@ -20,8 +20,7 @@ final class UserController extends AbstractController
 {
     public function __construct(
         private readonly TranslatorInterface $translator
-    ) {
-    }
+    ) {}
 
     #[Route('/admin/users', name: 'app_user_index', methods: ['GET'])]
     #[IsGranted('ROLE_ADMIN')]
@@ -59,8 +58,7 @@ final class UserController extends AbstractController
         EntityManagerInterface $entityManager,
         UserPasswordHasherInterface $passwordHasher,
         SluggerInterface $slugger
-    ): Response
-    {
+    ): Response {
         /** @var User $user */
         $user = $this->getUser();
         $form = $this->createForm(ProfileType::class, $user);
@@ -87,9 +85,9 @@ final class UserController extends AbstractController
                 try {
                     $avatarsDirectory = $this->getParameter('kernel.project_dir') . '/public/uploads/avatars';
 
-                    // Create directory if it doesn't exist
+                    // Create directory if it doesn't exist with secure permissions
                     if (!is_dir($avatarsDirectory)) {
-                        mkdir($avatarsDirectory, 0755, true);
+                        mkdir($avatarsDirectory, 0750, true);
                     }
 
                     $avatarFile->move($avatarsDirectory, $newFilename);

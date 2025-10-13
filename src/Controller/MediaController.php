@@ -21,8 +21,7 @@ class MediaController extends AbstractController
 
     public function __construct(
         private readonly TranslatorInterface $translator
-    ) {
-    }
+    ) {}
 
     #[Route('/cms/media', name: 'app_media_index', methods: ['GET'])]
     public function index(): Response
@@ -101,6 +100,18 @@ class MediaController extends AbstractController
     #[Route('/api/media/delete/image/{filename}', name: 'api_media_delete_image', methods: ['DELETE'])]
     public function deleteImage(string $filename): JsonResponse
     {
+        // Security: Validate filename to prevent directory traversal
+        if (
+            !preg_match('/^[a-zA-Z0-9._-]+$/', $filename) ||
+            strpos($filename, '..') !== false ||
+            strpos($filename, '/') !== false ||
+            strpos($filename, '\\') !== false
+        ) {
+            return $this->json(['error' => 'Invalid filename'], Response::HTTP_BAD_REQUEST);
+        }
+
+        // Use basename for additional security
+        $filename = basename($filename);
         $filePath = $this->getParameter('kernel.project_dir') . '/public/media/images/' . $filename;
 
         if (!file_exists($filePath)) {
