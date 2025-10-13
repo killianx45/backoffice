@@ -5,3 +5,21 @@ api_platform:
         stateless: true
         cache_headers:
             vary: ['Content-Type', 'Authorization', 'Origin']
+    formats:
+        jsonld: ['application/ld+json']
+        json: ['application/json']
+    swagger:
+        api_keys:
+            apiKey:
+                name: Authorization
+                type: header
+            JWT:
+                name: Authorization
+                type: header
+        swagger_ui_extra_configuration:
+            securityDefinitions:
+                Bearer:
+                    type: http
+                    scheme: bearer
+                    bearerFormat: JWT
+                    description: 'Enter JWT Bearer token'
