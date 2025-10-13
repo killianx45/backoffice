@@ -16,7 +16,7 @@
                     </a>
                 </li>
 
-                {% if is_granted('ROLE_AUTEUR') or is_granted('ROLE_EDITEUR') or is_granted('ROLE_ADMIN') %}
+                {% if is_granted('IS_AUTHENTICATED_FULLY') %}
                 <li>
                     <a href="{{ path('app_article_index') }}" class="flex items-center gap-3">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">

@@ -14,14 +14,13 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[Route('/cms/article')]
-#[IsGranted('ROLE_AUTEUR')]
 class ArticleController extends AbstractController
 {
     public function __construct(
         private readonly TranslatorInterface $translator
-    ) {
-    }
+    ) {}
     #[Route('/', name: 'app_article_index', methods: ['GET'])]
+    #[IsGranted('IS_AUTHENTICATED_FULLY')]
     public function index(ArticleRepository $articleRepository): Response
     {
         return $this->render('article/index.html.twig', [
@@ -30,6 +29,7 @@ class ArticleController extends AbstractController
     }
 
     #[Route('/new', name: 'app_article_new', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_AUTEUR')]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
         $article = new Article();
@@ -59,6 +59,7 @@ class ArticleController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_article_show', methods: ['GET'])]
+    #[IsGranted('IS_AUTHENTICATED_FULLY')]
     public function show(Article $article): Response
     {
         return $this->render('article/show.html.twig', [
@@ -67,6 +68,7 @@ class ArticleController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'app_article_edit', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_AUTEUR')]
     public function edit(Request $request, Article $article, EntityManagerInterface $entityManager): Response
     {
         $this->denyAccessUnlessGranted('ARTICLE_EDIT', $article);
@@ -93,6 +95,7 @@ class ArticleController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_article_delete', methods: ['POST'])]
+    #[IsGranted('ROLE_AUTEUR')]
     public function delete(Request $request, Article $article, EntityManagerInterface $entityManager): Response
     {
         $this->denyAccessUnlessGranted('ARTICLE_DELETE', $article);

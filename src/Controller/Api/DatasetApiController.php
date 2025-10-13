@@ -21,7 +21,7 @@ class DatasetApiController extends AbstractController
         private TranslatorInterface $translator
     ) {}
     #[Route('', name: 'app_api_datasets_list', methods: ['GET'])]
-    #[IsGranted('ROLE_AUTEUR')]
+    #[IsGranted('IS_AUTHENTICATED_FULLY')]
     public function list(CsvDatasetRepository $repository): JsonResponse
     {
         $datasets = $repository->findConfigured();
@@ -65,7 +65,7 @@ class DatasetApiController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_api_datasets_show', methods: ['GET'])]
-    #[IsGranted('ROLE_AUTEUR')]
+    #[IsGranted('IS_AUTHENTICATED_FULLY')]
     public function show(CsvDataset $dataset): JsonResponse
     {
         return $this->json([

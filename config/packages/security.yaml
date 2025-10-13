@@ -53,7 +53,8 @@ security:
     access_control:
         - { path: ^/api/login, roles: PUBLIC_ACCESS }
         - { path: ^/api/,       roles: IS_AUTHENTICATED_FULLY }
-        - { path: ^/cms, roles: ROLE_AUTEUR }
+        - { path: ^/cms/article/(new|.+/edit), roles: ROLE_AUTEUR }
+        - { path: ^/cms, roles: IS_AUTHENTICATED_FULLY }
 
 when@test:
     security:
