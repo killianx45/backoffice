@@ -7,7 +7,21 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
 
+#[ApiResource(
+    operations: [
+        new GetCollection(
+            normalizationContext: ['groups' => ['csv_dataset:read']]
+        ),
+        new Get(
+            normalizationContext: ['groups' => ['csv_dataset:read']]
+        )
+    ]
+)]
 #[ORM\Entity(repositoryClass: CsvDatasetRepository::class)]
 #[ORM\HasLifecycleCallbacks]
 class CsvDataset
@@ -15,31 +29,40 @@ class CsvDataset
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['csv_dataset:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['csv_dataset:read'])]
     private ?string $filename = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['csv_dataset:read'])]
     private ?string $originalName = null;
 
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['csv_dataset:read'])]
     private ?User $uploadedBy = null;
 
     #[ORM\Column]
+    #[Groups(['csv_dataset:read'])]
     private ?\DateTimeImmutable $uploadedAt = null;
 
     #[ORM\Column]
+    #[Groups(['csv_dataset:read'])]
     private ?int $fileSize = null;
 
     #[ORM\Column]
+    #[Groups(['csv_dataset:read'])]
     private ?int $rowCount = null;
 
     #[ORM\Column(type: Types::BOOLEAN, options: ['default' => false])]
+    #[Groups(['csv_dataset:read'])]
     private bool $isConfigured = false;
 
     #[ORM\OneToMany(targetEntity: CsvVariable::class, mappedBy: 'dataset', cascade: ['persist', 'remove'], orphanRemoval: true)]
+    #[Groups(['csv_dataset:read'])]
     private Collection $variables;
 
     public function __construct()
@@ -157,5 +180,11 @@ class CsvDataset
     public function getPublicUrl(): string
     {
         return '/media/csv/' . $this->filename;
+    }
+
+    #[Groups(['csv_dataset:read'])]
+    public function getPublicUrlForApi(): string
+    {
+        return $this->getPublicUrl();
     }
 }
