@@ -354,6 +354,22 @@ registration:
     closing: Cheers!
   flash:
     verification_success: Your email address has been verified.
+    email_not_verified: Please verify your email address to access this page.
+    already_verified: Your email address is already verified.
+    verification_resent: A new verification email has been sent.
+  verification_pending:
+    title: Email verification
+    heading: Verify your email address
+    description: We have sent a verification email to
+    instruction: Click the link in the email to activate your account and access all features.
+    help_section: Need help?
+    resend_button: Resend verification email
+    logout_button: Log out
+  banner:
+    title: Verify your email address
+    description: A verification email has been sent to %email%. Please check your inbox and click the link to activate your account.
+    warning: ⚠️ You cannot access other pages until your email is verified.
+    resend_button: Resend
 
 # Login
 login:

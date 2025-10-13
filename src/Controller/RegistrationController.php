@@ -40,13 +40,11 @@ class RegistrationController extends AbstractController
             $entityManager->persist($user);
             $entityManager->flush();
 
-            // generate a signed url and email it to the user
             $this->emailVerifier->sendEmailConfirmation('app_verify_email', $user,
                 (new TemplatedEmail())
-                    ->from(new Address('backoffice_cms@sport.com', $translator->trans('registration.email.sender_name')))
                     ->to((string) $user->getEmail())
                     ->subject($translator->trans('registration.email.confirmation_subject'))
-                    ->htmlTemplate('registration/confirmation_email.html.twig')
+                    ->htmlTemplate('email/verification.html.twig')
             );
 
             // do anything else you need here, like send an email
@@ -80,4 +78,5 @@ class RegistrationController extends AbstractController
 
         return $this->redirectToRoute('app_register');
     }
+
 }

@@ -354,6 +354,22 @@ registration:
     closing: Cordialement !
   flash:
     verification_success: Votre adresse email a été vérifiée.
+    email_not_verified: Veuillez vérifier votre adresse email pour accéder à cette page.
+    already_verified: Votre adresse email est déjà vérifiée.
+    verification_resent: Un nouvel email de vérification a été envoyé.
+  verification_pending:
+    title: Vérification de votre email
+    heading: Vérifiez votre adresse email
+    description: Nous avons envoyé un email de vérification à
+    instruction: Cliquez sur le lien dans l'email pour activer votre compte et accéder à toutes les fonctionnalités.
+    help_section: Besoin d'aide ?
+    resend_button: Renvoyer l'email de vérification
+    logout_button: Se déconnecter
+  banner:
+    title: Vérifiez votre adresse email
+    description: Un email de vérification a été envoyé à %email%. Veuillez vérifier votre boîte de réception et cliquer sur le lien pour activer votre compte.
+    warning: ⚠️ Vous ne pouvez pas accéder aux autres pages tant que votre email n'est pas vérifié.
+    resend_button: Renvoyer
 
 # Login
 login:
