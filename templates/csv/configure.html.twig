@@ -5,25 +5,25 @@
 {% block body %}
 <div class="max-w-6xl mx-auto p-6" data-controller="dataset-config" data-dataset-config-dataset-id-value="{{ dataset.id }}">
     <div class="mb-6">
-        <h1 class="text-3xl font-bold mb-2">{{ 'csv.configure.heading'|trans }}</h1>
-        <p class="text-base-content/70">{{ 'csv.configure.description'|trans }}</p>
+        <h1 class="text-3xl font-bold mb-2">{{ 'csv.heading'|trans }}</h1>
+        <p class="text-base-content/70">{{ 'csv.subtitle.configure'|trans }}</p>
     </div>
 
     <div class="card bg-base-100 shadow-xl mb-6">
         <div class="card-body">
-            <h2 class="card-title">{{ 'csv.configure.file_info.title'|trans }}</h2>
+            <h2 class="card-title">{{ 'csv.file_info.title'|trans }}</h2>
             <div class="grid grid-cols-2 gap-4">
                 <div>
-                    <span class="font-semibold">{{ 'csv.configure.file_info.name'|trans }}:</span> {{ dataset.originalName }}
+                    <span class="font-semibold">{{ 'csv.file_info.original_name'|trans }}</span> {{ dataset.originalName }}
                 </div>
                 <div>
-                    <span class="font-semibold">{{ 'csv.configure.file_info.rows'|trans }}:</span> {{ dataset.rowCount }}
+                    <span class="font-semibold">{{ 'csv.file_info.rows'|trans }}</span> {{ dataset.rowCount }}
                 </div>
                 <div>
-                    <span class="font-semibold">{{ 'csv.configure.file_info.size'|trans }}:</span> {{ (dataset.fileSize / 1024)|number_format(2) }} KB
+                    <span class="font-semibold">{{ 'csv.file_info.size'|trans }}</span> {{ (dataset.fileSize / 1024)|number_format(2) }} KB
                 </div>
                 <div>
-                    <span class="font-semibold">{{ 'csv.configure.file_info.variables'|trans }}:</span> {{ dataset.variables|length }}
+                    <span class="font-semibold">{{ 'csv.file_info.variables'|trans }}</span> {{ dataset.variables|length }}
                 </div>
             </div>
         </div>
@@ -31,15 +31,15 @@
 
     <div class="card bg-base-100 shadow-xl">
         <div class="card-body">
-            <h2 class="card-title mb-4">{{ 'csv.configure.variables.title'|trans }}</h2>
+            <h2 class="card-title mb-4">{{ 'csv.variables.title'|trans }}</h2>
 
             <div class="alert alert-info mb-4">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                 <div>
-                    <h3 class="font-bold">{{ 'csv.configure.variables.types.title'|trans }}</h3>
+                    <h3 class="font-bold">{{ 'csv.variables.type_info.title'|trans }}</h3>
                     <div class="text-xs">
-                        <strong>{{ 'csv.variables.type.numeric'|trans }}:</strong> {{ 'csv.configure.variables.types.numeric_desc'|trans }}<br>
-                        <strong>{{ 'csv.variables.type.categorical'|trans }}:</strong> {{ 'csv.configure.variables.types.categorical_desc'|trans }}
+                        <strong>{{ 'csv.variables.type_info.numeric.label'|trans }}</strong> {{ 'csv.variables.type_info.numeric.description'|trans }}<br>
+                        <strong>{{ 'csv.variables.type_info.categorical.label'|trans }}</strong> {{ 'csv.variables.type_info.categorical.description'|trans }}
                     </div>
                 </div>
             </div>
@@ -48,10 +48,10 @@
                 <table class="table table-zebra w-full">
                     <thead>
                         <tr>
-                            <th>{{ 'csv.configure.table.variable'|trans }}</th>
-                            <th>{{ 'csv.configure.table.type_detected'|trans }}</th>
-                            <th>{{ 'csv.configure.table.sample_values'|trans }}</th>
-                            <th>{{ 'csv.configure.table.actions'|trans }}</th>
+                            <th>{{ 'csv.variables.table.variable'|trans }}</th>
+                            <th>{{ 'csv.variables.table.detected_type'|trans }}</th>
+                            <th>{{ 'csv.variables.table.sample_values'|trans }}</th>
+                            <th>{{ 'csv.variables.table.actions'|trans }}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -60,7 +60,7 @@
                             <td class="font-semibold">{{ variable.name }}</td>
                             <td>
                                 <span class="badge {% if variable.type == 'numeric' %}badge-primary{% else %}badge-secondary{% endif %}">
-                                    {% if variable.type == 'numeric' %}{{ 'csv.variables.type.numeric'|trans }}{% else %}{{ 'csv.variables.type.categorical'|trans }}{% endif %}
+                                    {% if variable.type == 'numeric' %}{{ 'csv.variables.table.numeric'|trans }}{% else %}{{ 'csv.variables.table.categorical'|trans }}{% endif %}
                                 </span>
                             </td>
                             <td>
@@ -72,8 +72,8 @@
                             </td>
                             <td>
                                 <select class="select select-bordered select-sm" data-action="change->dataset-config#toggleVariableType">
-                                    <option value="categorical" {% if variable.type == 'categorical' %}selected{% endif %}>{{ 'csv.variables.type.categorical'|trans }}</option>
-                                    <option value="numeric" {% if variable.type == 'numeric' %}selected{% endif %}>{{ 'csv.variables.type.numeric'|trans }}</option>
+                                    <option value="categorical" {% if variable.type == 'categorical' %}selected{% endif %}>{{ 'csv.variables.table.categorical'|trans }}</option>
+                                    <option value="numeric" {% if variable.type == 'numeric' %}selected{% endif %}>{{ 'csv.variables.table.numeric'|trans }}</option>
                                 </select>
                             </td>
                         </tr>
@@ -83,9 +83,9 @@
             </div>
 
             <div class="card-actions justify-end mt-6">
-                <button class="btn btn-ghost" data-action="click->dataset-config#cancel">{{ 'csv.configure.actions.cancel'|trans }}</button>
+                <button class="btn btn-ghost" data-action="click->dataset-config#cancel">{{ 'button.cancel'|trans }}</button>
                 <button class="btn btn-primary" data-action="click->dataset-config#confirmConfiguration">
-                    {{ 'csv.configure.actions.confirm'|trans }}
+                    {{ 'csv.button.confirm_config'|trans }}
                 </button>
             </div>
         </div>
