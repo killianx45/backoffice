@@ -1,0 +1,4 @@
+api_user_profile_no_locale:
+    path: /api/user/profile
+    controller: App\Controller\Api\UserApiController::profile
+    methods: [GET]

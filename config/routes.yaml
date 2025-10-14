@@ -6,6 +6,14 @@ root_redirect:
         _locale: '%app.default_locale%'
         permanent: false
 
+# Routes API sans préfixe locale
+api_controllers:
+    resource:
+        path: ../src/Controller/Api/
+        namespace: App\Controller\Api
+    type: attribute
+
+# Routes web avec préfixe locale
 controllers:
     resource:
         path: ../src/Controller/
@@ -16,6 +24,7 @@ controllers:
         _locale: '%app.supported_locales%'
     defaults:
         _locale: '%app.default_locale%'
+    exclude: Api
 
 presta_sitemap:
     resource: "@PrestaSitemapBundle/config/routing.yml"
