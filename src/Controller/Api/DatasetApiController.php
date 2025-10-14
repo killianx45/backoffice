@@ -156,4 +156,30 @@ class DatasetApiController extends AbstractController
             'message' => $this->translator->trans('api.dataset.success.deleted')
         ]);
     }
+
+    #[Route('/{id}/csv', name: 'app_api_datasets_csv', methods: ['GET'])]
+    #[IsGranted('IS_AUTHENTICATED_FULLY')]
+    public function getCsv(CsvDataset $dataset): Response
+    {
+        $csvDirectory = $this->getParameter('kernel.project_dir') . '/public/media/csv';
+        $filePath = $csvDirectory . '/' . $dataset->getFilename();
+
+        if (!file_exists($filePath)) {
+            return $this->json(['error' => 'CSV file not found'], Response::HTTP_NOT_FOUND);
+        }
+
+        try {
+            $content = file_get_contents($filePath);
+
+            return new Response($content, Response::HTTP_OK, [
+                'Content-Type' => 'text/plain; charset=utf-8',
+                'Content-Disposition' => 'inline',
+                'Access-Control-Allow-Origin' => '*',
+                'Access-Control-Allow-Methods' => 'GET',
+                'Access-Control-Allow-Headers' => 'Content-Type, Authorization'
+            ]);
+        } catch (\Exception $e) {
+            return $this->json(['error' => 'Cannot read CSV file'], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
 }

@@ -58,3 +58,10 @@ api_datasets_delete_no_locale:
     methods: [DELETE]
     requirements:
         id: '\d+'
+
+api_datasets_csv_no_locale:
+    path: /api/datasets/{id}/csv
+    controller: App\Controller\Api\DatasetApiController::getCsv
+    methods: [GET]
+    requirements:
+        id: '\d+'
