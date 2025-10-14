@@ -56,6 +56,7 @@ security:
     # Note: Only the *first* access control that matches will be used
     access_control:
         - { path: ^/api/login, roles: PUBLIC_ACCESS }
+        - { path: ^/api/register, roles: PUBLIC_ACCESS }
         - { path: ^/api/,       roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/cms/article/(new|.+/edit), roles: ROLE_AUTEUR }
         - { path: ^/cms, roles: IS_AUTHENTICATED_FULLY }
