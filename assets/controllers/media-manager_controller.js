@@ -28,8 +28,10 @@ export default class extends Controller {
       this.createModal();
     }
 
-    this.modalElement.showModal();
-    this.loadImages();
+    if (this.modalElement && document.contains(this.modalElement)) {
+      this.modalElement.showModal();
+      this.loadImages();
+    }
   }
 
   closeModal() {
@@ -48,6 +50,11 @@ export default class extends Controller {
   }
 
   createModal() {
+    const existingModal = document.body.querySelector("[data-media-modal]");
+    if (existingModal) {
+      existingModal.remove();
+    }
+
     const modalHTML = `
             <dialog data-media-modal class="modal">
                 <div class="modal-box w-11/12 max-w-5xl bg-base-100">
