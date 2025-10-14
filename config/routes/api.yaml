@@ -7,3 +7,54 @@ api_register_no_locale:
     path: /api/register
     controller: App\Controller\Api\RegistrationApiController::register
     methods: [POST]
+
+api_theme_active_no_locale:
+    path: /api/theme/active
+    controller: App\Controller\Api\ThemeApiController::getActiveTheme
+    methods: [GET]
+
+api_theme_get_no_locale:
+    path: /api/theme/{id}
+    controller: App\Controller\Api\ThemeApiController::getTheme
+    methods: [GET]
+    requirements:
+        id: '\d+'
+
+api_datasets_list_no_locale:
+    path: /api/datasets
+    controller: App\Controller\Api\DatasetApiController::list
+    methods: [GET]
+
+api_datasets_all_no_locale:
+    path: /api/datasets/all
+    controller: App\Controller\Api\DatasetApiController::all
+    methods: [GET]
+
+api_datasets_show_no_locale:
+    path: /api/datasets/{id}
+    controller: App\Controller\Api\DatasetApiController::show
+    methods: [GET]
+    requirements:
+        id: '\d+'
+
+api_datasets_update_variable_no_locale:
+    path: /api/datasets/{id}/variables/{variableId}
+    controller: App\Controller\Api\DatasetApiController::updateVariable
+    methods: [PATCH]
+    requirements:
+        id: '\d+'
+        variableId: '\d+'
+
+api_datasets_configure_no_locale:
+    path: /api/datasets/{id}/configure
+    controller: App\Controller\Api\DatasetApiController::configure
+    methods: [POST]
+    requirements:
+        id: '\d+'
+
+api_datasets_delete_no_locale:
+    path: /api/datasets/{id}
+    controller: App\Controller\Api\DatasetApiController::delete
+    methods: [DELETE]
+    requirements:
+        id: '\d+'
