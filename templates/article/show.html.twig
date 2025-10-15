@@ -68,6 +68,9 @@
                 <span class="text-xs opacity-40">{{ 'article.modified_on'|trans({'%date%': article.updatedAt|date('d/m/Y')}) }}</span>
                 {% endif %}
             </div>
+            <div class="mt-3">
+                {% include 'components/star_rating.html.twig' with {'article': article} %}
+            </div>
         </div>
 
         <div class="flex gap-2">

@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\ArticleRepository;
+use App\Repository\RatingRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HttpFoundation\File\File;
@@ -16,10 +17,12 @@ use ApiPlatform\Metadata\GetCollection;
 #[ApiResource(
     operations: [
         new GetCollection(
-            normalizationContext: ['groups' => ['article:read']]
+            normalizationContext: ['groups' => ['article:read']],
+            provider: 'App\State\ArticleProvider'
         ),
         new Get(
-            normalizationContext: ['groups' => ['article:read']]
+            normalizationContext: ['groups' => ['article:read']],
+            provider: 'App\State\ArticleProvider'
         )
     ]
 )]
@@ -69,6 +72,12 @@ class Article
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
     #[Groups(['article:read'])]
     private ?\DateTimeImmutable $updatedAt = null;
+
+    #[Groups(['article:read'])]
+    private ?float $averageRating = null;
+
+    #[Groups(['article:read'])]
+    private ?int $ratingsCount = null;
 
     #[ORM\PrePersist]
     public function setCreatedAtValue(): void
@@ -170,6 +179,30 @@ class Article
     public function setUpdatedAt(\DateTimeImmutable $updatedAt): static
     {
         $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    public function getAverageRating(): ?float
+    {
+        return $this->averageRating;
+    }
+
+    public function setAverageRating(?float $averageRating): static
+    {
+        $this->averageRating = $averageRating;
+
+        return $this;
+    }
+
+    public function getRatingsCount(): ?int
+    {
+        return $this->ratingsCount;
+    }
+
+    public function setRatingsCount(?int $ratingsCount): static
+    {
+        $this->ratingsCount = $ratingsCount;
 
         return $this;
     }

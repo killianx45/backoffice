@@ -75,3 +75,31 @@ api_datasets_csv_no_locale:
     methods: [GET]
     requirements:
         id: '\d+'
+
+api_article_rate_no_locale:
+    path: /api/articles/{id}/rating
+    controller: App\Controller\Api\RatingApiController::rateArticle
+    methods: [POST]
+    requirements:
+        id: '\d+'
+
+api_article_get_user_rating_no_locale:
+    path: /api/articles/{id}/rating
+    controller: App\Controller\Api\RatingApiController::getUserRating
+    methods: [GET]
+    requirements:
+        id: '\d+'
+
+api_article_rating_stats_no_locale:
+    path: /api/articles/{id}/rating/stats
+    controller: App\Controller\Api\RatingApiController::getArticleRatingStats
+    methods: [GET]
+    requirements:
+        id: '\d+'
+
+api_article_delete_rating_no_locale:
+    path: /api/articles/{id}/rating
+    controller: App\Controller\Api\RatingApiController::deleteRating
+    methods: [DELETE]
+    requirements:
+        id: '\d+'

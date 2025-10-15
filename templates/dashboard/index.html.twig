@@ -4,7 +4,6 @@
 
 {% block body %}
 <div class="container mx-auto px-6 py-12 max-w-7xl">
-    {# Banner de vérification d'email #}
     {% if not app.user.isVerified %}
     <div class="mb-8">
         <div role="alert" class="alert border border-base-300 bg-base-100">
@@ -150,6 +149,7 @@
                     <tr class="text-left">
                         <th class="px-6 py-3 text-xs font-medium text-base-content/60">{{ 'dashboard.recent_articles.table.title'|trans }}</th>
                         <th class="px-6 py-3 text-xs font-medium text-base-content/60">{{ 'dashboard.recent_articles.table.author'|trans }}</th>
+                        <th class="px-6 py-3 text-xs font-medium text-base-content/60">Évaluation</th>
                         <th class="px-6 py-3 text-xs font-medium text-base-content/60">{{ 'dashboard.recent_articles.table.date'|trans }}</th>
                     </tr>
                 </thead>
@@ -161,6 +161,9 @@
                         </td>
                         <td class="px-6 py-4">
                             <p class="text-sm text-base-content/70">{{ article.author.prenom }} {{ article.author.nom }}</p>
+                        </td>
+                        <td class="px-6 py-4">
+                            {% include 'components/star_rating.html.twig' with {'article': article} %}
                         </td>
                         <td class="px-6 py-4">
                             <p class="text-sm text-base-content/60">{{ article.createdAt|date('d/m/Y') }}</p>

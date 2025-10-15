@@ -43,6 +43,9 @@
                 <div class="text-xs text-base-content/60 space-y-1 mb-4">
                     <p>{{ 'article.by_author'|trans({'%author%': article.author.prenom ~ ' ' ~ article.author.nom}) }}</p>
                     <p>{{ article.createdAt|date('d/m/Y') }}</p>
+                    <div class="pt-2">
+                        {% include 'components/star_rating.html.twig' with {'article': article} %}
+                    </div>
                 </div>
 
                 {% if is_granted('ARTICLE_EDIT', article) %}
