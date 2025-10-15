@@ -102,6 +102,9 @@
                 border-color: {{ themeConfig ? themeConfig.colors.base300 : '#e8e8e8' }};">
         <div class="article-content {% if themeConfig and themeConfig.layout.contentAlignment == 'center' %}text-center{% elseif themeConfig and themeConfig.layout.contentAlignment == 'justify' %}text-justify{% else %}text-left{% endif %} {% if themeConfig and themeConfig.typography.bodySize == 'small' %}text-sm{% elseif themeConfig and themeConfig.typography.bodySize == 'large' %}text-lg{% else %}text-base{% endif %} {% if themeConfig and themeConfig.typography.lineHeight == 'tight' %}leading-snug{% elseif themeConfig and themeConfig.typography.lineHeight == 'relaxed' %}leading-relaxed{% else %}leading-normal{% endif %}"
              data-controller="inline-chart"
+             {% if themeConfig %}
+             data-inline-chart-theme-colors-value='{{ themeConfig.colors|json_encode|raw }}'
+             {% endif %}
              style="font-family: {{ themeConfig and themeConfig.typography.bodyFont == 'montserrat' ? 'Montserrat' : 'Darker Grotesque' }};">
             {{ article.description|striptags('<p><br><strong><em><ul><li><ol><h1><h2><h3><h4><h5><h6><blockquote><a><img><div><span>')|raw }}
         </div>

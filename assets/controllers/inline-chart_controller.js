@@ -4,6 +4,8 @@ import { CSVParser } from "../utils/csv-parser";
 import { apiUrl } from "../services/locale-helper";
 
 export default class extends Controller {
+  static values = { themeColors: Object };
+
   async connect() {
     await this.renderAllCharts();
   }
@@ -55,20 +57,44 @@ export default class extends Controller {
       const csvText = await csvResponse.text();
       const parsedCSV = CSVParser.parse(csvText);
 
-      const theme = await this.fetchActiveTheme();
-      const themeColors = theme ? this.generateThemeColorPalette(theme) : null;
+      // Utilise les couleurs du thème passées depuis le template ou récupère le thème via API
+      let themeColors = null;
+      let theme = null;
+
+      if (this.hasThemeColorsValue && this.themeColorsValue) {
+        themeColors = this.generateThemeColorPaletteFromColors(this.themeColorsValue);
+        // On simule un objet theme pour la cohérence
+        theme = { configuration: { colors: this.themeColorsValue, charts: { legendPosition: "top" } } };
+      } else {
+        theme = await this.fetchActiveTheme();
+        themeColors = theme ? this.generateThemeColorPalette(theme) : null;
+      }
 
       const chartData = CSVParser.toChartDataAdvanced(parsedCSV, chartType, selectedVariables, themeColors);
+
+      // Récupère les couleurs pour le style du graphique
+      const chartColors = this.getChartColors(theme);
 
       const chartOptions = {
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
           legend: {
-            display: theme && theme.configuration.charts.legendPosition !== 'none',
-            position: theme && theme.configuration.charts.legendPosition !== 'none'
-              ? (theme.configuration.charts.legendPosition || "top")
-              : "top",
+            display:
+              theme &&
+              theme.configuration &&
+              theme.configuration.charts &&
+              theme.configuration.charts.legendPosition !== "none",
+            position:
+              theme &&
+              theme.configuration &&
+              theme.configuration.charts &&
+              theme.configuration.charts.legendPosition !== "none"
+                ? theme.configuration.charts.legendPosition || "top"
+                : "top",
+            labels: {
+              color: theme && theme.configuration ? theme.configuration.colors.secondary : "#666",
+            },
           },
           title: {
             display: !!title,
@@ -77,44 +103,85 @@ export default class extends Controller {
               size: 16,
               weight: "bold",
             },
+            color: theme && theme.configuration ? theme.configuration.colors.primary : "#333",
           },
         },
       };
 
-      if (chartType !== 'pie' && chartType !== 'scatter') {
+      if (chartType !== "pie" && chartType !== "scatter") {
         chartOptions.scales = {
           x: {
             title: {
               display: !!xAxisLabel,
               text: xAxisLabel || "",
+              color: theme && theme.configuration ? theme.configuration.colors.secondary : "#666",
+            },
+            ticks: {
+              color: theme && theme.configuration ? theme.configuration.colors.secondary : "#666",
+            },
+            grid: {
+              color:
+                theme && theme.configuration
+                  ? this.hexToRgba(theme.configuration.colors.base300, 0.3)
+                  : "rgba(232, 232, 232, 0.3)",
             },
           },
           y: {
             title: {
               display: !!yAxisLabel,
               text: yAxisLabel || "",
+              color: theme && theme.configuration ? theme.configuration.colors.secondary : "#666",
             },
             beginAtZero: true,
+            ticks: {
+              color: theme && theme.configuration ? theme.configuration.colors.secondary : "#666",
+            },
+            grid: {
+              color:
+                theme && theme.configuration
+                  ? this.hexToRgba(theme.configuration.colors.base300, 0.3)
+                  : "rgba(232, 232, 232, 0.3)",
+            },
           },
         };
       }
 
-      if (chartType === 'scatter') {
+      if (chartType === "scatter") {
         chartOptions.scales = {
           x: {
-            type: 'linear',
+            type: "linear",
             title: {
               display: !!xAxisLabel,
               text: xAxisLabel || "",
+              color: theme && theme.configuration ? theme.configuration.colors.secondary : "#666",
+            },
+            ticks: {
+              color: theme && theme.configuration ? theme.configuration.colors.secondary : "#666",
+            },
+            grid: {
+              color:
+                theme && theme.configuration
+                  ? this.hexToRgba(theme.configuration.colors.base300, 0.3)
+                  : "rgba(232, 232, 232, 0.3)",
             },
           },
           y: {
-            type: 'linear',
+            type: "linear",
             title: {
               display: !!yAxisLabel,
               text: yAxisLabel || "",
+              color: theme && theme.configuration ? theme.configuration.colors.secondary : "#666",
             },
             beginAtZero: true,
+            ticks: {
+              color: theme && theme.configuration ? theme.configuration.colors.secondary : "#666",
+            },
+            grid: {
+              color:
+                theme && theme.configuration
+                  ? this.hexToRgba(theme.configuration.colors.base300, 0.3)
+                  : "rgba(232, 232, 232, 0.3)",
+            },
           },
         };
       }
@@ -157,23 +224,49 @@ export default class extends Controller {
       return null;
     }
 
+    // Utilise d'abord la palette prédéfinie du thème si disponible
+    if (theme.configuration.colors.chartPalette && Array.isArray(theme.configuration.colors.chartPalette)) {
+      return theme.configuration.colors.chartPalette;
+    }
+
     const primary = theme.configuration.colors.primary;
     const accent = theme.configuration.colors.accent;
     const baseColor = accent || primary;
 
+    return this.generateColorPaletteFromBaseColor(baseColor);
+  }
+
+  generateThemeColorPaletteFromColors(colors) {
+    if (!colors) {
+      return null;
+    }
+
+    // Utilise d'abord la palette prédéfinie du thème si disponible
+    if (colors.chartPalette && Array.isArray(colors.chartPalette)) {
+      return colors.chartPalette;
+    }
+
+    const primary = colors.primary;
+    const accent = colors.accent;
+    const baseColor = accent || primary;
+
+    return this.generateColorPaletteFromBaseColor(baseColor);
+  }
+
+  generateColorPaletteFromBaseColor(baseColor) {
     const parseColor = (color) => {
-      if (color.startsWith('hsl')) {
+      if (color.startsWith("hsl")) {
         const match = color.match(/hsl\((\d+),\s*(\d+)%,\s*(\d+)%\)/);
         if (match) {
           return {
             h: parseInt(match[1]),
             s: parseInt(match[2]),
-            l: parseInt(match[3])
+            l: parseInt(match[3]),
           };
         }
       }
 
-      if (color.startsWith('#')) {
+      if (color.startsWith("#")) {
         const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(color);
         if (!result) return { h: 276, s: 82, l: 63 };
 
@@ -183,7 +276,9 @@ export default class extends Controller {
 
         const max = Math.max(r, g, b);
         const min = Math.min(r, g, b);
-        let h, s, l = (max + min) / 2;
+        let h,
+          s,
+          l = (max + min) / 2;
 
         if (max === min) {
           h = s = 0;
@@ -191,16 +286,22 @@ export default class extends Controller {
           const d = max - min;
           s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
           switch (max) {
-            case r: h = ((g - b) / d + (g < b ? 6 : 0)) / 6; break;
-            case g: h = ((b - r) / d + 2) / 6; break;
-            case b: h = ((r - g) / d + 4) / 6; break;
+            case r:
+              h = ((g - b) / d + (g < b ? 6 : 0)) / 6;
+              break;
+            case g:
+              h = ((b - r) / d + 2) / 6;
+              break;
+            case b:
+              h = ((r - g) / d + 4) / 6;
+              break;
           }
         }
 
         return {
           h: Math.round(h * 360),
           s: Math.round(s * 100),
-          l: Math.round(l * 100)
+          l: Math.round(l * 100),
         };
       }
 
@@ -211,7 +312,7 @@ export default class extends Controller {
 
     const baseSaturation = hsl.s < 40 ? 70 : hsl.s;
     const baseHue = hsl.s < 10 ? 276 : hsl.h;
-    const baseLightness = hsl.l < 30 ? 55 : (hsl.l > 70 ? 55 : hsl.l);
+    const baseLightness = hsl.l < 30 ? 55 : hsl.l > 70 ? 55 : hsl.l;
 
     return [
       `hsl(${baseHue}, ${baseSaturation}%, ${baseLightness}%)`,
@@ -231,12 +332,13 @@ export default class extends Controller {
       border: "rgba(59, 130, 246, 1)",
     };
 
-    if (!theme || !theme.configuration) {
+    if (!theme || !theme.configuration || !theme.configuration.colors) {
       return defaultColors;
     }
 
-    const primary = theme.configuration.colors.primary;
-    const accent = theme.configuration.colors.accent;
+    const themeColors = theme.configuration.colors;
+    const primary = themeColors.primary;
+    const accent = themeColors.accent;
 
     const hexToRgb = (hex) => {
       const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
@@ -256,5 +358,46 @@ export default class extends Controller {
       backgroundTransparent: `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.2)`,
       border: `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 1)`,
     };
+  }
+
+  hexToRgba(color, alpha = 1) {
+    // Si c'est déjà une couleur HSL
+    if (color.startsWith("hsl")) {
+      const match = color.match(/hsl\((\d+),\s*(\d+)%,\s*(\d+)%\)/);
+      if (match) {
+        const h = parseInt(match[1]) / 360;
+        const s = parseInt(match[2]) / 100;
+        const l = parseInt(match[3]) / 100;
+
+        const hue2rgb = (p, q, t) => {
+          if (t < 0) t += 1;
+          if (t > 1) t -= 1;
+          if (t < 1 / 6) return p + (q - p) * 6 * t;
+          if (t < 1 / 2) return q;
+          if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
+          return p;
+        };
+
+        const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+        const p = 2 * l - q;
+        const r = Math.round(hue2rgb(p, q, h + 1 / 3) * 255);
+        const g = Math.round(hue2rgb(p, q, h) * 255);
+        const b = Math.round(hue2rgb(p, q, h - 1 / 3) * 255);
+
+        return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+      }
+    }
+
+    // Si c'est une couleur hexadécimale
+    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(color);
+    if (result) {
+      const r = parseInt(result[1], 16);
+      const g = parseInt(result[2], 16);
+      const b = parseInt(result[3], 16);
+      return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+    }
+
+    // Fallback
+    return `rgba(232, 232, 232, ${alpha})`;
   }
 }
