@@ -10,6 +10,8 @@ nav:
   profile: My profile
   login: Login
   logout: Logout
+  dark_mode: Dark mode
+  light_mode: Light mode
 
 # Common buttons
 button:

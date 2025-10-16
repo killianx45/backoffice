@@ -9,6 +9,19 @@
     <title>{% block title %}{{ 'meta.title.default'|trans }}{% endblock %}</title>
     <meta name="description" content="{% block meta_description %}{{ 'meta.description.default'|trans }}{% endblock %}" />
     <meta name="robots" content="{% block meta_robots %}noindex, nofollow{% endblock %}" />
+    <meta name="theme-color" content="#ffffff" />
+    <script>
+      (function() {
+        const savedTheme = localStorage.getItem('theme');
+        const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const theme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', theme);
+        const metaThemeColor = document.querySelector('meta[name="theme-color"]');
+        if (metaThemeColor) {
+          metaThemeColor.setAttribute('content', theme === 'dark' ? '#1d232a' : '#ffffff');
+        }
+      })();
+    </script>
     {% block stylesheets %}
       {{ encore_entry_link_tags('app') }}
     {% endblock %}

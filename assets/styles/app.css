@@ -28,9 +28,66 @@
   --dui-error-content: 0 0% 100%;
 }
 
+/* Thème sombre personnalisé */
+[data-theme="dark"] {
+  --dui-primary: 0 0% 90%;
+  --dui-primary-content: 0 0% 9%;
+  --dui-secondary: 0 0% 75%;
+  --dui-secondary-content: 0 0% 9%;
+  --dui-accent: 0 0% 75%;
+  --dui-accent-content: 0 0% 9%;
+  --dui-neutral: 0 0% 90%;
+  --dui-neutral-content: 0 0% 9%;
+  --dui-base-100: 219 14% 15%;
+  --dui-base-200: 219 14% 12%;
+  --dui-base-300: 219 14% 8%;
+  --dui-base-content: 0 0% 90%;
+  --dui-info: 214 100% 60%;
+  --dui-info-content: 0 0% 100%;
+  --dui-success: 149 100% 45%;
+  --dui-success-content: 0 0% 100%;
+  --dui-warning: 38 100% 60%;
+  --dui-warning-content: 0 0% 100%;
+  --dui-error: 0 91% 65%;
+  --dui-error-content: 0 0% 100%;
+}
+
 body {
   font-family: "Darker Grotesque", sans-serif;
   font-size: 1.25rem; /* 18px */
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+* {
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+
+[data-controller="theme-toggle"] {
+  position: relative;
+}
+
+[data-controller="theme-toggle"] svg {
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+[data-controller="theme-toggle"]:hover svg {
+  transform: scale(1.1);
+}
+
+[data-controller="theme-toggle"].theme-switching svg {
+  animation: themeRotate 0.6s ease-in-out;
+}
+
+@keyframes themeRotate {
+  0% {
+    transform: rotate(0deg) scale(1);
+  }
+  50% {
+    transform: rotate(180deg) scale(1.2);
+  }
+  100% {
+    transform: rotate(360deg) scale(1);
+  }
 }
 
 h1,

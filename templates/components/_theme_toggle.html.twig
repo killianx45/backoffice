@@ -1,0 +1,21 @@
+{% set compact = compact|default(false) %}
+{% set show_text = show_text|default(true) %}
+{% set size = size|default('normal') %}
+
+<button 
+    data-controller="theme-toggle" 
+    data-action="click->theme-toggle#toggle"
+    data-theme-toggle-light-text-value="{{ 'nav.light_mode'|trans }}"
+    data-theme-toggle-dark-text-value="{{ 'nav.dark_mode'|trans }}"
+    class="btn {{ compact ? 'btn-ghost btn-sm' : 'btn-ghost' }} {{ compact ? 'gap-2 px-2' : 'w-full justify-start gap-3 px-3' }} transition-colors"
+    title="{{ 'nav.dark_mode'|trans }}"
+>
+    <span data-theme-toggle-target="icon" class="flex-shrink-0">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+        </svg>
+    </span>
+    {% if show_text %}
+        <span data-theme-toggle-target="text" class="text-sm">{{ 'nav.dark_mode'|trans }}</span>
+    {% endif %}
+</button>
