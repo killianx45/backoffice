@@ -1,0 +1,38 @@
+# Git
+.git
+.gitignore
+
+# Documentation
+README.md
+*.md
+
+# Fichiers de configuration locale
+.env.local
+.env.*.local
+
+# Cache et logs
+var/cache/*
+var/log/*
+var/sessions/*
+
+# Dépendances et vendor (seront réinstallées dans le container)
+vendor/
+node_modules/
+
+# Tests
+tests/
+phpunit.xml.dist
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Uploads temporaires
+public/uploads/*
+!public/uploads/.gitkeep
