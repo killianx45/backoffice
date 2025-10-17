@@ -16,9 +16,9 @@
              class="w-full {% if themeConfig.layout.featuredImageSize == 'small' %}h-48{% elseif themeConfig.layout.featuredImageSize == 'medium' %}h-64{% elseif themeConfig.layout.featuredImageSize == 'large' %}h-96{% else %}h-screen max-h-[600px]{% endif %} object-cover"
              style="font-family: {{ themeConfig and themeConfig.typography.headingFont == 'darker-grotesque' ? 'Darker Grotesque' : 'Montserrat' }}">
 
-        {% if themeConfig.layout.titlePosition starts with 'overlay' %}
+    {% if themeConfig and themeConfig.layout is defined and themeConfig.layout.titlePosition is defined and themeConfig.layout.titlePosition starts with 'overlay' %}
         <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent"></div>
-        <div class="absolute {% if themeConfig.layout.titlePosition == 'overlay-top' %}top-8{% elseif themeConfig.layout.titlePosition == 'overlay-center' %}top-1/2 -translate-y-1/2{% else %}bottom-8{% endif %} left-8 right-8">
+    <div class="absolute {% if themeConfig and themeConfig.layout is defined and themeConfig.layout.titlePosition is defined and themeConfig.layout.titlePosition == 'overlay-top' %}top-8{% elseif themeConfig and themeConfig.layout is defined and themeConfig.layout.titlePosition is defined and themeConfig.layout.titlePosition == 'overlay-center' %}top-1/2 -translate-y-1/2{% else %}bottom-8{% endif %} left-8 right-8">
             <h1 class="font-bold text-white mb-3 {% if themeConfig and themeConfig.typography.headingSize == 'small' %}text-[2rem]{% elseif themeConfig and themeConfig.typography.headingSize == 'large' %}text-[3rem]{% else %}text-4xl{% endif %}"
                 style="font-family: {{ themeConfig and themeConfig.typography.headingFont == 'darker-grotesque' ? 'Darker Grotesque' : 'Montserrat' }}">
                 {{ article.title }}
@@ -42,7 +42,7 @@
     </div>
     {% endif %}
 
-    {% if not article.featuredImage or not (themeConfig.layout.titlePosition starts with 'overlay') %}
+    {% if not article.featuredImage or not (themeConfig and themeConfig.layout is defined and themeConfig.layout.titlePosition is defined and themeConfig.layout.titlePosition starts with 'overlay') %}
     <div class="mb-8 flex justify-between items-start">
         <div class="flex-1">
             <h1 class="font-bold mb-3 {% if themeConfig and themeConfig.typography.headingSize == 'small' %}text-[2rem]{% elseif themeConfig and themeConfig.typography.headingSize == 'large' %}text-[3rem]{% else %}text-4xl{% endif %}"
