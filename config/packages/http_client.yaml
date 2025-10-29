@@ -1,0 +1,13 @@
+framework:
+    http_client:
+        default_options:
+            timeout: 30
+            headers:
+                User-Agent: 'CMS-Backoffice/1.0'
+
+        scoped_clients:
+            localai.client:
+                base_uri: 'http://host.docker.internal:11434'
+                timeout: 60
+                headers:
+                    Content-Type: 'application/json'

@@ -52,5 +52,8 @@
       </div>
       {% include 'header.html.twig' %}
     </div>
+    {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+      {{ include('components/_chatbot.html.twig') }}
+    {% endif %}
   </body>
 </html>
