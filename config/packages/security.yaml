@@ -38,8 +38,7 @@ security:
                 default_target_path: app_dashboard
             logout:
                 path: app_logout
-                # where to redirect after logout
-                # target: app_any_route
+                target: app_login
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall
@@ -49,8 +48,11 @@ security:
 
     # Role hierarchy: ROLE_ADMIN has all roles
     role_hierarchy:
-        ROLE_EDITEUR: ROLE_AUTEUR
-        ROLE_ADMIN: [ROLE_EDITEUR, ROLE_AUTEUR, ROLE_DESIGNEUR, ROLE_FOURNISSEUR]
+        ROLE_AUTEUR: ROLE_ABONNE
+        ROLE_EDITEUR: [ROLE_AUTEUR, ROLE_ABONNE]
+        ROLE_DESIGNEUR: ROLE_ABONNE
+        ROLE_FOURNISSEUR: ROLE_ABONNE
+        ROLE_ADMIN: [ROLE_EDITEUR, ROLE_AUTEUR, ROLE_DESIGNEUR, ROLE_FOURNISSEUR, ROLE_ABONNE]
 
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
@@ -59,8 +61,11 @@ security:
         - { path: ^/api/register, roles: PUBLIC_ACCESS }
         - { path: ^/api/theme, roles: PUBLIC_ACCESS }
         - { path: ^/api/,       roles: IS_AUTHENTICATED_FULLY }
+        - { path: '^/[a-z]{2}/login', roles: PUBLIC_ACCESS }
+        - { path: '^/[a-z]{2}/register', roles: PUBLIC_ACCESS }
         - { path: ^/cms/article/(new|.+/edit), roles: ROLE_AUTEUR }
         - { path: ^/cms, roles: IS_AUTHENTICATED_FULLY }
+        - { path: '^/[a-z]{2}/', roles: IS_AUTHENTICATED_FULLY }
 
 when@test:
     security:
