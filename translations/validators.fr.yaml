@@ -39,3 +39,10 @@ common:
     blank: L'email ne peut pas être vide
   required: Ce champ est obligatoire
   not_blank: Ce champ ne peut pas être vide
+
+# Email validation
+email:
+  validation:
+    invalid: L'adresse email "{{ email }}" n'existe pas ou est invalide. Veuillez utiliser une adresse email valide.
+    invalid_domain: Le domaine "{{ domain }}" n'existe pas ou ne peut pas recevoir d'emails. Veuillez vérifier votre adresse email.
+    disposable: Les adresses email temporaires ou jetables ne sont pas autorisées. Veuillez utiliser une adresse email permanente.
