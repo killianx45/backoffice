@@ -103,3 +103,8 @@ api_article_delete_rating_no_locale:
     methods: [DELETE]
     requirements:
         id: '\d+'
+
+api_chat_no_locale:
+    path: /api/chat
+    controller: App\Controller\Api\ChatApiController::sendMessage
+    methods: [POST]
