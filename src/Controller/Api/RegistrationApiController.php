@@ -3,12 +3,16 @@
 namespace App\Controller\Api;
 
 use App\Entity\User;
+use App\Security\EmailVerifier;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Mime\Address;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class RegistrationApiController extends AbstractController
 {
@@ -16,7 +20,9 @@ class RegistrationApiController extends AbstractController
         Request $request,
         UserPasswordHasherInterface $userPasswordHasher,
         EntityManagerInterface $entityManager,
-        ValidatorInterface $validator
+        ValidatorInterface $validator,
+        EmailVerifier $emailVerifier,
+        TranslatorInterface $translator
     ): JsonResponse {
         $data = json_decode($request->getContent(), true);
 
@@ -51,7 +57,7 @@ class RegistrationApiController extends AbstractController
 
         $user->setPassword($userPasswordHasher->hashPassword($user, $data['password']));
         $user->setRoles([]);
-        $user->setIsVerified(true);
+        $user->setIsVerified(false);
 
         $violations = $validator->validate($user);
         if (count($violations) > 0) {
@@ -66,18 +72,30 @@ class RegistrationApiController extends AbstractController
             $entityManager->persist($user);
             $entityManager->flush();
 
+            // Envoi de l'email de vérification
+            $emailVerifier->sendEmailConfirmation(
+                'app_verify_email',
+                $user,
+                (new TemplatedEmail())
+                    ->to(new Address((string) $user->getEmail(), $user->getPrenom() . ' ' . $user->getNom()))
+                    ->subject($translator->trans('registration.email.confirmation_subject'))
+                    ->htmlTemplate('email/verification.html.twig')
+            );
+
             return new JsonResponse([
-                'message' => 'Compte créé avec succès',
+                'message' => 'Compte créé avec succès. Un email de vérification vous a été envoyé.',
+                'requiresVerification' => true,
                 'user' => [
                     'id' => $user->getId(),
                     'nom' => $user->getNom(),
                     'prenom' => $user->getPrenom(),
                     'email' => $user->getEmail(),
-                    'roles' => $user->getRoles()
+                    'roles' => $user->getRoles(),
+                    'isVerified' => $user->isVerified()
                 ]
             ], 201);
         } catch (\Exception $e) {
-            return new JsonResponse(['error' => 'Erreur lors de la création du compte'], 500);
+            return new JsonResponse(['error' => 'Erreur lors de la création du compte: ' . $e->getMessage()], 500);
         }
     }
 }

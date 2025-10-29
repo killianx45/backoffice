@@ -1,0 +1,28 @@
+# .htaccess - Root directory for Hostinger subdomain
+# This file redirects all traffic to public/ subdirectory while hiding it from URLs
+# Place this file in the ROOT of your subdomain (NOT in public/)
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+
+    # Remove /public/ from URLs (301 permanent redirect)
+    # This ensures clean URLs without /public/ visible to users
+    RewriteCond %{THE_REQUEST} ^[A-Z]{3,}\s/public/(.*)\ HTTP/
+    RewriteRule ^public/(.*)$ /$1 [R=301,L]
+
+    # Internal redirect: Map clean URLs to /public/ directory
+    # Only applies if the file/directory doesn't exist in root
+    RewriteCond %{REQUEST_URI} !^/public/
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^(.*)$ /public/$1 [L,QSA]
+</IfModule>
+
+# Security: Deny access to hidden files (like .env, .git)
+<FilesMatch "^\.">
+    Require all denied
+</FilesMatch>
+
+# Prevent directory listing
+Options -Indexes
