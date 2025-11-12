@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Entity\CsvDataset;
 use App\Form\ProfileType;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -47,6 +48,44 @@ final class UserController extends AbstractController
         $entityManager->flush();
 
         $this->addFlash('success', $this->translator->trans('user.flash.roles_updated'));
+
+        return $this->redirectToRoute('app_user_index');
+    }
+
+    #[Route('/admin/users/{id}/delete', name: 'app_user_delete', methods: ['POST'])]
+    #[IsGranted('ROLE_ADMIN')]
+    public function deleteUser(User $user, EntityManagerInterface $entityManager): Response
+    {
+        if ($user === $this->getUser()) {
+            $this->addFlash('error', $this->translator->trans('user.flash.cannot_delete_self'));
+            return $this->redirectToRoute('app_user_index');
+        }
+
+        try {
+            $csvDatasets = $entityManager->getRepository(CsvDataset::class)->findBy(['uploadedBy' => $user]);
+
+            foreach ($csvDatasets as $dataset) {
+                $csvFilePath = $this->getParameter('kernel.project_dir') . '/public/media/csv/' . $dataset->getFilename();
+                if (file_exists($csvFilePath)) {
+                    unlink($csvFilePath);
+                }
+
+                $entityManager->remove($dataset);
+            }
+            if ($user->getAvatar()) {
+                $avatarPath = $this->getParameter('kernel.project_dir') . '/public/uploads/avatars/' . $user->getAvatar();
+                if (file_exists($avatarPath)) {
+                    unlink($avatarPath);
+                }
+            }
+            $userName = $user->getPrenom() . ' ' . $user->getNom();
+            $entityManager->remove($user);
+            $entityManager->flush();
+
+            $this->addFlash('success', $this->translator->trans('user.flash.user_deleted', ['%name%' => $userName]));
+        } catch (\Exception $e) {
+            $this->addFlash('error', $this->translator->trans('user.flash.delete_error'));
+        }
 
         return $this->redirectToRoute('app_user_index');
     }

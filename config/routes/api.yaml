@@ -13,6 +13,11 @@ api_user_update_avatar_no_locale:
     controller: App\Controller\Api\UserApiController::updateAvatar
     methods: [POST]
 
+api_user_delete_no_locale:
+    path: /api/user/delete
+    controller: App\Controller\Api\UserApiController::deleteAccount
+    methods: [DELETE]
+
 api_register_no_locale:
     path: /api/register
     controller: App\Controller\Api\RegistrationApiController::register

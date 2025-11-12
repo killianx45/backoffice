@@ -20,6 +20,7 @@ button:
   save: Enregistrer
   save_changes: Enregistrer les modifications
   delete: Supprimer
+  delete_confirm: Supprimer définitivement
   confirm: Confirmer
   close: Fermer
   back: Retour
@@ -160,6 +161,13 @@ user:
     admin: Administrateur
   modal:
     edit_roles: Modifier les rôles de %name%
+    delete_confirm: Confirmer la suppression
+    delete_warning: "Attention : Cette action est irréversible !"
+    delete_user_name: "Vous êtes sur le point de supprimer le compte de %name%."
+    delete_articles: Tous les articles de l'utilisateur
+    delete_ratings: Tous les avis de l'utilisateur
+    delete_datasets: Tous les fichiers CSV de l'utilisateur
+    delete_personal_data: Toutes les données personnelles
   no_users: Aucun utilisateur trouvé.
   profile:
     avatar:
@@ -175,6 +183,9 @@ user:
     roles_updated: Les rôles de l'utilisateur ont été mis à jour avec succès.
     avatar_error: Une erreur est survenue lors de l'upload de l'avatar.
     profile_updated: Votre profil a été mis à jour avec succès.
+    user_deleted: Le compte de %name% a été supprimé avec succès.
+    delete_error: Une erreur est survenue lors de la suppression du compte.
+    cannot_delete_self: Vous ne pouvez pas supprimer votre propre compte.
 
 # Media
 media:
@@ -350,7 +361,7 @@ registration:
     sender_name: Louise & Killian
     confirmation_subject: Veuillez confirmer votre email
     greeting: Bonjour ! Veuillez confirmer votre email !
-    instructions: Veuillez confirmer votre adresse email en cliquant sur le lien suivant :
+    instructions: Veuillez confirmer votre adresse email en cliquant sur le lien suivant
     button: Confirmer mon Email
     expiry: Ce lien expirera dans %time%.
     closing: Cordialement !

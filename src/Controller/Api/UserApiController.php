@@ -3,6 +3,7 @@
 namespace App\Controller\Api;
 
 use App\Entity\User;
+use App\Entity\CsvDataset;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -139,6 +140,47 @@ final class UserApiController extends AbstractController
             ]);
         } catch (\Exception $e) {
             return new JsonResponse(['error' => 'Erreur lors de l\'upload de l\'avatar'], 500);
+        }
+    }
+
+    #[Route('/delete', name: 'delete', methods: ['DELETE'])]
+    public function deleteAccount(EntityManagerInterface $entityManager): JsonResponse
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+
+        if (!$user) {
+            return new JsonResponse(['error' => 'Utilisateur non authentifié'], 401);
+        }
+
+        try {
+            $csvDatasets = $entityManager->getRepository(CsvDataset::class)->findBy(['uploadedBy' => $user]);
+            foreach ($csvDatasets as $dataset) {
+                $csvFilePath = $this->getParameter('kernel.project_dir') . '/public/media/csv/' . $dataset->getFilename();
+                if (file_exists($csvFilePath)) {
+                    unlink($csvFilePath);
+                }
+
+                $entityManager->remove($dataset);
+            }
+
+            if ($user->getAvatar()) {
+                $avatarPath = $this->getParameter('kernel.project_dir') . '/public/uploads/avatars/' . $user->getAvatar();
+                if (file_exists($avatarPath)) {
+                    unlink($avatarPath);
+                }
+            }
+            $entityManager->remove($user);
+            $entityManager->flush();
+
+            return new JsonResponse([
+                'message' => 'Compte supprimé avec succès',
+                'success' => true
+            ]);
+        } catch (\Exception $e) {
+            return new JsonResponse([
+                'error' => 'Erreur lors de la suppression du compte : ' . $e->getMessage()
+            ], 500);
         }
     }
 }

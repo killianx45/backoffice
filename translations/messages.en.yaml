@@ -20,6 +20,7 @@ button:
   save: Save
   save_changes: Save changes
   delete: Delete
+  delete_confirm: Delete permanently
   confirm: Confirm
   close: Close
   back: Back
@@ -160,6 +161,13 @@ user:
     admin: Administrator
   modal:
     edit_roles: Edit roles for %name%
+    delete_confirm: Confirm deletion
+    delete_warning: "Warning: This action is irreversible!"
+    delete_user_name: "You are about to delete %name%'s account."
+    delete_articles: All user's articles
+    delete_ratings: All user's ratings
+    delete_datasets: All user's CSV files
+    delete_personal_data: All personal data
   no_users: No users found.
   profile:
     avatar:
@@ -175,6 +183,9 @@ user:
     roles_updated: User roles have been successfully updated.
     avatar_error: An error occurred while uploading the avatar.
     profile_updated: Your profile has been successfully updated.
+    user_deleted: "%name%'s account has been successfully deleted."
+    delete_error: An error occurred while deleting the account.
+    cannot_delete_self: You cannot delete your own account.
 
 # Media
 media:
@@ -350,7 +361,7 @@ registration:
     sender_name: Louise & Killian
     confirmation_subject: Please confirm your email
     greeting: Hi! Please confirm your email!
-    instructions: Please confirm your email address by clicking the following link:
+    instructions: Please confirm your email address by clicking the following link
     button: Confirm my Email
     expiry: This link will expire in %time%.
     closing: Cheers!
