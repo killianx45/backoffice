@@ -19,7 +19,6 @@ class EmailVerificationSubscriber implements EventSubscriberInterface
     private const ALLOWED_ROUTES = [
         'app_login',
         'app_logout',
-        'app_register',
         'app_verify_email',
         'app_email_verification_pending',
         'app_resend_verification_email',
