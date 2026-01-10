@@ -23,6 +23,17 @@
                 style="font-family: {{ themeConfig and themeConfig.typography.headingFont == 'darker-grotesque' ? 'Darker Grotesque' : 'Montserrat' }}">
                 {{ article.title }}
             </h1>
+
+            {% if article.tags %}
+            <div class="flex flex-wrap gap-2 mb-4">
+                {% for tag in article.tags %}
+                    <span class="badge" style="border-color:{{tag.color}}">
+                        {{ tag.nom }}
+                    </span>
+                {% endfor %}
+            </div>
+            {% endif %}
+
             <div class="flex items-center gap-3 text-sm text-white/90">
                 <div class="flex items-center gap-2">
                     <div class="w-7 h-7 rounded-full bg-white/20 flex items-center justify-center overflow-hidden">

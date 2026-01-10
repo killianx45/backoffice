@@ -4,6 +4,8 @@ namespace App\Form;
 
 use App\Entity\Article;
 use App\Entity\User;
+use App\Entity\Tag;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -23,6 +25,13 @@ class ArticleType extends AbstractType
                     'class' => 'input input-bordered w-full',
                     'placeholder' => 'article.placeholder.title',
                 ],
+            ])
+            ->add('tags', EntityType::class, [
+                'class' => Tag::class, 
+                'choice_label' => 'nom',
+                'multiple' => true,
+                'expanded' => false,
+                'label' => 'article.label.tags',
             ])
             ->add('description', TextareaType::class, [
                 'label' => 'article.label.description',

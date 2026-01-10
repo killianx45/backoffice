@@ -8,6 +8,14 @@
 
 <div class="form-control">
     <label class="label">
+        <span class="label-text">{{ 'article.label.tags'|trans({}, 'forms') }}</span>
+    </label>
+    {{ form_widget(form.tags, {'attr': {'class': 'select select-bordered w-full'}}) }}
+    {{ form_errors(form.tags) }}
+</div>
+
+<div class="form-control">
+    <label class="label">
         <span class="label-text">{{ 'article.label.description'|trans({}, 'forms') }}</span>
     </label>
     <div id="ckeditor-editor"

@@ -38,7 +38,20 @@
             {% endif %}
 
             <div class="p-5 flex flex-col flex-1">
-                <h2 class="text-lg font-medium text-base-content mb-3 group-hover:text-base-content/80 transition-colors">{{ article.title }}</h2>
+                <h2 class="text-lg font-medium text-base-content mb-3 group-hover:text-base-content/80 transition-colors">
+                    {{ article.title }}
+                </h2>
+                
+                
+                {% if article.tags %}
+                <div class="flex flex-wrap gap-2 mb-4"> 
+                    {% for tag in article.tags %}
+                        <span class="badge" style="border-color{{tag.color}} color{{tag.color}}">
+                            {{tag.nom}}
+                        </span>
+                    {% endfor %}
+                </div>
+                {% endif %}
 
                 <div class="text-xs text-base-content/60 space-y-1 mb-4">
                     <p>{{ 'article.by_author'|trans({'%author%': article.author.prenom ~ ' ' ~ article.author.nom}) }}</p>
