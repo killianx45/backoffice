@@ -297,9 +297,26 @@ theme:
     spacing: "Espacement:"
     charts: "Graphiques:"
     style: "Style:"
+    page_title: "Prévisualisation : %theme%"
+    viewing_theme: "Thème :"
+    select_article: "Article :"
+    iframe_title: Prévisualisation du thème
+    no_articles: Aucun article disponible pour la prévisualisation
+    chart_example: Exemple de graphique
+    button_primary: Bouton principal
+    button_secondary: Bouton secondaire
+    chart_labels:
+      jan: Janvier
+      feb: Février
+      mar: Mars
+      apr: Avril
+      may: Mai
+      jun: Juin
+    chart_dataset: Données exemple
   button:
     create_theme: + Créer un thème
     update: Enregistrer les modifications
+    preview: Prévisualiser
   actions:
     back: Retour à la liste
     create_submit: Créer le thème

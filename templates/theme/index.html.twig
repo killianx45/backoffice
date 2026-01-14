@@ -3,7 +3,7 @@
 {% block title %}{{ 'theme.title.list'|trans }}{% endblock %}
 
 {% block body %}
-<div class="p-6 max-w-7xl mx-auto">
+<div class="p-6 max-w-7xl mx-auto" data-controller="theme-preview-modal">
     <div class="mb-8 flex justify-between items-start">
         <div>
             <h1 class="text-3xl font-bold mb-2">{{ 'theme.heading'|trans }}</h1>
@@ -67,6 +67,16 @@
                     </div>
 
                     <div class="card-actions justify-end gap-2">
+                        <button type="button"
+                                class="btn btn-sm border border-base-300 hover:border-base-content gap-1"
+                                data-action="click->theme-preview-modal#open"
+                                data-preview-url="{{ path('app_theme_preview', {'id': theme.id}) }}">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                            </svg>
+                            {{ 'theme.button.preview'|trans }}
+                        </button>
                         <a href="{{ path('app_theme_edit', {'id': theme.id}) }}" class="btn btn-sm border border-base-300 hover:border-base-content">
                             {{ 'button.edit'|trans }}
                         </a>
@@ -85,5 +95,16 @@
             </div>
         {% endfor %}
     </div>
+
+    <dialog data-theme-preview-modal-target="modal"
+            class="modal"
+            data-action="click->theme-preview-modal#backdropClick">
+        <div class="modal-box w-full max-w-full h-screen max-h-screen p-0 rounded-none">
+            <iframe data-theme-preview-modal-target="iframe"
+                    class="w-full h-full border-0"
+                    src="about:blank"
+                    title="{{ 'theme.preview.iframe_title'|trans }}"></iframe>
+        </div>
+    </dialog>
 </div>
 {% endblock %}

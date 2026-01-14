@@ -38,6 +38,7 @@ article:
     description: Description
     content: Contenu
     image: Image principale
+    tags: Tags
   placeholder:
     title: Entrez le titre de l'article
   button:

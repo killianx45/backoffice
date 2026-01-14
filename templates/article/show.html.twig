@@ -23,6 +23,17 @@
                 style="font-family: {{ themeConfig and themeConfig.typography.headingFont == 'darker-grotesque' ? 'Darker Grotesque' : 'Montserrat' }}">
                 {{ article.title }}
             </h1>
+
+            {% if article.tags|length > 0 %}
+            <div class="flex flex-wrap gap-2 mb-4">
+                {% for tag in article.tags %}
+                    <span class="badge" style="border-color: {{ tag.color }}">
+                        {{ tag.nom }}
+                    </span>
+                {% endfor %}
+            </div>
+            {% endif %}
+
             <div class="flex items-center gap-3 text-sm text-white/90">
                 <div class="flex items-center gap-2">
                     <div class="w-7 h-7 rounded-full bg-white/20 flex items-center justify-center overflow-hidden">
@@ -50,6 +61,16 @@
                        font-family: {{ themeConfig and themeConfig.typography.headingFont == 'darker-grotesque' ? 'Darker Grotesque' : 'Montserrat' }};">
                 {{ article.title }}
             </h1>
+
+            {% if article.tags|length > 0 %}
+            <div class="flex flex-wrap gap-2 mb-4">
+                {% for tag in article.tags %}
+                    <span class="badge" style="border-color: {{ tag.color }}">
+                        {{ tag.nom }}
+                    </span>
+                {% endfor %}
+            </div>
+            {% endif %}
 
             <div class="flex items-center gap-3 text-sm" style="color: {{ themeConfig ? themeConfig.colors.secondary : '#262626' }};">
                 <div class="flex items-center gap-2">
@@ -106,7 +127,7 @@
              data-inline-chart-theme-colors-value='{{ themeConfig.colors|json_encode|raw }}'
              {% endif %}
              style="font-family: {{ themeConfig and themeConfig.typography.bodyFont == 'montserrat' ? 'Montserrat' : 'Darker Grotesque' }};">
-            {{ article.description|striptags('<p><br><strong><em><ul><li><ol><h1><h2><h3><h4><h5><h6><blockquote><a><img><div><span>')|raw }}
+            {{ article.description|safe_html }}
         </div>
     </div>
 
@@ -158,6 +179,59 @@
 
         .article-content img {
             border-radius: {% if themeConfig.components.borderRadius == 'none' %}0{% elseif themeConfig.components.borderRadius == 'small' %}0.25rem{% elseif themeConfig.components.borderRadius == 'large' %}1rem{% else %}0.5rem{% endif %};
+        }
+
+        /* Image positioning styles */
+        .article-content figure.image {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            margin-top: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .article-content figure.image-style-side {
+            float: right;
+            margin-left: 1rem;
+            margin-right: 0;
+            margin-bottom: 1rem;
+            max-width: 50%;
+        }
+
+        .article-content figure.image-style-align-left {
+            float: left;
+            margin-right: 1rem;
+            margin-left: 0;
+            margin-bottom: 1rem;
+        }
+
+        .article-content figure.image-style-align-right {
+            float: right;
+            margin-left: 1rem;
+            margin-right: 0;
+            margin-bottom: 1rem;
+        }
+
+        .article-content figure.image-style-align-center,
+        .article-content figure.image-style-block-align-center {
+            margin-left: auto;
+            margin-right: auto;
+            clear: both;
+            display: block;
+            float: none !important;
+        }
+
+        .article-content figure.image-style-side img,
+        .article-content figure.image-style-align-left img,
+        .article-content figure.image-style-align-right img {
+            margin-left: 0;
+            margin-right: 0;
+        }
+
+        .article-content::after {
+            content: "";
+            display: table;
+            clear: both;
         }
 
         .article-content table {

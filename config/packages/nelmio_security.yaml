@@ -24,8 +24,8 @@ nelmio_security:
                 - "https:"
             connect-src:
                 - "'self'"
-            frame-src: 
-                - "'none'"
+            frame-src:
+                - "'self'"
             object-src: 
                 - "'none'"
             media-src: 

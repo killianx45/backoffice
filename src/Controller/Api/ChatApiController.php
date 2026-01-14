@@ -9,6 +9,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
+use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Contracts\Cache\ItemInterface;
 
 #[Route('/api/chat', name: 'api_chat_')]
 #[IsGranted('IS_AUTHENTICATED_FULLY')]
@@ -22,8 +24,21 @@ final class ChatApiController extends AbstractController
         'ROLE_ADMIN',
     ];
 
+    private const QUICK_COMMANDS = [
+        '/cms' => "🏠 **CMS Backoffice:** Plateforme de gestion de contenu pour créer et publier des articles, gérer les médias (images), importer des datasets CSV pour visualisations, et organiser le contenu par thèmes. Accessible selon votre rôle utilisateur.",
+        '/articles' => "📝 **Créer un article:** Articles > Nouveau > titre + contenu CKEditor > Enregistrer",
+        '/roles' => "👥 **Rôles:** AUTEUR (ses articles), EDITEUR (tous), FOURNISSEUR (CSV), DESIGNEUR (thèmes), ADMIN (tout)",
+        '/medias' => "🖼️ **Upload média:** Médias > Upload ou glisser-déposer. Formats: JPG/PNG/GIF/WebP, max 5MB",
+        '/csv' => "📊 **Importer CSV:** Datasets CSV > Importer. Max 10MB. Graphiques disponibles: barres, lignes, camemberts",
+        '/themes' => "🎨 **Thèmes:** Menu Thèmes pour catégoriser le contenu. Mode sombre: bouton dans la sidebar",
+        '/profil' => "👤 **Profil:** Menu profil en haut à droite. Avatar: JPG/PNG/WebP max 2MB",
+        '/aide' => "💡 **Commandes disponibles:** /cms, /articles, /roles, /medias, /csv, /themes, /profil",
+        '/help' => "💡 **Available commands:** /cms, /articles, /roles, /medias, /csv, /themes, /profil",
+    ];
+
     public function __construct(
-        private readonly HttpClientInterface $localaiClient
+        private readonly HttpClientInterface $localaiClient,
+        private readonly CacheInterface $cache
     ) {}
 
     #[Route('', name: 'message', methods: ['POST'])]
@@ -56,47 +71,21 @@ final class ChatApiController extends AbstractController
                 );
             }
 
-            $contextPath = $this->getParameter('kernel.project_dir') . '/help/cms_context.txt';
-            $systemContext = file_exists($contextPath)
-                ? file_get_contents($contextPath)
-                : 'You are a helpful assistant for a CMS backoffice. Answer questions about managing articles, users, media, and datasets.';
-
-            $payload = [
-                'model' => 'llama3.2:1b',
-                'messages' => [
-                    [
-                        'role' => 'system',
-                        'content' => $systemContext
-                    ],
-                    [
-                        'role' => 'user',
-                        'content' => $userMessage
-                    ]
-                ],
-                'stream' => false,
-            ];
-
-            try {
-                $response = $this->localaiClient->request('POST', '/api/chat', [
-                    'json' => $payload,
-                    'timeout' => 60,
+            // Quick commands - instant response, no LLM call
+            $quickResponse = $this->handleQuickCommand($userMessage);
+            if ($quickResponse !== null) {
+                return new JsonResponse([
+                    'message' => $quickResponse,
+                    'timestamp' => time(),
                 ]);
-
-                $statusCode = $response->getStatusCode();
-                if ($statusCode !== 200) {
-                    throw new \Exception('LocalAI returned non-200 status');
-                }
-
-                $responseData = $response->toArray();
-
-                // Ollama format: response.message.content
-                // OpenAI format: response.choices[0].message.content
-                $botMessage = $responseData['message']['content']
-                    ?? $responseData['choices'][0]['message']['content']
-                    ?? 'No response available';
-            } catch (\Exception $e) {
-                $botMessage = $this->getDemoResponse($userMessage);
             }
+
+            // Check cache for common queries
+            $cacheKey = 'chat_' . md5(strtolower($userMessage));
+            $botMessage = $this->cache->get($cacheKey, function (ItemInterface $item) use ($userMessage) {
+                $item->expiresAfter(3600); // Cache for 1 hour
+                return $this->callLLM($userMessage);
+            });
 
             return new JsonResponse([
                 'message' => $botMessage,
@@ -115,6 +104,52 @@ final class ChatApiController extends AbstractController
         }
     }
 
+    private function handleQuickCommand(string $message): ?string
+    {
+        $lowerMessage = strtolower(trim($message));
+        return self::QUICK_COMMANDS[$lowerMessage] ?? null;
+    }
+
+    private function callLLM(string $userMessage): string
+    {
+        $contextPath = $this->getParameter('kernel.project_dir') . '/help/cms_context.txt';
+        $systemContext = file_exists($contextPath)
+            ? file_get_contents($contextPath)
+            : 'Tu es un assistant CMS concis. Réponses: 2-3 phrases max.';
+
+        $payload = [
+            'model' => 'llama3.2:1b',
+            'messages' => [
+                ['role' => 'system', 'content' => $systemContext],
+                ['role' => 'user', 'content' => $userMessage]
+            ],
+            'stream' => false,
+            'options' => [
+                'num_predict' => 150,    // Max tokens for response
+                'temperature' => 0.3,    // More deterministic/concise
+            ],
+        ];
+
+        try {
+            $response = $this->localaiClient->request('POST', '/api/chat', [
+                'json' => $payload,
+                'timeout' => 30,
+            ]);
+
+            if ($response->getStatusCode() !== 200) {
+                throw new \Exception('LocalAI returned non-200 status');
+            }
+
+            $responseData = $response->toArray();
+
+            return $responseData['message']['content']
+                ?? $responseData['choices'][0]['message']['content']
+                ?? 'No response available';
+        } catch (\Exception $e) {
+            return $this->getDemoResponse($userMessage);
+        }
+    }
+
     private function hasAllowedRole(array $userRoles): bool
     {
         return !empty(array_intersect($userRoles, self::ALLOWED_ROLES));
@@ -125,19 +160,19 @@ final class ChatApiController extends AbstractController
         $lowerMessage = strtolower($userMessage);
 
         $responses = [
-            'article' => "Pour créer un article : 1) Allez dans 'Articles' > 'Nouveau', 2) Remplissez le titre et le contenu avec l'éditeur CKEditor, 3) Ajoutez des images via le gestionnaire de médias, 4) Cliquez sur 'Enregistrer'. Les articles peuvent avoir les statuts : Brouillon, Publié ou Archivé.",
-            'user' => "Les rôles disponibles sont : ROLE_AUTEUR (créer ses articles), ROLE_EDITEUR (modifier tous les articles), ROLE_FOURNISSEUR (uploader des CSV), ROLE_DESIGNEUR (gérer les thèmes), ROLE_ADMIN (accès complet).",
-            'image' => "Pour uploader des images : allez dans 'Médias', cliquez sur 'Upload' ou glissez-déposez. Formats acceptés : JPG, PNG, GIF, WebP (max 5MB).",
-            'csv' => "Pour importer un CSV : menu 'Datasets CSV' > 'Importer', sélectionnez votre fichier (max 10MB). Le système détecte automatiquement les colonnes pour créer des graphiques.",
-            'theme' => "Les thèmes permettent de catégoriser le contenu. Menu 'Thèmes' pour créer/gérer. Le mode sombre/clair se bascule via le bouton en haut de la sidebar.",
+            'article' => "📝 Articles > Nouveau > titre + contenu > Enregistrer",
+            'user' => "👥 Rôles: AUTEUR, EDITEUR, FOURNISSEUR, DESIGNEUR, ADMIN",
+            'image' => "🖼️ Médias > Upload. Formats: JPG/PNG/GIF/WebP, max 5MB",
+            'csv' => "📊 Datasets CSV > Importer. Max 10MB, graphiques auto",
+            'theme' => "🎨 Menu Thèmes. Mode sombre: bouton sidebar",
         ];
 
         foreach ($responses as $keyword => $response) {
             if (str_contains($lowerMessage, $keyword)) {
-                return "🤖 [Mode démo - LocalAI en configuration]\n\n" . $response;
+                return "[Mode démo]\n" . $response;
             }
         }
 
-        return "🤖 [Mode démo - LocalAI en configuration]\n\nJe suis votre assistant CMS. Je peux vous aider avec : la création d'articles, la gestion des utilisateurs et rôles, l'upload d'images et de datasets CSV, et la personnalisation des thèmes. Que souhaitez-vous savoir ?";
+        return "[Mode démo]\nAssistant CMS. Tapez /aide pour les commandes disponibles.";
     }
 }

@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="{{ app.request.locale }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ 'theme.preview.page_title'|trans({'%theme%': theme.name}) }}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Darker+Grotesque:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    {% block stylesheets %}
+        {{ encore_entry_link_tags('app') }}
+    {% endblock %}
+</head>
+<body class="min-h-screen" style="background-color: {{ themeConfig.colors.base200 ?? '#fafafa' }};">
+
+{% set themeConfig = theme.configuration %}
+
+<div class="sticky top-0 z-50 border-b px-4 py-3 flex items-center justify-between gap-4"
+     style="background-color: {{ themeConfig.colors.base100 ?? '#ffffff' }}; border-color: {{ themeConfig.colors.base300 ?? '#e8e8e8' }};">
+    <div class="flex items-center gap-3">
+        <span class="text-sm font-medium opacity-60">{{ 'theme.preview.viewing_theme'|trans }}</span>
+        <span class="font-semibold" style="color: {{ themeConfig.colors.primary ?? '#171717' }};">{{ theme.name }}</span>
+    </div>
+
+    <div class="flex items-center gap-4">
+        <form method="get" action="{{ path('app_theme_preview', {'id': theme.id}) }}" class="flex items-center gap-2">
+            <label class="text-sm opacity-60">{{ 'theme.preview.select_article'|trans }}</label>
+            <select name="article" onchange="this.form.submit()" class="select select-sm select-bordered"
+                    style="background-color: {{ themeConfig.colors.base100 ?? '#ffffff' }}; border-color: {{ themeConfig.colors.base300 ?? '#e8e8e8' }};">
+                {% for art in articles %}
+                    <option value="{{ art.id }}" {% if article and art.id == article.id %}selected{% endif %}>
+                        {{ art.title|length > 40 ? art.title|slice(0, 40) ~ '...' : art.title }}
+                    </option>
+                {% endfor %}
+            </select>
+        </form>
+
+        <button onclick="window.parent.postMessage('close-preview', '*')" class="btn btn-sm btn-ghost gap-1">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+            {{ 'button.close'|trans }}
+        </button>
+    </div>
+</div>
+
+{% if article %}
+<div class="container mx-auto px-6 py-12"
+     style="max-width: {% if themeConfig.layout.articleWidth == 'narrow' %}600px{% elseif themeConfig.layout.articleWidth == 'medium' %}800px{% elseif themeConfig.layout.articleWidth == 'wide' %}1200px{% else %}800px{% endif %};">
+
+    {% if article.featuredImage %}
+    <div class="mb-8 relative rounded-lg overflow-hidden"
+         style="border-radius: {% if themeConfig.components.borderRadius == 'none' %}0{% elseif themeConfig.components.borderRadius == 'small' %}0.25rem{% elseif themeConfig.components.borderRadius == 'large' %}1rem{% else %}0.5rem{% endif %};">
+        <img src="{{ vich_uploader_asset(article, 'featuredImageFile') }}"
+             alt="{{ article.title }}"
+             class="w-full object-cover"
+             style="height: {% if themeConfig.layout.featuredImageSize == 'small' %}12rem{% elseif themeConfig.layout.featuredImageSize == 'medium' %}16rem{% elseif themeConfig.layout.featuredImageSize == 'large' %}24rem{% else %}600px{% endif %};">
+
+        {% if themeConfig.layout.titlePosition starts with 'overlay' %}
+        <div class="absolute inset-0 pointer-events-none"
+             style="background: linear-gradient(to top, {{ themeConfig.colors.titleOverlay ?? '#000000' }}B3, {{ themeConfig.colors.titleOverlay ?? '#000000' }}4D, transparent);"></div>
+        <div class="absolute {% if themeConfig.layout.titlePosition == 'overlay-top' %}top-8{% elseif themeConfig.layout.titlePosition == 'overlay-center' %}top-1/2 -translate-y-1/2{% else %}bottom-8{% endif %} left-8 right-8">
+            <h1 class="font-bold text-white mb-3"
+                style="font-family: {{ themeConfig.typography.headingFont == 'darker-grotesque' ? 'Darker Grotesque' : 'Montserrat' }}, sans-serif;
+                       font-size: {% if themeConfig.typography.headingSize == 'small' %}2rem{% elseif themeConfig.typography.headingSize == 'large' %}3rem{% else %}2.5rem{% endif %};">
+                {{ article.title }}
+            </h1>
+
+            {% if article.tags|length > 0 %}
+            <div class="flex flex-wrap gap-2 mb-4">
+                {% for tag in article.tags %}
+                    <span class="badge badge-outline text-white border-white/50">{{ tag.nom }}</span>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <div class="flex items-center gap-3 text-sm text-white/90">
+                <div class="flex items-center gap-2">
+                    <div class="w-7 h-7 rounded-full bg-white/20 flex items-center justify-center overflow-hidden">
+                        {% if article.author.avatar %}
+                            <img src="{{ asset('uploads/avatars/' ~ article.author.avatar) }}" alt="{{ article.author.prenom }}" class="w-full h-full object-cover">
+                        {% else %}
+                            <span class="text-xs font-medium">{{ article.author.prenom|first }}{{ article.author.nom|first }}</span>
+                        {% endif %}
+                    </div>
+                    <span>{{ article.author.prenom }} {{ article.author.nom }}</span>
+                </div>
+                <span class="text-white/60">•</span>
+                <span>{{ article.createdAt|date('d/m/Y') }}</span>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    {% if not article.featuredImage or not (themeConfig.layout.titlePosition starts with 'overlay') %}
+    <div class="mb-8">
+        <h1 class="font-bold mb-3"
+            style="color: {{ themeConfig.colors.primary ?? '#171717' }};
+                   font-family: {{ themeConfig.typography.headingFont == 'darker-grotesque' ? 'Darker Grotesque' : 'Montserrat' }}, sans-serif;
+                   font-size: {% if themeConfig.typography.headingSize == 'small' %}2rem{% elseif themeConfig.typography.headingSize == 'large' %}3rem{% else %}2.5rem{% endif %};">
+            {{ article.title }}
+        </h1>
+
+        {% if article.tags|length > 0 %}
+        <div class="flex flex-wrap gap-2 mb-4">
+            {% for tag in article.tags %}
+                <span class="badge" style="border-color: {{ tag.color }};">{{ tag.nom }}</span>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="flex items-center gap-3 text-sm" style="color: {{ themeConfig.colors.secondary ?? '#262626' }};">
+            <div class="flex items-center gap-2">
+                <div class="w-7 h-7 rounded-full flex items-center justify-center overflow-hidden"
+                     style="background-color: {{ themeConfig.colors.base300 ?? '#e8e8e8' }};">
+                    {% if article.author.avatar %}
+                        <img src="{{ asset('uploads/avatars/' ~ article.author.avatar) }}" alt="{{ article.author.prenom }}" class="w-full h-full object-cover">
+                    {% else %}
+                        <span class="text-xs font-medium">{{ article.author.prenom|first }}{{ article.author.nom|first }}</span>
+                    {% endif %}
+                </div>
+                <span>{{ article.author.prenom }} {{ article.author.nom }}</span>
+            </div>
+            <span class="opacity-40">•</span>
+            <span>{{ article.createdAt|date('d/m/Y') }}</span>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="mb-8 {% if themeConfig.components.cardStyle == 'bordered' %}border{% elseif themeConfig.components.cardStyle == 'elevated' %}shadow-lg{% endif %}"
+         style="background-color: {{ themeConfig.colors.base100 ?? '#ffffff' }};
+                border-color: {{ themeConfig.colors.base300 ?? '#e8e8e8' }};
+                border-radius: {% if themeConfig.components.borderRadius == 'none' %}0{% elseif themeConfig.components.borderRadius == 'small' %}0.25rem{% elseif themeConfig.components.borderRadius == 'large' %}1rem{% else %}0.5rem{% endif %};
+                padding: {% if themeConfig.layout.spacing == 'compact' %}1.5rem{% elseif themeConfig.layout.spacing == 'spacious' %}2.5rem{% else %}2rem{% endif %};">
+
+        <div class="article-content"
+             style="text-align: {{ themeConfig.layout.contentAlignment ?? 'left' }};
+                    font-family: {{ themeConfig.typography.bodyFont == 'montserrat' ? 'Montserrat' : 'Darker Grotesque' }}, sans-serif;
+                    font-size: {% if themeConfig.typography.bodySize == 'small' %}0.875rem{% elseif themeConfig.typography.bodySize == 'large' %}1.125rem{% else %}1rem{% endif %};
+                    line-height: {% if themeConfig.typography.lineHeight == 'tight' %}1.4{% elseif themeConfig.typography.lineHeight == 'relaxed' %}1.8{% else %}1.6{% endif %};">
+            {{ article.description|striptags('<p><br><strong><em><ul><li><ol><h1><h2><h3><h4><h5><h6><blockquote><a><img><div><span><figure><figcaption><canvas>')|raw }}
+        </div>
+
+        <div class="mt-8 pt-6" style="border-top: 1px solid {{ themeConfig.colors.base300 ?? '#e8e8e8' }};">
+            <h3 class="font-semibold mb-4"
+                style="color: {{ themeConfig.colors.primary ?? '#171717' }};
+                       font-family: {{ themeConfig.typography.headingFont == 'darker-grotesque' ? 'Darker Grotesque' : 'Montserrat' }}, sans-serif;">
+                {{ 'theme.preview.chart_example'|trans }}
+            </h3>
+            <div class="relative" style="height: 250px;">
+                <canvas id="preview-chart"></canvas>
+            </div>
+        </div>
+
+        <div class="mt-6 flex gap-3">
+            <button class="btn"
+                    style="{% if themeConfig.components.buttonStyle == 'solid' %}background-color: {{ themeConfig.colors.primary ?? '#171717' }}; color: {{ themeConfig.colors.base100 ?? '#ffffff' }}; border-color: {{ themeConfig.colors.primary ?? '#171717' }};{% elseif themeConfig.components.buttonStyle == 'outline' %}background-color: transparent; color: {{ themeConfig.colors.primary ?? '#171717' }}; border: 1px solid {{ themeConfig.colors.primary ?? '#171717' }};{% else %}background-color: transparent; color: {{ themeConfig.colors.primary ?? '#171717' }}; border: none;{% endif %}
+                           border-radius: {% if themeConfig.components.borderRadius == 'none' %}0{% elseif themeConfig.components.borderRadius == 'small' %}0.25rem{% elseif themeConfig.components.borderRadius == 'large' %}1rem{% else %}0.5rem{% endif %};">
+                {{ 'theme.preview.button_primary'|trans }}
+            </button>
+            <button class="btn btn-outline"
+                    style="color: {{ themeConfig.colors.secondary ?? '#262626' }};
+                           border-color: {{ themeConfig.colors.base300 ?? '#e8e8e8' }};
+                           border-radius: {% if themeConfig.components.borderRadius == 'none' %}0{% elseif themeConfig.components.borderRadius == 'small' %}0.25rem{% elseif themeConfig.components.borderRadius == 'large' %}1rem{% else %}0.5rem{% endif %};">
+                {{ 'theme.preview.button_secondary'|trans }}
+            </button>
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="flex items-center justify-center min-h-[60vh]">
+    <div class="text-center">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto mb-4 opacity-30" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+        </svg>
+        <p class="text-lg opacity-60">{{ 'theme.preview.no_articles'|trans }}</p>
+    </div>
+</div>
+{% endif %}
+
+<style>
+    .article-content h1,
+    .article-content h2,
+    .article-content h3,
+    .article-content h4,
+    .article-content h5,
+    .article-content h6 {
+        font-family: {{ themeConfig.typography.headingFont == 'darker-grotesque' ? 'Darker Grotesque' : 'Montserrat' }}, sans-serif;
+        color: {{ themeConfig.colors.primary ?? '#171717' }};
+        {% if themeConfig.typography.headingSize == 'small' %}font-size: 0.9em;{% elseif themeConfig.typography.headingSize == 'large' %}font-size: 1.3em;{% endif %}
+        margin-bottom: 0.75rem;
+        font-weight: 600;
+    }
+
+    .article-content p {
+        margin-bottom: 1rem;
+    }
+
+    .article-content blockquote {
+        border-left: 4px solid {{ themeConfig.colors.accent ?? '#262626' }};
+        padding-left: 1rem;
+        margin: 1rem 0;
+        font-style: italic;
+        opacity: 0.8;
+    }
+
+    .article-content a {
+        color: {{ themeConfig.colors.accent ?? '#262626' }};
+        text-decoration: underline;
+    }
+
+    .article-content a:hover {
+        opacity: 0.7;
+    }
+
+    .article-content ul, .article-content ol {
+        margin: 1rem 0;
+        padding-left: 1.5rem;
+    }
+
+    .article-content li {
+        margin-bottom: 0.5rem;
+    }
+
+    .article-content img {
+        border-radius: {% if themeConfig.components.borderRadius == 'none' %}0{% elseif themeConfig.components.borderRadius == 'small' %}0.25rem{% elseif themeConfig.components.borderRadius == 'large' %}1rem{% else %}0.5rem{% endif %};
+        margin: 1rem 0;
+    }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const ctx = document.getElementById('preview-chart');
+    if (ctx) {
+        const chartPalette = {{ themeConfig.colors.chartPalette|json_encode|raw }};
+
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['{{ "theme.preview.chart_labels.jan"|trans }}', '{{ "theme.preview.chart_labels.feb"|trans }}', '{{ "theme.preview.chart_labels.mar"|trans }}', '{{ "theme.preview.chart_labels.apr"|trans }}', '{{ "theme.preview.chart_labels.may"|trans }}', '{{ "theme.preview.chart_labels.jun"|trans }}'],
+                datasets: [{
+                    label: '{{ "theme.preview.chart_dataset"|trans }}',
+                    data: [12, 19, 8, 15, 12, 17],
+                    backgroundColor: chartPalette,
+                    borderColor: chartPalette,
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: {% if themeConfig.charts.legendPosition == 'none' %}false{% else %}true{% endif %},
+                        position: '{{ themeConfig.charts.legendPosition ?? 'top' }}'
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: '{{ themeConfig.colors.base300 ?? '#e8e8e8' }}40'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    }
+                }
+            }
+        });
+    }
+});
+</script>
+
+</body>
+</html>

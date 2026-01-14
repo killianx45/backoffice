@@ -111,12 +111,27 @@ export default class extends Controller {
         ? "chat-bubble-error"
         : "chat-bubble-neutral"
     }`;
-    bubbleDiv.textContent = content;
+
+    if (role === "user") {
+      bubbleDiv.textContent = content;
+    } else {
+      bubbleDiv.innerHTML = this.parseMarkdown(content);
+    }
 
     messageDiv.appendChild(bubbleDiv);
     this.chatLogTarget.appendChild(messageDiv);
 
     this.scrollToBottom();
+  }
+
+  parseMarkdown(text) {
+    return text
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+      .replace(/`(.+?)`/g, "<code class='bg-base-300 px-1 rounded'>$1</code>")
+      .replace(/\n/g, "<br>");
   }
 
   scrollToBottom() {

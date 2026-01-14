@@ -297,9 +297,26 @@ theme:
     spacing: "Spacing:"
     charts: "Charts:"
     style: "Style:"
+    page_title: "Preview: %theme%"
+    viewing_theme: "Theme:"
+    select_article: "Article:"
+    iframe_title: Theme preview
+    no_articles: No articles available for preview
+    chart_example: Chart example
+    button_primary: Primary button
+    button_secondary: Secondary button
+    chart_labels:
+      jan: January
+      feb: February
+      mar: March
+      apr: April
+      may: May
+      jun: June
+    chart_dataset: Sample data
   button:
     create_theme: + Create theme
     update: Save changes
+    preview: Preview
   actions:
     back: Back to list
     create_submit: Create theme

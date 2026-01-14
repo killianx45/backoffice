@@ -3,24 +3,24 @@
 namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use App\Service\ImageOptimizationService;
 
 #[IsGranted('ROLE_AUTEUR')]
 class MediaController extends AbstractController
 {
-    private const MAX_FILE_SIZE = 5 * 1024 * 1024;
+    private const MAX_FILE_SIZE = 10 * 1024 * 1024;
     private const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
 
     public function __construct(
-        private readonly TranslatorInterface $translator
+        private readonly TranslatorInterface $translator,
+        private readonly ImageOptimizationService $imageOptimizer
     ) {}
 
     #[Route('/cms/media', name: 'app_media_index', methods: ['GET'])]
@@ -30,7 +30,7 @@ class MediaController extends AbstractController
     }
 
     #[Route('/api/media/upload/image', name: 'api_media_upload_image', methods: ['POST'])]
-    public function uploadImage(Request $request, SluggerInterface $slugger): JsonResponse
+    public function uploadImage(Request $request): JsonResponse
     {
         $file = $request->files->get('file');
 
@@ -46,22 +46,18 @@ class MediaController extends AbstractController
             return $this->json(['error' => $this->translator->trans('media.error.invalid_type')], Response::HTTP_BAD_REQUEST);
         }
 
-        $originalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
-        $safeFilename = $slugger->slug($originalFilename);
-        $newFilename = $safeFilename . '-' . uniqid() . '.' . $file->guessExtension();
-
         try {
-            $file->move(
-                $this->getParameter('kernel.project_dir') . '/public/media/images',
-                $newFilename
-            );
+            $result = $this->imageOptimizer->processUpload($file);
 
             return $this->json([
                 'success' => true,
-                'url' => '/media/images/' . $newFilename,
-                'filename' => $newFilename,
+                'url' => $result['url'],
+                'filename' => $result['filename'],
+                'thumbnail' => $result['thumbnail'],
+                'thumbnailUrl' => $result['thumbnailUrl'],
+                'savings' => $result['savings'],
             ]);
-        } catch (FileException $e) {
+        } catch (\Exception $e) {
             return $this->json([
                 'error' => $this->translator->trans('media.error.upload_failed', ['%message%' => $e->getMessage()])
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
@@ -81,11 +77,19 @@ class MediaController extends AbstractController
         $images = [];
 
         foreach ($files as $file) {
+            if (str_ends_with($file, '-thumb.webp')) {
+                continue;
+            }
+
             $filePath = $imagesPath . '/' . $file;
             if (is_file($filePath)) {
+                $thumbFile = preg_replace('/\.webp$/', '-thumb.webp', $file);
+                $thumbPath = $imagesPath . '/' . $thumbFile;
+
                 $images[] = [
                     'filename' => $file,
                     'url' => '/media/images/' . $file,
+                    'thumbnailUrl' => file_exists($thumbPath) ? '/media/images/' . $thumbFile : '/media/images/' . $file,
                     'size' => filesize($filePath),
                     'modified' => filemtime($filePath),
                 ];
@@ -119,6 +123,10 @@ class MediaController extends AbstractController
         }
 
         if (unlink($filePath)) {
+            $thumbPath = preg_replace('/\.webp$/', '-thumb.webp', $filePath);
+            if (file_exists($thumbPath)) {
+                unlink($thumbPath);
+            }
             return $this->json(['success' => true, 'message' => $this->translator->trans('media.success.deleted')]);
         }
 

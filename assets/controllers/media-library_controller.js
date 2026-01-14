@@ -13,6 +13,26 @@ export default class extends Controller {
     "deleteModal",
   ];
 
+  /**
+   * Extrait le nom original du fichier en retirant les suffixes uniques (hash hexadécimaux)
+   * Exemple: "alteres-696749106caca.png" → "alteres.png"
+   * Exemple: "pexels-photo-983297-68e8095a92b1d-69674f25f2195.jpg" → "pexels-photo-983297.jpg"
+   */
+  getDisplayName(filename) {
+    const extMatch = filename.match(/(\.[a-zA-Z0-9]+)$/);
+    if (!extMatch) return filename;
+
+    const ext = extMatch[1];
+    let name = filename.slice(0, -ext.length);
+
+    // Retire tous les suffixes hash hexadécimaux à la fin
+    while (/-[a-f0-9]{8,}$/i.test(name)) {
+      name = name.replace(/-[a-f0-9]{8,}$/i, "");
+    }
+
+    return name + ext;
+  }
+
   connect() {
     this.imageToDelete = null;
     this.loadImages();
@@ -60,11 +80,12 @@ export default class extends Controller {
     const figure = document.createElement("figure");
     figure.className = "aspect-video bg-base-200";
 
-    // Create image element securely
+    // Create image element securely (use thumbnail for faster loading)
     const img = document.createElement("img");
-    img.src = image.url;
+    img.src = image.thumbnailUrl || image.url;
     img.alt = image.filename;
     img.className = "w-full h-full object-cover";
+    img.loading = "lazy";
     figure.appendChild(img);
 
     // Create card body
@@ -74,8 +95,8 @@ export default class extends Controller {
     // Create title
     const title = document.createElement("h3");
     title.className = "text-sm font-medium truncate";
-    title.title = image.filename;
-    title.textContent = image.filename;
+    title.title = this.getDisplayName(image.filename);
+    title.textContent = this.getDisplayName(image.filename);
 
     // Create info div
     const infoDiv = document.createElement("div");

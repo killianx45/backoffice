@@ -176,11 +176,11 @@ export default class extends Controller {
           "aspect-square bg-base-200 rounded-box overflow-hidden cursor-pointer border-2 border-transparent hover:border-primary transition-all";
         imageCard.dataset.imageUrl = image.url;
 
-        // Secure image creation
         const img = document.createElement("img");
-        img.src = image.url;
+        img.src = image.thumbnailUrl || image.url;
         img.alt = image.filename;
         img.className = "w-full h-full object-cover";
+        img.loading = "lazy";
         imageCard.appendChild(img);
 
         imageCard.addEventListener("click", (e) => this.selectImageFromGallery(e));

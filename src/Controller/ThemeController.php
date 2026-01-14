@@ -3,7 +3,9 @@
 namespace App\Controller;
 
 use App\Entity\Theme;
+use App\Entity\Article;
 use App\Form\ThemeType;
+use App\Repository\ArticleRepository;
 use App\Service\ThemeService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -22,7 +24,8 @@ class ThemeController extends AbstractController
         private ThemeService $themeService,
         private EntityManagerInterface $entityManager,
         private SluggerInterface $slugger,
-        private TranslatorInterface $translator
+        private TranslatorInterface $translator,
+        private ArticleRepository $articleRepository
     ) {
     }
 
@@ -119,10 +122,22 @@ class ThemeController extends AbstractController
     }
 
     #[Route('/{id}/preview', name: 'app_theme_preview')]
-    public function preview(Theme $theme): Response
+    public function preview(Request $request, Theme $theme): Response
     {
+        $articleId = $request->query->get('article');
+
+        if ($articleId) {
+            $article = $this->articleRepository->find($articleId);
+        } else {
+            $article = $this->articleRepository->findOneBy([], ['createdAt' => 'DESC']);
+        }
+
+        $articles = $this->articleRepository->findBy([], ['createdAt' => 'DESC'], 10);
+
         return $this->render('theme/preview.html.twig', [
             'theme' => $theme,
+            'article' => $article,
+            'articles' => $articles,
         ]);
     }
 }

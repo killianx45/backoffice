@@ -31,6 +31,7 @@ article:
     description: Description
     content: Content
     image: Featured image
+    tags: Tags
   placeholder:
     title: Enter article title
   button:

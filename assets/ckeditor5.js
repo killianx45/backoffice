@@ -226,7 +226,7 @@ EnhancedEditor.defaultConfig = {
             '|',
             'resizeImage'
         ],
-        styles: ['block', 'inline', 'side']
+        styles: ['inline', 'block', 'side']
     },
     link: {
         defaultProtocol: 'https://',
