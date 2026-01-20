@@ -46,9 +46,9 @@
     {{ form_errors(form.featuredImageFile) }}
 </div>
 
-<div class="flex gap-2 justify-end pt-4">
-    <a href="{{ path('app_article_index') }}" class="btn btn-ghost">{{ 'button.cancel'|trans }}</a>
-    <button type="submit" class="btn btn-primary">{{ button_label|default('button.save'|trans) }}</button>
+<div class="flex flex-col sm:flex-row gap-2 sm:justify-end pt-4">
+    <a href="{{ path('app_article_index') }}" class="btn btn-ghost w-full sm:w-auto">{{ 'button.cancel'|trans }}</a>
+    <button type="submit" class="btn btn-primary w-full sm:w-auto">{{ button_label|default('button.save'|trans) }}</button>
 </div>
 
 {{ form_end(form) }}

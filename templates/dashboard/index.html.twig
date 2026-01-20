@@ -3,7 +3,7 @@
 {% block title %}{{ 'dashboard.title'|trans }}{% endblock %}
 
 {% block body %}
-<div class="container mx-auto px-6 py-12 max-w-7xl">
+<div class="container mx-auto px-4 py-8 sm:px-6 sm:py-12 max-w-7xl">
     {% if not app.user.isVerified %}
     <div class="mb-8">
         <div role="alert" class="alert border border-base-300 bg-base-100">
@@ -143,35 +143,54 @@
                 </a>
             {% endif %}
         </div>
-        <div class="border border-base-300 rounded-lg overflow-hidden bg-base-100">
-            <table class="w-full">
-                <thead class="border-b border-base-300">
-                    <tr class="text-left">
-                        <th class="px-6 py-3 text-xs font-medium text-base-content/60">{{ 'dashboard.recent_articles.table.title'|trans }}</th>
-                        <th class="px-6 py-3 text-xs font-medium text-base-content/60">{{ 'dashboard.recent_articles.table.author'|trans }}</th>
-                        <th class="px-6 py-3 text-xs font-medium text-base-content/60">Évaluation</th>
-                        <th class="px-6 py-3 text-xs font-medium text-base-content/60">{{ 'dashboard.recent_articles.table.date'|trans }}</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-base-300">
-                    {% for article in recent_articles %}
-                    <tr class="hover:bg-base-200/50 transition-colors">
-                        <td class="px-6 py-4">
-                            <p class="text-sm font-medium text-base-content">{{ article.title }}</p>
-                        </td>
-                        <td class="px-6 py-4">
-                            <p class="text-sm text-base-content/70">{{ article.author.prenom }} {{ article.author.nom }}</p>
-                        </td>
-                        <td class="px-6 py-4">
-                            {% include 'components/star_rating.html.twig' with {'article': article} %}
-                        </td>
-                        <td class="px-6 py-4">
-                            <p class="text-sm text-base-content/60">{{ article.createdAt|date('d/m/Y') }}</p>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+        {# Mobile card layout #}
+        <div class="space-y-3 md:hidden">
+            {% for article in recent_articles %}
+            <div class="border border-base-300 rounded-lg p-4 bg-base-100">
+                <p class="font-medium text-base-content mb-2">{{ article.title }}</p>
+                <div class="flex items-center justify-between text-sm">
+                    <span class="text-base-content/70">{{ article.author.prenom }} {{ article.author.nom }}</span>
+                    <span class="text-base-content/60">{{ article.createdAt|date('d/m/Y') }}</span>
+                </div>
+                <div class="mt-2">
+                    {% include 'components/star_rating.html.twig' with {'article': article} %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        {# Desktop table layout #}
+        <div class="border border-base-300 rounded-lg overflow-hidden bg-base-100 hidden md:block">
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead class="border-b border-base-300">
+                        <tr class="text-left">
+                            <th class="px-4 py-3 text-xs font-medium text-base-content/60 lg:px-6">{{ 'dashboard.recent_articles.table.title'|trans }}</th>
+                            <th class="px-4 py-3 text-xs font-medium text-base-content/60 lg:px-6">{{ 'dashboard.recent_articles.table.author'|trans }}</th>
+                            <th class="px-4 py-3 text-xs font-medium text-base-content/60 lg:px-6">Évaluation</th>
+                            <th class="px-4 py-3 text-xs font-medium text-base-content/60 lg:px-6">{{ 'dashboard.recent_articles.table.date'|trans }}</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-base-300">
+                        {% for article in recent_articles %}
+                        <tr class="hover:bg-base-200/50 transition-colors">
+                            <td class="px-4 py-4 lg:px-6">
+                                <p class="text-sm font-medium text-base-content">{{ article.title }}</p>
+                            </td>
+                            <td class="px-4 py-4 lg:px-6">
+                                <p class="text-sm text-base-content/70">{{ article.author.prenom }} {{ article.author.nom }}</p>
+                            </td>
+                            <td class="px-4 py-4 lg:px-6">
+                                {% include 'components/star_rating.html.twig' with {'article': article} %}
+                            </td>
+                            <td class="px-4 py-4 lg:px-6">
+                                <p class="text-sm text-base-content/60">{{ article.createdAt|date('d/m/Y') }}</p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
     {% endif %}

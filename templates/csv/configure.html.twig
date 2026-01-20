@@ -3,18 +3,18 @@
 {% block title %}{{ 'csv.title.configure'|trans }}{% endblock %}
 
 {% block body %}
-<div class="max-w-6xl mx-auto p-6" data-controller="dataset-config" data-dataset-config-dataset-id-value="{{ dataset.id }}">
+<div class="max-w-6xl mx-auto p-4 sm:p-6" data-controller="dataset-config" data-dataset-config-dataset-id-value="{{ dataset.id }}">
     <div class="mb-6">
-        <h1 class="text-3xl font-bold mb-2">{{ 'csv.heading'|trans }}</h1>
-        <p class="text-base-content/70">{{ 'csv.subtitle.configure'|trans }}</p>
+        <h1 class="text-2xl sm:text-3xl font-bold mb-2">{{ 'csv.heading'|trans }}</h1>
+        <p class="text-base-content/70 text-sm sm:text-base">{{ 'csv.subtitle.configure'|trans }}</p>
     </div>
 
     <div class="card bg-base-100 shadow-xl mb-6">
         <div class="card-body">
             <h2 class="card-title">{{ 'csv.file_info.title'|trans }}</h2>
-            <div class="grid grid-cols-2 gap-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 text-sm sm:text-base">
                 <div>
-                    <span class="font-semibold">{{ 'csv.file_info.original_name'|trans }}</span> {{ dataset.originalName }}
+                    <span class="font-semibold">{{ 'csv.file_info.original_name'|trans }}</span> <span class="break-all">{{ dataset.originalName }}</span>
                 </div>
                 <div>
                     <span class="font-semibold">{{ 'csv.file_info.rows'|trans }}</span> {{ dataset.rowCount }}
@@ -44,7 +44,34 @@
                 </div>
             </div>
 
-            <div class="overflow-x-auto">
+            {# Mobile card layout #}
+            <div class="space-y-4 md:hidden">
+                {% for variable in dataset.variables %}
+                <div class="border border-base-300 rounded-lg p-4" data-variable-id="{{ variable.id }}" data-original-type="{{ variable.type }}" data-dataset-config-target="variableRow">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="font-semibold">{{ variable.name }}</span>
+                        <span class="badge {% if variable.type == 'numeric' %}badge-primary{% else %}badge-secondary{% endif %}">
+                            {% if variable.type == 'numeric' %}{{ 'csv.variables.table.numeric'|trans }}{% else %}{{ 'csv.variables.table.categorical'|trans }}{% endif %}
+                        </span>
+                    </div>
+                    <div class="text-sm text-base-content/70 mb-3">
+                        <span class="text-xs text-base-content/50">{{ 'csv.variables.table.sample_values'|trans }}:</span>
+                        <div class="flex flex-wrap gap-1 mt-1">
+                            {% for value in variable.sampleValues|slice(0, 3) %}
+                                <span class="badge badge-ghost badge-sm">{{ value }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <select class="select select-bordered select-sm w-full" data-action="change->dataset-config#toggleVariableType">
+                        <option value="categorical" {% if variable.type == 'categorical' %}selected{% endif %}>{{ 'csv.variables.table.categorical'|trans }}</option>
+                        <option value="numeric" {% if variable.type == 'numeric' %}selected{% endif %}>{{ 'csv.variables.table.numeric'|trans }}</option>
+                    </select>
+                </div>
+                {% endfor %}
+            </div>
+
+            {# Desktop table layout #}
+            <div class="overflow-x-auto hidden md:block">
                 <table class="table table-zebra w-full">
                     <thead>
                         <tr>
@@ -82,9 +109,9 @@
                 </table>
             </div>
 
-            <div class="card-actions justify-end mt-6">
-                <button class="btn btn-ghost" data-action="click->dataset-config#cancel">{{ 'button.cancel'|trans }}</button>
-                <button class="btn btn-primary" data-action="click->dataset-config#confirmConfiguration">
+            <div class="card-actions flex-col sm:flex-row justify-end mt-6 gap-2">
+                <button class="btn btn-ghost w-full sm:w-auto" data-action="click->dataset-config#cancel">{{ 'button.cancel'|trans }}</button>
+                <button class="btn btn-primary w-full sm:w-auto" data-action="click->dataset-config#confirmConfiguration">
                     {{ 'csv.button.confirm_config'|trans }}
                 </button>
             </div>

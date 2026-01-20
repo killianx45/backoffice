@@ -3,7 +3,7 @@
 {% block title %}{{ 'csv.title.list'|trans }}{% endblock %}
 
 {% block body %}
-<div class="drawer-content flex flex-col p-6 py-12" data-controller="csv-library">
+<div class="drawer-content flex flex-col p-4 py-8 sm:p-6 sm:py-12" data-controller="csv-library">
     <div class="max-w-7xl mx-auto w-full">
         <div class="mb-8">
             <h1 class="text-3xl font-semibold text-base-content">{{ 'csv.heading'|trans }}</h1>
@@ -12,9 +12,9 @@
 
         <div id="flash-container" class="mb-6"></div>
 
-        <div class="border border-base-300 rounded-lg p-6 bg-base-100 mb-12">
+        <div class="border border-base-300 rounded-lg p-4 sm:p-6 bg-base-100 mb-8 sm:mb-12">
             <div
-                class="border-2 border-dashed border-base-300 rounded-lg p-12 text-center hover:border-base-content/30 transition-colors cursor-pointer"
+                class="border-2 border-dashed border-base-300 rounded-lg p-6 sm:p-12 text-center hover:border-base-content/30 transition-colors cursor-pointer"
                 data-csv-library-target="dropzone"
                 data-action="dragover->csv-library#handleDragOver dragleave->csv-library#handleDragLeave drop->csv-library#handleDrop click->csv-library#openFileDialog"
             >

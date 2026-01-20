@@ -6,7 +6,7 @@
 {% set themeConfig = theme ? theme.configuration : null %}
 
 {% block body %}
-<div class="container mx-auto px-6 py-12"
+<div class="container mx-auto px-4 py-8 sm:px-6 sm:py-12"
      style="max-width: {% if themeConfig and themeConfig.layout.articleWidth == 'narrow' %}600px{% elseif themeConfig and themeConfig.layout.articleWidth == 'medium' %}800px{% elseif themeConfig and themeConfig.layout.articleWidth == 'wide' %}1200px{% else %}800px{% endif %};">
 
     {% if article.featuredImage %}
@@ -54,7 +54,7 @@
     {% endif %}
 
     {% if not article.featuredImage or not (themeConfig.layout.titlePosition starts with 'overlay') %}
-    <div class="mb-8 flex justify-between items-start">
+    <div class="mb-8 flex flex-col gap-4 sm:flex-row sm:justify-between sm:items-start">
         <div class="flex-1">
             <h1 class="font-bold mb-3 {% if themeConfig and themeConfig.typography.headingSize == 'small' %}text-[2rem]{% elseif themeConfig and themeConfig.typography.headingSize == 'large' %}text-[3rem]{% else %}text-4xl{% endif %}"
                 style="color: {{ themeConfig ? themeConfig.colors.primary : '#171717' }};
@@ -94,7 +94,7 @@
             </div>
         </div>
 
-        <div class="flex gap-2">
+        <div class="flex gap-2 flex-shrink-0">
             <a href="{{ path('app_article_index') }}" class="text-sm px-3 py-2 opacity-70" style="color: {{ themeConfig ? themeConfig.colors.secondary : '#262626' }};">{{ 'button.back'|trans }}</a>
             {% if is_granted('ARTICLE_EDIT', article) %}
             <a href="{{ path('app_article_edit', {'id': article.id}) }}"
@@ -106,7 +106,7 @@
         </div>
     </div>
     {% else %}
-    <div class="mb-4 flex justify-end gap-2">
+    <div class="mb-4 flex justify-end gap-2 flex-wrap">
         <a href="{{ path('app_article_index') }}" class="text-sm px-3 py-2 opacity-70" style="color: {{ themeConfig ? themeConfig.colors.secondary : '#262626' }};">{{ 'button.back'|trans }}</a>
         {% if is_granted('ARTICLE_EDIT', article) %}
         <a href="{{ path('app_article_edit', {'id': article.id}) }}"

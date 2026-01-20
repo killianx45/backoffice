@@ -3,13 +3,13 @@
 {% block title %}{{ 'theme.title.list'|trans }}{% endblock %}
 
 {% block body %}
-<div class="p-6 max-w-7xl mx-auto" data-controller="theme-preview-modal">
-    <div class="mb-8 flex justify-between items-start">
+<div class="p-4 sm:p-6 max-w-7xl mx-auto" data-controller="theme-preview-modal">
+    <div class="mb-8 flex flex-col gap-4 sm:flex-row sm:justify-between sm:items-start">
         <div>
-            <h1 class="text-3xl font-bold mb-2">{{ 'theme.heading'|trans }}</h1>
-            <p class="opacity-70">{{ 'theme.subtitle.list'|trans }}</p>
+            <h1 class="text-2xl sm:text-3xl font-bold mb-2">{{ 'theme.heading'|trans }}</h1>
+            <p class="opacity-70 text-sm sm:text-base">{{ 'theme.subtitle.list'|trans }}</p>
         </div>
-        <a href="{{ path('app_theme_new') }}" class="btn border border-base-content bg-base-content text-base-100 hover:opacity-90">
+        <a href="{{ path('app_theme_new') }}" class="btn border border-base-content bg-base-content text-base-100 hover:opacity-90 w-full sm:w-auto">
             {{ 'theme.button.create_theme'|trans }}
         </a>
     </div>
@@ -66,7 +66,7 @@
                         </div>
                     </div>
 
-                    <div class="card-actions justify-end gap-2">
+                    <div class="card-actions flex-wrap justify-end gap-2">
                         <button type="button"
                                 class="btn btn-sm border border-base-300 hover:border-base-content gap-1"
                                 data-action="click->theme-preview-modal#open"
@@ -75,7 +75,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                             </svg>
-                            {{ 'theme.button.preview'|trans }}
+                            <span class="hidden sm:inline">{{ 'theme.button.preview'|trans }}</span>
                         </button>
                         <a href="{{ path('app_theme_edit', {'id': theme.id}) }}" class="btn btn-sm border border-base-300 hover:border-base-content">
                             {{ 'button.edit'|trans }}

@@ -3,7 +3,7 @@
 {% block title %}{{ 'user.title.list'|trans }}{% endblock %}
 
 {% block body %}
-<div class="container mx-auto px-6 py-12 max-w-7xl">
+<div class="container mx-auto px-4 py-8 sm:px-6 sm:py-12 max-w-7xl">
     <div class="mb-8">
         <h1 class="text-3xl font-semibold text-base-content">{{ 'user.title.list'|trans }}</h1>
         <p class="text-sm text-base-content/60 mt-1">{{ 'user.subtitle.list'|trans }}</p>
@@ -18,70 +18,119 @@
         </div>
     {% endfor %}
 
-    <div class="border border-base-300 rounded-lg overflow-hidden bg-base-100">
-        <table class="w-full">
-            <thead class="border-b border-base-300">
-                <tr class="text-left">
-                    <th class="px-6 py-3 text-xs font-medium text-base-content/60">{{ 'user.table.id'|trans }}</th>
-                    <th class="px-6 py-3 text-xs font-medium text-base-content/60">{{ 'user.table.last_name'|trans }}</th>
-                    <th class="px-6 py-3 text-xs font-medium text-base-content/60">{{ 'user.table.first_name'|trans }}</th>
-                    <th class="px-6 py-3 text-xs font-medium text-base-content/60">{{ 'user.table.email'|trans }}</th>
-                    <th class="px-6 py-3 text-xs font-medium text-base-content/60">{{ 'user.table.roles'|trans }}</th>
-                    <th class="px-6 py-3 text-xs font-medium text-base-content/60">{{ 'user.table.status'|trans }}</th>
-                    <th class="px-6 py-3 text-xs font-medium text-base-content/60">{{ 'user.table.actions'|trans }}</th>
-                </tr>
-            </thead>
-            <tbody class="divide-y divide-base-300">
-                {% for user in users %}
-                <tr class="hover:bg-base-200/50 transition-colors">
-                    <td class="px-6 py-4 text-sm text-base-content/70">{{ user.id }}</td>
-                    <td class="px-6 py-4 text-sm text-base-content">{{ user.nom }}</td>
-                    <td class="px-6 py-4 text-sm text-base-content">{{ user.prenom }}</td>
-                    <td class="px-6 py-4 text-sm text-base-content/70">{{ user.email }}</td>
-                    <td class="px-6 py-4">
-                        <div class="flex flex-wrap gap-1">
-                            {% for role in user.roles %}
-                                {% if role != 'ROLE_ABONNE' %}
-                                    {% set roleKey = role|replace({'ROLE_': ''})|lower %}
-                                    <span class="text-xs px-2 py-1 border border-base-300 rounded text-base-content/70">{{ ('user.role.' ~ roleKey)|trans }}</span>
-                                {% endif %}
-                            {% endfor %}
-                            {% if user.roles|length == 1 %}
-                                <span class="text-xs px-2 py-1 border border-base-300 rounded text-base-content/50">{{ 'user.role.abonne'|trans }}</span>
-                            {% endif %}
-                        </div>
-                    </td>
-                    <td class="px-6 py-4">
-                        {% if user.isVerified %}
-                            <span class="text-xs text-base-content/60">{{ 'user.status.verified'|trans }}</span>
-                        {% else %}
-                            <span class="text-xs text-base-content/40">{{ 'user.status.not_verified'|trans }}</span>
-                        {% endif %}
-                    </td>
-                    <td class="px-6 py-4">
-                        <div class="flex items-center gap-3">
-                            <button
-                                class="text-sm text-base-content/60 hover:text-base-content transition-colors flex items-center gap-1"
-                                onclick="openRoleModal{{ user.id }}()"
-                            >
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                </svg>
-                                {{ 'button.edit'|trans }}
-                            </button>
+    {# Mobile card layout #}
+    <div class="space-y-4 md:hidden">
+        {% for user in users %}
+        <div class="border border-base-300 rounded-lg p-4 bg-base-100">
+            <div class="flex items-start justify-between mb-3">
+                <div>
+                    <p class="font-medium text-base-content">{{ user.prenom }} {{ user.nom }}</p>
+                    <p class="text-sm text-base-content/60">{{ user.email }}</p>
+                </div>
+                <span class="text-xs text-base-content/40">#{{ user.id }}</span>
+            </div>
+            <div class="flex flex-wrap gap-1 mb-3">
+                {% for role in user.roles %}
+                    {% if role != 'ROLE_ABONNE' %}
+                        {% set roleKey = role|replace({'ROLE_': ''})|lower %}
+                        <span class="text-xs px-2 py-1 border border-base-300 rounded text-base-content/70">{{ ('user.role.' ~ roleKey)|trans }}</span>
+                    {% endif %}
+                {% endfor %}
+                {% if user.roles|length == 1 %}
+                    <span class="text-xs px-2 py-1 border border-base-300 rounded text-base-content/50">{{ 'user.role.abonne'|trans }}</span>
+                {% endif %}
+            </div>
+            <div class="flex items-center justify-between">
+                {% if user.isVerified %}
+                    <span class="text-xs text-base-content/60">{{ 'user.status.verified'|trans }}</span>
+                {% else %}
+                    <span class="text-xs text-base-content/40">{{ 'user.status.not_verified'|trans }}</span>
+                {% endif %}
+                <div class="flex items-center gap-3">
+                    <button class="text-sm text-base-content/60 hover:text-base-content transition-colors" onclick="openRoleModal{{ user.id }}()">
+                        {{ 'button.edit'|trans }}
+                    </button>
+                    {% if app.user.id != user.id %}
+                    <button class="text-sm text-red-600/60 hover:text-red-600 transition-colors" onclick="openDeleteModal{{ user.id }}()">
+                        {{ 'button.delete'|trans }}
+                    </button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="border border-base-300 rounded-lg p-8 text-center">
+            <p class="text-sm text-base-content/60">{{ 'user.no_users'|trans }}</p>
+        </div>
+        {% endfor %}
+    </div>
 
-                            {% if app.user.id != user.id %}
-                            <button
-                                class="text-sm text-red-600/60 hover:text-red-600 transition-colors flex items-center gap-1"
-                                onclick="openDeleteModal{{ user.id }}()"
-                            >
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                </svg>
-                                {{ 'button.delete'|trans }}
-                            </button>
+    {# Desktop table layout #}
+    <div class="border border-base-300 rounded-lg overflow-hidden bg-base-100 hidden md:block">
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead class="border-b border-base-300">
+                    <tr class="text-left">
+                        <th class="px-4 py-3 text-xs font-medium text-base-content/60 lg:px-6">{{ 'user.table.id'|trans }}</th>
+                        <th class="px-4 py-3 text-xs font-medium text-base-content/60 lg:px-6">{{ 'user.table.last_name'|trans }}</th>
+                        <th class="px-4 py-3 text-xs font-medium text-base-content/60 lg:px-6">{{ 'user.table.first_name'|trans }}</th>
+                        <th class="px-4 py-3 text-xs font-medium text-base-content/60 lg:px-6">{{ 'user.table.email'|trans }}</th>
+                        <th class="px-4 py-3 text-xs font-medium text-base-content/60 lg:px-6">{{ 'user.table.roles'|trans }}</th>
+                        <th class="px-4 py-3 text-xs font-medium text-base-content/60 lg:px-6">{{ 'user.table.status'|trans }}</th>
+                        <th class="px-4 py-3 text-xs font-medium text-base-content/60 lg:px-6">{{ 'user.table.actions'|trans }}</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-base-300">
+                    {% for user in users %}
+                    <tr class="hover:bg-base-200/50 transition-colors">
+                        <td class="px-4 py-4 text-sm text-base-content/70 lg:px-6">{{ user.id }}</td>
+                        <td class="px-4 py-4 text-sm text-base-content lg:px-6">{{ user.nom }}</td>
+                        <td class="px-4 py-4 text-sm text-base-content lg:px-6">{{ user.prenom }}</td>
+                        <td class="px-4 py-4 text-sm text-base-content/70 lg:px-6">{{ user.email }}</td>
+                        <td class="px-4 py-4 lg:px-6">
+                            <div class="flex flex-wrap gap-1">
+                                {% for role in user.roles %}
+                                    {% if role != 'ROLE_ABONNE' %}
+                                        {% set roleKey = role|replace({'ROLE_': ''})|lower %}
+                                        <span class="text-xs px-2 py-1 border border-base-300 rounded text-base-content/70">{{ ('user.role.' ~ roleKey)|trans }}</span>
+                                    {% endif %}
+                                {% endfor %}
+                                {% if user.roles|length == 1 %}
+                                    <span class="text-xs px-2 py-1 border border-base-300 rounded text-base-content/50">{{ 'user.role.abonne'|trans }}</span>
+                                {% endif %}
+                            </div>
+                        </td>
+                        <td class="px-4 py-4 lg:px-6">
+                            {% if user.isVerified %}
+                                <span class="text-xs text-base-content/60">{{ 'user.status.verified'|trans }}</span>
+                            {% else %}
+                                <span class="text-xs text-base-content/40">{{ 'user.status.not_verified'|trans }}</span>
                             {% endif %}
-                        </div>
+                        </td>
+                        <td class="px-4 py-4 lg:px-6">
+                            <div class="flex items-center gap-3">
+                                <button
+                                    class="text-sm text-base-content/60 hover:text-base-content transition-colors flex items-center gap-1"
+                                    onclick="openRoleModal{{ user.id }}()"
+                                >
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                    </svg>
+                                    {{ 'button.edit'|trans }}
+                                </button>
+
+                                {% if app.user.id != user.id %}
+                                <button
+                                    class="text-sm text-red-600/60 hover:text-red-600 transition-colors flex items-center gap-1"
+                                    onclick="openDeleteModal{{ user.id }}()"
+                                >
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                    </svg>
+                                    {{ 'button.delete'|trans }}
+                                </button>
+                                {% endif %}
+                            </div>
 
                         {# Modal for editing roles #}
                         <dialog id="role_modal_{{ user.id }}" class="modal">
@@ -198,15 +247,16 @@
                         </script>
                     </td>
                 </tr>
-                {% else %}
-                <tr>
-                    <td colspan="7" class="text-center py-12">
-                        <p class="text-sm text-base-content/60">{{ 'user.no_users'|trans }}</p>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+                    {% else %}
+                    <tr>
+                        <td colspan="7" class="text-center py-12">
+                            <p class="text-sm text-base-content/60">{{ 'user.no_users'|trans }}</p>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 {% endblock %}
