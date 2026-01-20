@@ -1,12 +1,12 @@
 <div class="drawer-side">
-    <label for="main-drawer" aria-label="close sidebar" class="drawer-overlay"></label>
-    <aside class="bg-base-200 h-screen w-[85vw] max-w-[280px] sm:w-70 flex flex-col">
+    <label for="main-drawer" aria-label="{{ 'accessibility.close_sidebar'|trans }}" class="drawer-overlay"></label>
+    <aside class="bg-base-200 h-screen w-[85vw] max-w-[280px] sm:w-70 flex flex-col" role="complementary" aria-label="{{ 'accessibility.sidebar_navigation'|trans }}">
         <div class="p-3 sm:p-4 mb-2 sm:mb-4">
             <h1 class="text-xl sm:text-2xl font-bold px-2 sm:px-4">{{ 'meta.title.default'|trans }}</h1>
         </div>
 
-        <div class="flex-1 overflow-y-auto px-2 sm:px-4">
-            <ul class="menu w-full gap-2">
+        <nav class="flex-1 overflow-y-auto px-2 sm:px-4" aria-label="{{ 'accessibility.main_navigation'|trans }}">
+            <ul class="menu w-full gap-2" role="menubar">
                 <li>
                     <a href="{{ path('app_dashboard') }}" class="flex items-center gap-3">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -60,12 +60,12 @@
                 </li>
                 {% endif %}
 
-                <div class="divider"></div>
+                <li class="divider" role="separator" aria-hidden="true"></li>
 
                 {% if is_granted('ROLE_ADMIN') %}
-                <li>
-                    <a href="{{ path('app_user_index') }}" class="flex items-center gap-3">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <li role="none">
+                    <a href="{{ path('app_user_index') }}" class="flex items-center gap-3" role="menuitem">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
                         </svg>
                         <span>{{ 'nav.users'|trans }}</span>
@@ -73,7 +73,7 @@
                 </li>
                 {% endif %}
             </ul>
-        </div>
+        </nav>
 
         <div class="p-2 sm:p-4 border-t border-base-300 flex-shrink-0">
             <div class="mb-3">

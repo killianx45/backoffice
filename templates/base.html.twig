@@ -1,52 +1,112 @@
 <!doctype html>
-<html lang="fr" data-theme="light">
+<html lang="{{ app.request.locale }}" data-theme="light">
   <head>
     <meta charset="utf-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0"
-    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    {# SEO Meta Tags #}
     <title>{% block title %}{{ 'meta.title.default'|trans }}{% endblock %}</title>
     <meta name="description" content="{% block meta_description %}{{ 'meta.description.default'|trans }}{% endblock %}" />
     <meta name="robots" content="{% block meta_robots %}noindex, nofollow{% endblock %}" />
-    <meta name="theme-color" content="#ffffff" />
+    <meta name="author" content="FrameUp CMS" />
+    <meta name="generator" content="Symfony" />
+
+    {# Canonical URL #}
+    {% block canonical %}
+    <link rel="canonical" href="{{ url(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')) }}" />
+    {% endblock %}
+
+    {# Language alternates for i18n #}
+    {% block hreflang %}
+    <link rel="alternate" hreflang="fr" href="{{ url(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')|merge({'_locale': 'fr'})) }}" />
+    <link rel="alternate" hreflang="en" href="{{ url(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')|merge({'_locale': 'en'})) }}" />
+    <link rel="alternate" hreflang="x-default" href="{{ url(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')|merge({'_locale': 'fr'})) }}" />
+    {% endblock %}
+
+    {# Theme Color #}
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#1d232a" media="(prefers-color-scheme: dark)" />
+
+    {# Open Graph / Social Media #}
+    {% block opengraph %}
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="{{ app.request.locale }}_{{ app.request.locale|upper }}" />
+    <meta property="og:site_name" content="{{ 'meta.title.default'|trans }}" />
+    <meta property="og:title" content="{% block og_title %}{{ block('title') }}{% endblock %}" />
+    <meta property="og:description" content="{% block og_description %}{{ block('meta_description') }}{% endblock %}" />
+    <meta property="og:url" content="{{ app.request.uri }}" />
+    {% endblock %}
+
+    {# Twitter Card #}
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="{{ block('title') }}" />
+    <meta name="twitter:description" content="{{ block('meta_description') }}" />
+
+    {# Favicon #}
+    <link rel="icon" href="{{ asset('favicon.svg') }}" type="image/svg+xml" />
+
+    {# Structured Data - WebApplication #}
+    {% block structured_data %}
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "{{ 'meta.title.default'|trans }}",
+      "description": "{{ 'meta.description.default'|trans }}",
+      "url": "{{ url('app_dashboard') }}",
+      "applicationCategory": "Content Management System",
+      "operatingSystem": "Web Browser",
+      "inLanguage": ["fr", "en"]
+    }
+    </script>
+    {% endblock %}
+
+    {# Inline critical theme script to prevent FOUC - must be before CSS #}
     <script>
       (function() {
-        const savedTheme = localStorage.getItem('theme');
-        const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        const theme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
-        document.documentElement.setAttribute('data-theme', theme);
-        const metaThemeColor = document.querySelector('meta[name="theme-color"]');
-        if (metaThemeColor) {
-          metaThemeColor.setAttribute('content', theme === 'dark' ? '#1d232a' : '#ffffff');
-        }
+        var t = localStorage.getItem('theme') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', t);
       })();
     </script>
+
+    {# Font preloads - high priority #}
+    <link rel="preload" href="{{ asset('build/fonts/DarkerGrotesque-VariableFont_wght.cfaaba46.woff2') }}" as="font" type="font/woff2" crossorigin="anonymous" />
+    <link rel="preload" href="{{ asset('build/fonts/Montserrat-VariableFont_wght.54a98d6e.woff2') }}" as="font" type="font/woff2" crossorigin="anonymous" />
+
+    {# DNS Prefetch - only for pages that need external resources #}
+    {% block dns_prefetch %}{% endblock %}
+
     {% block stylesheets %}
       {{ encore_entry_link_tags('app') }}
     {% endblock %}
+
     {% block javascripts %}
       {{ encore_entry_script_tags('app') }}
     {% endblock %}
   </head>
   <body>
+    {# Skip to main content link for accessibility - hidden until focused #}
+    <a href="#main-content" class="skip-link bg-base-100 text-base-content ring-2 ring-primary">
+      {{ 'accessibility.skip_to_content'|trans }}
+    </a>
+
     <div class="drawer lg:drawer-open" data-controller="chart-manager media-manager">
-      <input id="main-drawer" type="checkbox" class="drawer-toggle" />
+      <input id="main-drawer" type="checkbox" class="drawer-toggle" aria-label="{{ 'accessibility.toggle_navigation'|trans }}" />
       <div class="drawer-content flex flex-col">
         {# Mobile navbar #}
-        <div class="navbar bg-base-300 lg:hidden">
+        <header class="navbar bg-base-300 lg:hidden" role="banner">
           <div class="flex-none">
-            <label for="main-drawer" class="btn btn-square btn-ghost drawer-button">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block w-5 h-5 stroke-current">
+            <label for="main-drawer" class="btn btn-square btn-ghost drawer-button" aria-label="{{ 'accessibility.open_menu'|trans }}">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block w-5 h-5 stroke-current" aria-hidden="true">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
               </svg>
             </label>
           </div>
           <div class="flex-1">
-            <a class="btn btn-ghost text-xl">{{ 'meta.title.default'|trans }}</a>
+            <a href="{{ path('app_dashboard') }}" class="btn btn-ghost text-xl">{{ 'meta.title.default'|trans }}</a>
           </div>
-        </div>
-        <main class="flex-1 p-4 sm:p-6">
+        </header>
+        <main id="main-content" class="flex-1 p-4 sm:p-6" role="main" tabindex="-1">
           {% block body %}{% endblock %}
         </main>
       </div>

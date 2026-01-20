@@ -57,6 +57,23 @@ Encore
     };
   })
 
+  // Configure CSS optimization
+  .configureCssLoader((config) => {
+    config.modules = false;
+  })
+
+  // Enable CSS minification in production
+  .when(Encore.isProduction(), (Encore) => {
+    Encore
+      .configureTerserPlugin((options) => {
+        options.terserOptions = {
+          compress: {
+            drop_console: true,
+          },
+        };
+      });
+  })
+
   // configure Babel
   // .configureBabel((config) => {
   //     config.plugins.push('@babel/a-babel-plugin');

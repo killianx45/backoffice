@@ -2,6 +2,11 @@
 
 {% block title %}{{ 'article.title.new'|trans }}{% endblock %}
 
+{% block dns_prefetch %}
+<link rel="dns-prefetch" href="https://cdn.ckeditor.com" />
+<link rel="preconnect" href="https://cdn.ckeditor.com" crossorigin />
+{% endblock %}
+
 {% block body %}
 <div class="container mx-auto px-4 py-8 max-w-4xl">
     <div class="mb-8">

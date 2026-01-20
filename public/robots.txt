@@ -1,12 +1,27 @@
 # Robots.txt for CMS Backoffice
+# This backoffice should not be indexed by search engines
 
-# Block backoffice from search engines
+# Block all crawlers from admin areas
 User-agent: *
+Disallow: /
+
+# Block common bot paths
 Disallow: /admin/
 Disallow: /dashboard/
 Disallow: /user/
 Disallow: /article/
 Disallow: /theme/
+Disallow: /media/
+Disallow: /csv/
+Disallow: /api/
+Disallow: /_profiler/
+Disallow: /_wdt/
 
-# Allow sitemap
-Sitemap: https://yourdomain.com/sitemap.xml
+# Allow only static assets if needed
+Allow: /build/*.css
+Allow: /build/*.js
+Allow: /build/fonts/
+
+# Note: Update the domain below before production deployment
+# Sitemap should point to your frontend application, not this backoffice
+# Sitemap: https://your-frontend-domain.com/sitemap.xml

@@ -439,3 +439,12 @@ error:
 common:
     or: OR
     avatar_alt: Avatar of %name%
+
+# Accessibility
+accessibility:
+    skip_to_content: Skip to main content
+    toggle_navigation: Toggle navigation
+    open_menu: Open menu
+    close_sidebar: Close sidebar
+    sidebar_navigation: Sidebar navigation
+    main_navigation: Main navigation
