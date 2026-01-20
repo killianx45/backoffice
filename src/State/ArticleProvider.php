@@ -24,12 +24,12 @@ class ArticleProvider implements ProviderInterface
         }
 
         if ($operation instanceof \ApiPlatform\Metadata\GetCollection) {
-            $articles = $this->articleRepository->findAll();
+            $articles = $this->articleRepository->findAllWithTags();
             return $this->articleRatingService->enrichCollectionWithRatingStats($articles);
         }
 
         if (isset($uriVariables['id'])) {
-            $article = $this->articleRepository->find($uriVariables['id']);
+            $article = $this->articleRepository->findOneWithTags($uriVariables['id']);
             if (!$article) {
                 return null;
             }

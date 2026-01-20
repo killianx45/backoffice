@@ -7,7 +7,16 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
 
+#[ApiResource(
+    operations: [
+        new GetCollection(normalizationContext: ['groups' => ['tag:read']]),
+        new Get(normalizationContext: ['groups' => ['tag:read']])
+    ]
+)]
 #[ORM\Entity(repositoryClass: TagRepository::class)]
 class Tag
 {

@@ -84,7 +84,7 @@ class Article
     /**
      * @var Collection<int, Tag>
      */
-    #[ORM\ManyToMany(targetEntity: Tag::class, inversedBy: 'articles')]
+    #[ORM\ManyToMany(targetEntity: Tag::class, inversedBy: 'articles', fetch: 'EAGER')]
     #[Groups(['article:read'])]
     private Collection $tags;
 

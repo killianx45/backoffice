@@ -34,4 +34,29 @@ class ArticleRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    public function findAllWithTags(): array
+    {
+        return $this->createQueryBuilder('a')
+            ->leftJoin('a.tags', 't')
+            ->addSelect('t')
+            ->leftJoin('a.author', 'u')
+            ->addSelect('u')
+            ->orderBy('a.createdAt', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findOneWithTags(int $id): ?Article
+    {
+        return $this->createQueryBuilder('a')
+            ->leftJoin('a.tags', 't')
+            ->addSelect('t')
+            ->leftJoin('a.author', 'u')
+            ->addSelect('u')
+            ->where('a.id = :id')
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
 }
