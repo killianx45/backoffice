@@ -76,6 +76,7 @@ class Article
      * @var Collection<int, Tag>
      */
     #[ORM\ManyToMany(targetEntity: Tag::class, inversedBy: 'articles')]
+    #[Groups(['article:read'])]
     private Collection $tags;
 
     public function __construct()
